@@ -187,7 +187,7 @@ Figma: https://www.figma.com/design/rXFhDYu5CotJj6NmKRnNXR/Palate?node-id=6-162&
 ## 👥 Команда
 
 * iOS разработчик: https://github.com/NAstyasasasas
-* 2 Android разработчика: https://github.com/yana-pv
+* 2 Android разработчика: https://github.com/yana-pv, https://github.com/GalinaLi17
 
 ---
 
