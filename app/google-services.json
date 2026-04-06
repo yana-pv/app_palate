@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "183316819895",
+    "project_id": "palate-2f02e",
+    "storage_bucket": "palate-2f02e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:183316819895:android:750526ddfac5634ff24232",
+        "android_client_info": {
+          "package_name": "com.example.palate"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCWmBP513ZRDiBdheDLgtj05ElYLbWwmSk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

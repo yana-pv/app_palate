@@ -1,4 +1,4 @@
-package com.example.build_config
+package com.example.network
 
 import org.junit.Test
 

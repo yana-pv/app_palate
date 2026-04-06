@@ -1,7 +1,8 @@
 plugins {
     alias(libs.plugins.app.android.application)
     alias(libs.plugins.app.compose)
-    //alias(libs.plugins.app.dagger)
+    alias(libs.plugins.app.dagger)
+    alias(libs.plugins.google.services)
 }
 
 android {
@@ -24,4 +25,9 @@ dependencies {
     implementation(libs.x.lifecycle.runtime.ktx)
     implementation(libs.x.activity.compose)
     implementation(libs.retrofit)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.auth.ktx)
+    implementation(libs.firebase.firestore.ktx)
+    implementation(libs.firebase.storage.ktx)
 }

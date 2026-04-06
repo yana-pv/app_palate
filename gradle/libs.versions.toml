@@ -20,11 +20,19 @@ compose-activity = "1.12.3"
 compose-foundation = "1.10.2"
 compose-ui = "1.10.2"
 compose-material3 = "1.4.0"
+
 # Dagger
 dagger = "2.59.2"
 javax-inject = "1"
+
 # Retrofit
 retrofit = "3.0.0"
+
+# Google
+google-services = "4.4.4"
+
+# Firebase
+firebase-bom = "33.7.0"
 
 gradle-secrets = "2.0.1"
 
@@ -59,6 +67,13 @@ dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = 
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
 retrofit-converter-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
 
+# Firebase
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
+firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
+firebase-auth-ktx = { module = "com.google.firebase:firebase-auth-ktx" }
+firebase-firestore-ktx = { module = "com.google.firebase:firebase-firestore-ktx" }
+firebase-storage-ktx = { module = "com.google.firebase:firebase-storage-ktx" }
+
 # Tests
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
@@ -78,6 +93,9 @@ kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "ko
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "dagger" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 gradle-secrets = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version.ref = "gradle-secrets" }
+
+# Google
+google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }
 
 # Project Internal convention plugins
 app-android-application = { id = "app.android.application" }
