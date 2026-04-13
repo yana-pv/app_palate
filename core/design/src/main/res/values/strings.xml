@@ -16,4 +16,11 @@
     <string name="nav_home">Home</string>
     <string name="nav_shopping_list">Shopping List</string>
     <string name="nav_profile">Profile</string>
+
+    <!-- Recipe Detail -->
+    <string name="recipe_detail_want_to_cook">Want to cook</string>
+    <string name="recipe_detail_to_list">To list</string>
+    <string name="recipe_detail_ingredients">INGREDIENTS</string>
+    <string name="recipe_detail_preparation">PREPARATION</string>
+    <string name="recipe_detail_back_desc">Back</string>
 </resources>

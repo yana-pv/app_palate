@@ -16,4 +16,11 @@
     <string name="nav_home">Главная</string>
     <string name="nav_shopping_list">Покупки</string>
     <string name="nav_profile">Профиль</string>
+
+    <!-- Детали рецепта -->
+    <string name="recipe_detail_want_to_cook">Хочу приготовить</string>
+    <string name="recipe_detail_to_list">В список</string>
+    <string name="recipe_detail_ingredients">ИНГРЕДИЕНТЫ</string>
+    <string name="recipe_detail_preparation">ПРИГОТОВЛЕНИЕ</string>
+    <string name="recipe_detail_back_desc">Назад</string>
 </resources>

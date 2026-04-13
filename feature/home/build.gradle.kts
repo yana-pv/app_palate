@@ -20,6 +20,7 @@ dependencies {
     implementation(project(":core:domain"))
     implementation(project(":core:design"))
     implementation(project(":core:data"))
+    implementation(project(":core:navigation"))
     implementation(project(":feature:plan"))
     implementation(project(":feature:my_recipes"))
     implementation(project(":feature:shopping_list"))

@@ -51,14 +51,15 @@ fun PalateBottomNav(
     )
 
     Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(dimensionResource(R.dimen.nav_bar_height)),
+        modifier = Modifier.fillMaxWidth(),
         color = SurfaceWhite,
         shadowElevation = dimensionResource(R.dimen.nav_bar_elevation)
     ) {
         Row(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .navigationBarsPadding()
+                .height(dimensionResource(R.dimen.nav_bar_height_small)),
             verticalAlignment = Alignment.CenterVertically
         ) {
             items.forEach { item ->
@@ -84,7 +85,7 @@ private fun NavItem(
     Column(
         modifier = modifier
             .clickable { onClick() }
-            .padding(vertical = dimensionResource(R.dimen.padding_medium)),
+            .padding(vertical = dimensionResource(R.dimen.padding_small)),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {

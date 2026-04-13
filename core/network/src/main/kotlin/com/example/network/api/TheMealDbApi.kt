@@ -28,4 +28,9 @@ interface TheMealDbApi {
     suspend fun getRecipesByCuisine(
         @Query("a") cuisine: String
     ): Response<MealResponse>
+
+    @GET("lookup.php")
+    suspend fun getRecipeById(
+        @Query("i") id: String
+    ): Response<MealResponse>
 }

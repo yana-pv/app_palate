@@ -13,7 +13,6 @@ android {
         applicationId = "com.example.palate"
         versionCode = 1
         versionName = "1.0"
-
     }
     buildFeatures {
         compose = true
@@ -37,7 +36,14 @@ dependencies {
     implementation(project(":core:domain"))
     implementation(project(":core:data"))
     implementation(project(":core:network"))
+    implementation(project(":core:navigation"))
+    
     implementation(project(":feature:home"))
+    implementation(project(":feature:recipe_detail"))
+    implementation(project(":feature:plan"))
+    implementation(project(":feature:my_recipes"))
+    implementation(project(":feature:shopping_list"))
+    implementation(project(":feature:profile"))
 
     implementation(libs.hilt)
     ksp(libs.hilt.compiler)
@@ -45,4 +51,5 @@ dependencies {
     implementation(libs.compose.ui)
     implementation(libs.compose.material3)
     implementation(libs.x.activity.compose)
+    implementation(libs.androidx.navigation.compose)
 }

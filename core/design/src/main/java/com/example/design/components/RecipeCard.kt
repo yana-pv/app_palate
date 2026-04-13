@@ -6,6 +6,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -13,9 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -33,6 +31,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -86,7 +85,9 @@ fun RecipeCard(
         ) {
             Box(
                 modifier = Modifier
-                    .size(dimensionResource(R.dimen.recipe_card_image_size)) 
+                    .padding(horizontal = dimensionResource(R.dimen.padding_medium))
+                    .fillMaxWidth()
+                    .aspectRatio(1f)
                     .clip(RoundedCornerShape(dimensionResource(R.dimen.recipe_card_image_corner_radius)))
             ) {
                 AsyncImage(
@@ -105,7 +106,7 @@ fun RecipeCard(
                 ) {
                     IconButton(onClick = onSaveClick) {
                         Icon(
-                            imageVector = if (isSaved) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                            painter = painterResource(id = R.drawable.icon),
                             contentDescription = stringResource(R.string.save_recipe_content_desc),
                             tint = if (isSaved) FavoriteRed else UnsavedGray,
                             modifier = Modifier.size(dimensionResource(R.dimen.recipe_card_favorite_icon_size))

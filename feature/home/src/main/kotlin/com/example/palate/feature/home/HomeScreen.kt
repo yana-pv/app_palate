@@ -1,5 +1,7 @@
 package com.example.palate.feature.home
 
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -122,7 +124,7 @@ fun HomeContent(
                 modifier = Modifier
                     .background(Color.White)
                     .windowInsetsPadding(WindowInsets.statusBars)
-                    .padding(bottom = dimensionResource(R.dimen.padding_medium))
+                    .padding(bottom = dimensionResource(R.dimen.padding_small))
             ) {
                 // Поиск
                 var isFocused by remember { mutableStateOf(false) }
@@ -186,7 +188,7 @@ fun HomeContent(
                 if (state is HomeUiState.Success) {
                     val successState = state as HomeUiState.Success
                     LazyRow(
-                        modifier = Modifier.padding(vertical = dimensionResource(R.dimen.padding_medium)),
+                        modifier = Modifier.padding(vertical = dimensionResource(R.dimen.padding_small)),
                         contentPadding = PaddingValues(horizontal = dimensionResource(R.dimen.padding_large)),
                         horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium))
                     ) {
@@ -231,7 +233,7 @@ fun HomeContent(
                                 .fillMaxWidth()
                                 .padding(
                                     horizontal = dimensionResource(R.dimen.padding_large),
-                                    vertical = dimensionResource(R.dimen.padding_medium)
+                                    vertical = dimensionResource(R.dimen.padding_small)
                                 ),
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
@@ -252,7 +254,7 @@ fun HomeContent(
                             columns = GridCells.Fixed(3),
                             contentPadding = PaddingValues(
                                 horizontal = dimensionResource(R.dimen.search_bar_corner_radius),
-                                vertical = dimensionResource(R.dimen.padding_medium)
+                                vertical = dimensionResource(R.dimen.padding_small)
                             ),
                             modifier = Modifier.fillMaxSize()
                         ) {
@@ -315,78 +317,88 @@ fun FilterBottomSheetContent(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(dimensionResource(R.dimen.padding_large))
+            .padding(horizontal = dimensionResource(R.dimen.padding_large))
             .navigationBarsPadding()
     ) {
-        Text(stringResource(R.string.filters_title), style = MaterialTheme.typography.headlineSmall)
-        
-        Spacer(Modifier.height(dimensionResource(R.dimen.padding_large)))
-        
-        Text(stringResource(R.string.categories_title), style = MaterialTheme.typography.titleMedium)
-        FlowRow(
-            modifier = Modifier.padding(vertical = dimensionResource(R.dimen.padding_medium)),
-            horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium)),
-            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium))
+        Column(
+            modifier = Modifier
+                .weight(1f, fill = false)
+                .verticalScroll(rememberScrollState())
         ) {
-            CategoryChip(
-                name = stringResource(R.string.all_categories),
-                isSelected = selectedCategoryId == "all" || selectedCategoryId == null,
-                onClick = { onCategoryClick("all") }
-            )
-            categories.filter { it.id != "all" }.forEach { category ->
-                CategoryChip(
-                    name = category.name,
-                    isSelected = selectedCategoryId == category.id,
-                    onClick = { onCategoryClick(category.id) }
-                )
-            }
-        }
-
-        Spacer(Modifier.height(dimensionResource(R.dimen.padding_large)))
-
-        Text(stringResource(R.string.cuisine_title), style = MaterialTheme.typography.titleMedium)
-        FlowRow(
-            modifier = Modifier.padding(vertical = dimensionResource(R.dimen.padding_medium)),
-            horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium)),
-            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium))
-        ) {
-            CategoryChip(
-                name = stringResource(R.string.all_categories),
-                isSelected = selectedCuisine == null || selectedCuisine == "null",
-                onClick = { onCuisineClick("null") }
-            )
-            cuisines.forEach { cuisine ->
-                CategoryChip(
-                    name = cuisine,
-                    isSelected = selectedCuisine == cuisine,
-                    onClick = { onCuisineClick(cuisine) }
-                )
-            }
-        }
-
-        Spacer(Modifier.height(dimensionResource(R.dimen.padding_extra_large)))
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_large))
-        ) {
-            OutlinedButton(
-                onClick = onReset,
-                modifier = Modifier.weight(1f),
-                shape = RoundedCornerShape(dimensionResource(R.dimen.search_bar_corner_radius))
+            Spacer(Modifier.height(dimensionResource(R.dimen.padding_medium)))
+            Text(stringResource(R.string.filters_title), style = MaterialTheme.typography.headlineSmall)
+            
+            Spacer(Modifier.height(dimensionResource(R.dimen.padding_large)))
+            
+            Text(stringResource(R.string.categories_title), style = MaterialTheme.typography.titleMedium)
+            FlowRow(
+                modifier = Modifier.padding(vertical = dimensionResource(R.dimen.padding_medium)),
+                horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium)),
+                verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium))
             ) {
-                Text(stringResource(R.string.reset_button))
+                CategoryChip(
+                    name = stringResource(R.string.all_categories),
+                    isSelected = selectedCategoryId == "all" || selectedCategoryId == null,
+                    onClick = { onCategoryClick("all") }
+                )
+                categories.filter { it.id != "all" }.forEach { category ->
+                    CategoryChip(
+                        name = category.name,
+                        isSelected = selectedCategoryId == category.id,
+                        onClick = { onCategoryClick(category.id) }
+                    )
+                }
             }
-            Button(
-                onClick = onApply,
-                modifier = Modifier.weight(1f),
-                shape = RoundedCornerShape(dimensionResource(R.dimen.search_bar_corner_radius)),
-                colors = ButtonDefaults.buttonColors(containerColor = SecondaryPurple)
+
+            Spacer(Modifier.height(dimensionResource(R.dimen.padding_large)))
+
+            Text(stringResource(R.string.cuisine_title), style = MaterialTheme.typography.titleMedium)
+            FlowRow(
+                modifier = Modifier.padding(vertical = dimensionResource(R.dimen.padding_medium)),
+                horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium)),
+                verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium))
             ) {
-                Text(stringResource(R.string.apply_button))
+                CategoryChip(
+                    name = stringResource(R.string.all_categories),
+                    isSelected = selectedCuisine == null || selectedCuisine == "null",
+                    onClick = { onCuisineClick("null") }
+                )
+                cuisines.forEach { cuisine ->
+                    CategoryChip(
+                        name = cuisine,
+                        isSelected = selectedCuisine == cuisine,
+                        onClick = { onCuisineClick(cuisine) }
+                    )
+                }
             }
         }
-        Spacer(Modifier.height(dimensionResource(R.dimen.padding_large)))
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = dimensionResource(R.dimen.padding_large))
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_large))
+            ) {
+                OutlinedButton(
+                    onClick = onReset,
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(dimensionResource(R.dimen.search_bar_corner_radius))
+                ) {
+                    Text(stringResource(R.string.reset_button))
+                }
+                Button(
+                    onClick = onApply,
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(dimensionResource(R.dimen.search_bar_corner_radius)),
+                    colors = ButtonDefaults.buttonColors(containerColor = SecondaryPurple)
+                ) {
+                    Text(stringResource(R.string.apply_button))
+                }
+            }
+        }
     }
 }
 

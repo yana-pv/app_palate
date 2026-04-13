@@ -1,11 +1,11 @@
 package com.example.data.repository
 
-
-
 import com.example.data.mapper.toDomain
+import com.example.data.mapper.toDomainPreview
 import com.example.domain.repository.RecipeRepository
 import com.example.network.api.TheMealDbApi
 import com.example.domain.model.Category
+import com.example.domain.model.Recipe
 import com.example.domain.model.RecipePreview
 import javax.inject.Inject
 
@@ -25,7 +25,7 @@ class RecipeRepositoryImpl @Inject constructor(
     override suspend fun getRecipesByCategory(categoryName: String): List<RecipePreview> {
         val response = api.getRecipesByCategory(categoryName)
         return if (response.isSuccessful) {
-            response.body()?.meals?.map { it.toDomain() } ?: emptyList()
+            response.body()?.meals?.map { it.toDomainPreview() } ?: emptyList()
         } else {
             emptyList()
         }
@@ -43,9 +43,18 @@ class RecipeRepositoryImpl @Inject constructor(
     override suspend fun getRecipesByCuisine(cuisine: String): List<RecipePreview> {
         val response = api.getRecipesByCuisine(cuisine)
         return if (response.isSuccessful) {
-            response.body()?.meals?.map { it.toDomain() } ?: emptyList()
+            response.body()?.meals?.map { it.toDomainPreview() } ?: emptyList()
         } else {
             emptyList()
+        }
+    }
+
+    override suspend fun getRecipeById(id: String): Recipe? {
+        val response = api.getRecipeById(id)
+        return if (response.isSuccessful) {
+            response.body()?.meals?.firstOrNull()?.toDomain()
+        } else {
+            null
         }
     }
 }

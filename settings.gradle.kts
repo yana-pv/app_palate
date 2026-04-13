@@ -22,6 +22,7 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Palate"
+include(":core:navigation")
 include(":app")
 include(":core:data")
 include(":core:domain")

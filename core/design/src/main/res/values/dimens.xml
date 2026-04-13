@@ -28,6 +28,7 @@
 
     <!-- Navigation Bar -->
     <dimen name="nav_bar_height">80dp</dimen>
+    <dimen name="nav_bar_height_small">72dp</dimen>
     <dimen name="nav_bar_elevation">8dp</dimen>
     <dimen name="nav_item_indicator_width">56dp</dimen>
     <dimen name="nav_item_indicator_height">32dp</dimen>
@@ -36,9 +37,22 @@
     <dimen name="nav_item_text_size">10sp</dimen>
     <dimen name="nav_item_line_height">12sp</dimen>
 
+    <!-- Recipe Detail -->
+    <dimen name="recipe_detail_header_height">420dp</dimen>
+    <dimen name="recipe_detail_back_btn_width">32dp</dimen>
+    <dimen name="recipe_detail_back_btn_height">40dp</dimen>
+    <dimen name="recipe_detail_back_btn_radius">20dp</dimen>
+    <dimen name="recipe_detail_action_btn_height">38dp</dimen>
+    <dimen name="recipe_detail_action_btn_radius">8dp</dimen>
+    <dimen name="recipe_detail_section_title_height">38dp</dimen>
+    <dimen name="recipe_detail_section_title_radius">8dp</dimen>
+    <dimen name="recipe_detail_icon_size">18dp</dimen>
+    <dimen name="recipe_detail_back_btn_top_padding">48dp</dimen>
+
     <!-- Text Sizes -->
     <dimen name="text_size_small">9sp</dimen>
     <dimen name="text_size_category_chip">12sp</dimen>
     <dimen name="text_size_recipe_name">11sp</dimen>
     <dimen name="text_size_normal">14sp</dimen>
+    <dimen name="text_size_action_button">14sp</dimen>
 </resources>

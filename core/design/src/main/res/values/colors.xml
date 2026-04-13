@@ -7,4 +7,12 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="secondary_purple">#A855F7</color>
+    <color name="primary_green">#84CC16</color>
+    <color name="section_bg">#EAEAEA</color>
+    <color name="back_button_icon">#625B71</color>
+    <color name="white_65">#A6FFFFFF</color>
+    <color name="gradient_start">#00000000</color>
+    <color name="gradient_end">#CC000000</color>
 </resources>
