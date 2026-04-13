@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.app.compose)
     alias(libs.plugins.app.dagger)
     alias(libs.plugins.google.services)
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -30,4 +32,17 @@ dependencies {
     implementation(libs.firebase.auth.ktx)
     implementation(libs.firebase.firestore.ktx)
     implementation(libs.firebase.storage.ktx)
+
+    implementation(project(":core:design"))
+    implementation(project(":core:domain"))
+    implementation(project(":core:data"))
+    implementation(project(":core:network"))
+    implementation(project(":feature:home"))
+
+    implementation(libs.hilt)
+    ksp(libs.hilt.compiler)
+
+    implementation(libs.compose.ui)
+    implementation(libs.compose.material3)
+    implementation(libs.x.activity.compose)
 }

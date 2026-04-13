@@ -1,0 +1,44 @@
+<resources>
+    <!-- Common -->
+    <dimen name="padding_small">4dp</dimen>
+    <dimen name="padding_medium">8dp</dimen>
+    <dimen name="padding_large">16dp</dimen>
+    <dimen name="padding_extra_large">24dp</dimen>
+
+    <!-- Search Bar -->
+    <dimen name="search_bar_height">42dp</dimen>
+    <dimen name="search_bar_corner_radius">12dp</dimen>
+    <dimen name="search_bar_icon_size">20dp</dimen>
+
+    <!-- Category Chip -->
+    <dimen name="category_chip_height">32dp</dimen>
+    <dimen name="category_chip_corner_radius">16dp</dimen>
+    <dimen name="category_chip_padding_horizontal">16dp</dimen>
+
+    <!-- Recipe Card -->
+    <dimen name="recipe_card_height">180dp</dimen>
+    <dimen name="recipe_card_image_size">110dp</dimen>
+    <dimen name="recipe_card_corner_radius">12dp</dimen>
+    <dimen name="recipe_card_image_corner_radius">8dp</dimen>
+    <dimen name="recipe_card_favorite_btn_size">24dp</dimen>
+    <dimen name="recipe_card_favorite_icon_size">14dp</dimen>
+    <dimen name="recipe_card_elevation_default">2dp</dimen>
+    <dimen name="recipe_card_elevation_pressed">8dp</dimen>
+    <dimen name="recipe_card_border_width">1dp</dimen>
+
+    <!-- Navigation Bar -->
+    <dimen name="nav_bar_height">80dp</dimen>
+    <dimen name="nav_bar_elevation">8dp</dimen>
+    <dimen name="nav_item_indicator_width">56dp</dimen>
+    <dimen name="nav_item_indicator_height">32dp</dimen>
+    <dimen name="nav_item_indicator_corner_radius">16dp</dimen>
+    <dimen name="nav_item_icon_size">24dp</dimen>
+    <dimen name="nav_item_text_size">10sp</dimen>
+    <dimen name="nav_item_line_height">12sp</dimen>
+
+    <!-- Text Sizes -->
+    <dimen name="text_size_small">9sp</dimen>
+    <dimen name="text_size_category_chip">12sp</dimen>
+    <dimen name="text_size_recipe_name">11sp</dimen>
+    <dimen name="text_size_normal">14sp</dimen>
+</resources>
