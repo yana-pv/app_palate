@@ -18,8 +18,10 @@ kotlin {
 }
 
 dependencies {
-    compileOnly(libs.android.gradle.plugin)
-    compileOnly(libs.kotlin.gradle.plugin)
+    implementation(libs.android.gradle.plugin)
+    implementation(libs.kotlin.gradle.plugin)
+    implementation(libs.hilt.gradle.plugin)
+    implementation(libs.ksp.gradle.plugin)
 }
 
 tasks {
@@ -48,7 +50,7 @@ gradlePlugin {
             implementationClass = "HiltConventionPlugin"
         }
         register("androidDagger") {
-            id = libs.plugins.app.dagger.get().pluginId                // ← app.dagger
+            id = libs.plugins.app.dagger.get().pluginId
             implementationClass = "DaggerConventionPlugin"
         }
     }

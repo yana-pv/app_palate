@@ -1,47 +1,70 @@
 package com.example.palate
 
+import android.graphics.Color
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.palate.core.navigation.Destination
+import com.example.palate.feature.home.HomeScreen
+import com.example.palate.feature.recipe_detail.RecipeDetailScreen
+import com.example.palate.navigation.PalateNavigator
 import com.example.palate.ui.theme.PalateTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        
+        enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.light(
+                Color.TRANSPARENT, Color.TRANSPARENT
+            ),
+            navigationBarStyle = SystemBarStyle.light(
+                Color.TRANSPARENT, Color.TRANSPARENT
+            )
+        )
+        
         setContent {
             PalateTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
+                val navController = rememberNavController()
+                val navigator = remember(navController) { PalateNavigator(navController) }
+
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    contentWindowInsets = WindowInsets(0, 0, 0, 0)
+                ) { innerPadding ->
+                    NavHost(
+                        navController = navController,
+                        startDestination = Destination.Home.route,
                         modifier = Modifier.padding(innerPadding)
-                    )
+                    ) {
+                        composable(Destination.Home.route) {
+                            HomeScreen(
+                                onRecipeClick = { recipeId ->
+                                    navigator.openRecipeDetail(recipeId)
+                                }
+                            )
+                        }
+                        composable(Destination.RecipeDetail.route) {
+                            RecipeDetailScreen(
+                                onBackClick = { navigator.navigateUp() }
+                            )
+                        }
+                    }
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    PalateTheme {
-        Greeting("Android")
     }
 }
