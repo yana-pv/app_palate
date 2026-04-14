@@ -2,6 +2,7 @@ package com.example.auth.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.domain.model.User
 import com.example.domain.repository.AuthRepository
 import com.example.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -96,13 +97,13 @@ class AuthViewModel @Inject constructor(
 sealed class RegisterUiState {
     object Idle : RegisterUiState()
     object Loading : RegisterUiState()
-    data class Success(val user: com.example.domain.model.User) : RegisterUiState()
+    data class Success(val user: User) : RegisterUiState()
     data class Error(val message: String) : RegisterUiState()
 }
 
 sealed class LoginUiState {
     object Idle : LoginUiState()
     object Loading : LoginUiState()
-    data class Success(val user: com.example.domain.model.User) : LoginUiState()
+    data class Success(val user: User) : LoginUiState()
     data class Error(val message: String) : LoginUiState()
 }

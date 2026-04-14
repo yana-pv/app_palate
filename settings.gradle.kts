@@ -22,6 +22,7 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Palate"
+include(":core:navigation")
 include(":app")
 include(":core:data")
 include(":core:domain")
@@ -37,4 +38,5 @@ include(":feature:create_recipe")
 include(":feature:shopping_list")
 include(":feature:profile")
 include(":core:network")
+include(":feature:plan")
 include(":core:utils")
