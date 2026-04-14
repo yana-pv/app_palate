@@ -1,5 +1,8 @@
 plugins {
     alias(libs.plugins.app.android.library)
+    alias(libs.plugins.app.hilt)
+    alias(libs.plugins.app.compose)
+
 }
 
 android {
@@ -7,6 +10,16 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:data"))
+    implementation(project(":core:utils"))
+    implementation(project(":core:domain"))
+    implementation(project(":core:design"))
+
+
+    implementation(libs.x.lifecycle.runtime.ktx)
+    implementation(libs.lifecycle.viewmodel.compose)
+
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.app.android.application)
     alias(libs.plugins.app.compose)
     alias(libs.plugins.app.dagger)
+    alias(libs.plugins.app.hilt)
     alias(libs.plugins.google.services)
 }
 
@@ -19,6 +20,8 @@ android {
 }
 
 dependencies {
+    implementation(project(":feature:auth"))
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
