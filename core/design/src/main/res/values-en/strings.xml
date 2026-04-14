@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Palate</string>
+
+    <!-- Common strings -->
+    <string name="register">Register</string>
+    <string name="login">Login</string>
+    <string name="password_min_hint">Minimum 6 characters</string>
+
+    <!-- Registration screen -->
+    <string name="name_hint">Name</string>
+    <string name="email_hint">Email</string>
+    <string name="password_hint">Password</string>
+    <string name="confirm_password_hint">Confirm password</string>
+    <string name="register_button">REGISTER</string>
+    <string name="have_account">Already have an account? </string>
+    <string name="login_link">Login</string>
+
+    <!-- Login screen -->
+    <string name="login_button">LOGIN</string>
+    <string name="no_account">Don\'t have an account? </string>
+    <string name="register_link">Register</string>
+
+    <!-- Validation errors -->
+    <string name="error_name_required">Name is required</string>
+    <string name="error_email_required">Email is required</string>
+    <string name="error_email_invalid">Enter a valid email address</string>
+    <string name="error_password_required">Password is required</string>
+    <string name="error_password_min">Password must be at least 6 characters</string>
+    <string name="error_confirm_password_required">Confirm password is required</string>
+    <string name="error_password_mismatch">Passwords do not match</string>
+
+    <!-- App description -->
+    <string name="app_description">A cozy app for those who love to cook, experiment with recipes and save culinary memories</string>
+</resources>

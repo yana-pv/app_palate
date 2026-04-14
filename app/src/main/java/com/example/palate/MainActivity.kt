@@ -15,18 +15,27 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.auth.ui.AuthViewModel
+import com.example.auth.ui.LoginScreen
+import com.example.auth.ui.RegisterScreen
+import com.example.auth.ui.StartupScreen
 import com.example.palate.core.navigation.Destination
 import com.example.palate.feature.home.HomeScreen
 import com.example.palate.feature.recipe_detail.RecipeDetailScreen
 import com.example.palate.navigation.PalateNavigator
 import com.example.palate.ui.theme.PalateTheme
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var authViewModel: AuthViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
+
         enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.light(
                 Color.TRANSPARENT, Color.TRANSPARENT
@@ -35,7 +44,7 @@ class MainActivity : ComponentActivity() {
                 Color.TRANSPARENT, Color.TRANSPARENT
             )
         )
-        
+
         setContent {
             PalateTheme {
                 val navController = rememberNavController()
@@ -47,9 +56,19 @@ class MainActivity : ComponentActivity() {
                 ) { innerPadding ->
                     NavHost(
                         navController = navController,
-                        startDestination = Destination.Home.route,
+                        startDestination = "startup",
                         modifier = Modifier.padding(innerPadding)
                     ) {
+                        composable("startup") {
+                            StartupScreen(navController)
+                        }
+                        composable("login") {
+                            LoginScreen(navController, authViewModel)
+                        }
+                        composable("register") {
+                            RegisterScreen(navController, authViewModel)
+                        }
+
                         composable(Destination.Home.route) {
                             HomeScreen(
                                 onRecipeClick = { recipeId ->
@@ -57,6 +76,7 @@ class MainActivity : ComponentActivity() {
                                 }
                             )
                         }
+
                         composable(Destination.RecipeDetail.route) {
                             RecipeDetailScreen(
                                 onBackClick = { navigator.navigateUp() }
