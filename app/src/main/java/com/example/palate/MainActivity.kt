@@ -19,10 +19,10 @@ import com.example.auth.ui.AuthViewModel
 import com.example.auth.ui.LoginScreen
 import com.example.auth.ui.RegisterScreen
 import com.example.auth.ui.StartupScreen
-import com.example.palate.core.navigation.Destination
-import com.example.palate.feature.home.HomeScreen
-import com.example.palate.feature.recipe_detail.RecipeDetailScreen
+import com.example.navigation.Destination
+import com.example.home.HomeScreen
 import com.example.palate.navigation.PalateNavigator
+import com.example.recipe_detail.RecipeDetailScreen
 import com.example.palate.ui.theme.PalateTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject

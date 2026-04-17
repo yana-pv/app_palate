@@ -1,0 +1,27 @@
+<resources>
+    <!-- Auth Screens -->
+    <dimen name="auth_header_height">300dp</dimen>
+    <dimen name="auth_container_height">650dp</dimen>
+    <dimen name="auth_header_radius">28dp</dimen>
+    <dimen name="auth_container_radius">30dp</dimen>
+    <dimen name="auth_logo_size">48sp</dimen>
+    <dimen name="auth_field_border_width">1dp</dimen>
+    <dimen name="auth_field_corner_radius">10dp</dimen>
+    <dimen name="auth_field_padding">16dp</dimen>
+    <dimen name="auth_error_text_size">12sp</dimen>
+    <dimen name="auth_field_spacing">8dp</dimen>
+    <dimen name="auth_vertical_padding">32dp</dimen>
+    <dimen name="auth_logo_letter_spacing">0.1sp</dimen>
+    <dimen name="auth_logo_line_height">25sp</dimen>
+
+    <!-- Startup Screen -->
+    <dimen name="startup_bottom_sheet_height">420dp</dimen>
+    <dimen name="startup_bottom_sheet_radius">30dp</dimen>
+    <dimen name="startup_logo_text_size">52sp</dimen>
+    <dimen name="startup_description_text_size">15sp</dimen>
+    <dimen name="startup_description_line_height">22sp</dimen>
+    <dimen name="startup_button_width">220dp</dimen>
+    <dimen name="startup_button_height">48dp</dimen>
+    <dimen name="startup_button_radius">8dp</dimen>
+    <dimen name="startup_bg_radius">28dp</dimen>
+</resources>

@@ -1,26 +1,14 @@
 <resources>
+    <!-- App Information -->
     <string name="app_name">Palate</string>
-    <string name="search_placeholder">Find a recipe...</string>
-    <string name="category_more">More</string>
-    <string name="all_recipes">All recipes</string>
-    <string name="filters_content_desc">Filters</string>
-    <string name="filters_title">Filters</string>
-    <string name="categories_title">Categories</string>
-    <string name="all_categories">All</string>
-    <string name="cuisine_title">Cuisine</string>
-    <string name="reset_button">Reset</string>
-    <string name="apply_button">Apply</string>
-    <string name="save_recipe_content_desc">Save</string>
-    <string name="nav_plan">Plan</string>
-    <string name="nav_my_recipes">My Recipes</string>
+
+    <!-- Navigation -->
     <string name="nav_home">Home</string>
+    <string name="nav_my_recipes">My Recipes</string>
+    <string name="nav_plan">Plan</string>
     <string name="nav_shopping_list">Shopping List</string>
     <string name="nav_profile">Profile</string>
 
-    <!-- Recipe Detail -->
-    <string name="recipe_detail_want_to_cook">Want to cook</string>
-    <string name="recipe_detail_to_list">To list</string>
-    <string name="recipe_detail_ingredients">INGREDIENTS</string>
-    <string name="recipe_detail_preparation">PREPARATION</string>
-    <string name="recipe_detail_back_desc">Back</string>
+    <!-- Recipe Card -->
+    <string name="save_recipe_content_desc">Save recipe</string>
 </resources>

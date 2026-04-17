@@ -1,24 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="green_primary">#87E638</color>
-    <color name="green_dark">#1B5E20</color>
-    <color name="purple_button">#B351F4</color>
-    <color name="white">#FFFFFF</color>
-    <color name="black">#000000</color>
-    <color name="gray_border">#B3B3B3</color>
-    <color name="gray_text">#B3B3B3</color>
-    <color name="error_red">#F44336</color>
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
-
+    <!-- Основные цвета -->
+    <color name="primary_purple">#B351F4</color>
     <color name="secondary_purple">#A855F7</color>
     <color name="primary_green">#84CC16</color>
-    <color name="section_bg">#EAEAEA</color>
-    <color name="back_button_icon">#625B71</color>
+
+    <!-- Нейтральные цвета -->
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="surface_white">#FFFFFF</color>
     <color name="white_65">#A6FFFFFF</color>
+
+    <!-- Текст и границы -->
+    <color name="gray_text">#B3B3B3</color>
+    <color name="gray_border">#B3B3B3</color>
+    <color name="search_border">#E2E8F0</color>
+    <color name="search_placeholder">#94A3B8</color>
+    <color name="back_button_icon">#625B71</color>
+
+    <!-- Фоны -->
+    <color name="section_bg">#EAEAEA</color>
+    <color name="category_unselected_bg">#F1F5F9</color>
+    <color name="category_unselected_text">#64748B</color>
+    <color name="gray_light_bg">#D9D9D9</color>
+
+    <!-- Состояния и градиенты -->
+    <color name="error_red">#F44336</color>
     <color name="gradient_start">#00000000</color>
     <color name="gradient_end">#CC000000</color>
 </resources>

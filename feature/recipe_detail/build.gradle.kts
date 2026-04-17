@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.palate.feature.recipe_detail"
+    namespace = "com.example.recipe_detail"
 }
 
 dependencies {

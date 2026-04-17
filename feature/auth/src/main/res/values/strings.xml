@@ -1,35 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Palate</string>
+    <!-- Auth Common -->
+    <string name="register">Register</string>
+    <string name="login">Login</string>
+    <string name="password_min_hint">Minimum 6 characters</string>
+    <string name="password_show_content_desc">Show password</string>
+    <string name="password_hide_content_desc">Hide password</string>
+    <string name="app_description">A cozy app for those who love to cook, experiment with recipes and save culinary memories</string>
 
-    <!-- Общие строки -->
-    <string name="register">Регистрация</string>
-    <string name="login">Войти</string>
-    <string name="password_min_hint">Минимум 6 символов</string>
+    <!-- Login screen -->
+    <string name="login_button">LOGIN</string>
+    <string name="no_account">"Don\'t have an account? "</string>
+    <string name="register_link">Register</string>
 
-    <!-- Экран регистрации -->
-    <string name="name_hint">Имя</string>
+    <!-- Registration screen -->
+    <string name="name_hint">Name</string>
     <string name="email_hint">Email</string>
-    <string name="password_hint">Пароль</string>
-    <string name="confirm_password_hint">Подтверждение пароля</string>
-    <string name="register_button">ЗАРЕГИСТРИРОВАТЬСЯ</string>
-    <string name="have_account">Уже есть аккаунт? </string>
-    <string name="login_link">Войти</string>
+    <string name="password_hint">Password</string>
+    <string name="confirm_password_hint">Confirm password</string>
+    <string name="register_button">REGISTER</string>
+    <string name="have_account">"Already have an account? "</string>
+    <string name="login_link">Login</string>
 
-    <!-- Экран входа -->
-    <string name="login_button">ВОЙТИ</string>
-    <string name="no_account">Нет аккаунта? </string>
-    <string name="register_link">Зарегистрироваться</string>
-
-    <!-- Ошибки валидации -->
-    <string name="error_name_required">Введите имя</string>
-    <string name="error_email_required">Введите email</string>
-    <string name="error_email_invalid">Введите корректный email</string>
-    <string name="error_password_required">Введите пароль</string>
-    <string name="error_password_min">Пароль должен быть не менее 6 символов</string>
-    <string name="error_confirm_password_required">Подтвердите пароль</string>
-    <string name="error_password_mismatch">Пароли не совпадают</string>
-
-    <!-- Описание приложения -->
-    <string name="app_description">Уютное приложение для тех, кто любит готовить, экспериментировать с рецептами и сохранять кулинарные впечатления</string>
+    <!-- Validation errors -->
+    <string name="error_name_required">Name is required</string>
+    <string name="error_email_required">Email is required</string>
+    <string name="error_email_invalid">Enter a valid email address</string>
+    <string name="error_password_required">Password is required</string>
+    <string name="error_password_min">Password must be at least 6 characters</string>
+    <string name="error_confirm_password_required">Confirm password is required</string>
+    <string name="error_password_mismatch">Passwords do not match</string>
 </resources>

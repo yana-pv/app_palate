@@ -1,1 +1,1 @@
-com.example.palate.core.navigation
+com.example.navigation

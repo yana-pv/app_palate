@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Recipe Detail -->
+    <string name="recipe_detail_want_to_cook">Want to cook</string>
+    <string name="recipe_detail_to_list">To list</string>
+    <string name="recipe_detail_ingredients">INGREDIENTS</string>
+    <string name="recipe_detail_preparation">PREPARATION</string>
+    <string name="recipe_detail_back_desc">Back</string>
+</resources>
