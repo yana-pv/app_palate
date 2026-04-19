@@ -14,10 +14,14 @@ dependencies {
     implementation(project(":core:utils"))
     implementation(project(":core:domain"))
     implementation(project(":core:design"))
+    implementation(project(":core:navigation"))
+
 
 
     implementation(libs.x.lifecycle.runtime.ktx)
     implementation(libs.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.hilt.navigation.compose)
+
 
 
     implementation(libs.androidx.core.ktx)

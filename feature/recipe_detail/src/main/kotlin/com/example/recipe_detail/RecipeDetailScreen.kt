@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.example.design.R as DesignR
+import com.example.design.components.RecipeDetailPlaceholder
 import com.example.domain.model.Recipe
 import com.example.recipe_detail.viewmodel.RecipeDetailViewModel
 
@@ -34,25 +35,87 @@ fun RecipeDetailScreen(
     onBackClick: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
 
-    Box(modifier = Modifier.fillMaxSize().background(Color.White)) {
-        when (val state = uiState) {
-            is RecipeDetailUiState.Loading -> {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-            }
-            is RecipeDetailUiState.Success -> {
-                RecipeDetailContent(
-                    recipe = state.recipe,
-                    onBackClick = onBackClick
+    LaunchedEffect(uiState.errorMessage) {
+        uiState.errorMessage?.let {
+            snackbarHostState.showSnackbar(it)
+            viewModel.clearError()
+        }
+    }
+
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        containerColor = Color.White,
+        contentWindowInsets = WindowInsets(0, 0, 0, 0)
+    ) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize()
+                .background(Color.White)
+        ) {
+            if (uiState.isLoading && uiState.recipe == null) {
+                RecipeDetailPlaceholder()
+            } else {
+                uiState.recipe?.let { recipe ->
+                    RecipeDetailContent(
+                        recipe = recipe,
+                        onBackClick = onBackClick
+                    )
+                } ?: RecipeErrorState(
+                    onBackClick = onBackClick,
+                    onRetryClick = { viewModel.loadRecipe() }
                 )
             }
-            is RecipeDetailUiState.Error -> {
-                Text(
-                    text = state.message,
-                    color = Color.Red,
-                    modifier = Modifier.align(Alignment.Center)
-                )
-            }
+        }
+    }
+}
+
+@Composable
+fun RecipeErrorState(
+    onBackClick: () -> Unit,
+    onRetryClick: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(dimensionResource(DesignR.dimen.padding_large)),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Icon(
+            painter = painterResource(id = DesignR.drawable.icon),
+            contentDescription = null,
+            modifier = Modifier.size(dimensionResource(DesignR.dimen.placeholder_icon_size_extra_large)),
+            tint = Color.LightGray
+        )
+        Spacer(modifier = Modifier.height(dimensionResource(DesignR.dimen.padding_large)))
+        Text(
+            text = stringResource(R.string.recipe_not_found),
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.Bold
+        )
+        Spacer(modifier = Modifier.height(dimensionResource(DesignR.dimen.padding_medium)))
+        Text(
+            text = stringResource(R.string.error_loading_recipe),
+            style = MaterialTheme.typography.bodyMedium,
+            color = Color.Gray
+        )
+        Spacer(modifier = Modifier.height(dimensionResource(DesignR.dimen.padding_extra_large)))
+        Button(
+            onClick = onRetryClick,
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(containerColor = colorResource(DesignR.color.primary_green))
+        ) {
+            Text(text = stringResource(R.string.retry))
+        }
+        Spacer(modifier = Modifier.height(dimensionResource(DesignR.dimen.padding_medium)))
+        OutlinedButton(
+            onClick = onBackClick,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(text = stringResource(R.string.back_to_home))
         }
     }
 }
@@ -107,25 +170,26 @@ fun RecipeHeader(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(dimensionResource(R.dimen.recipe_detail_header_height))
+            .heightIn(min = dimensionResource(R.dimen.recipe_detail_header_height))
     ) {
         AsyncImage(
             model = recipe.imageUrl,
             contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.matchParentSize(),
             contentScale = ContentScale.Crop
         )
 
         Box(
             modifier = Modifier
-                .fillMaxSize()
+                .matchParentSize()
                 .background(
                     Brush.verticalGradient(
                         colors = listOf(
-                            colorResource(DesignR.color.gradient_start),
+                            Color.Transparent,
+                            colorResource(DesignR.color.gradient_end).copy(alpha = 0.5f),
                             colorResource(DesignR.color.gradient_end)
                         ),
-                        startY = 300f
+                        startY = 0f
                     )
                 )
         )
@@ -133,8 +197,9 @@ fun RecipeHeader(
         IconButton(
             onClick = onBackClick,
             modifier = Modifier
+                .statusBarsPadding()
                 .padding(
-                    top = dimensionResource(R.dimen.recipe_detail_back_btn_top_padding),
+                    top = dimensionResource(DesignR.dimen.padding_medium),
                     start = dimensionResource(DesignR.dimen.padding_large)
                 )
                 .size(
@@ -162,8 +227,12 @@ fun RecipeHeader(
                 text = recipe.name,
                 style = MaterialTheme.typography.headlineLarge,
                 color = Color.White,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                maxLines = 3,
+                softWrap = true,
+                lineHeight = 34.sp
             )
+            Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = recipe.cuisine,
                 style = MaterialTheme.typography.bodyMedium,
@@ -273,11 +342,13 @@ fun IngredientItem(name: String, amount: String) {
     ) {
         Text(
             text = "•",
-            modifier = Modifier.width(dimensionResource(DesignR.dimen.padding_large))
+            modifier = Modifier.width(dimensionResource(DesignR.dimen.padding_large)),
+            fontSize = dimensionResource(DesignR.dimen.text_size_normal).value.sp
         )
         Text(
             text = "$name — $amount",
-            style = MaterialTheme.typography.bodyMedium
+            style = MaterialTheme.typography.bodyMedium,
+            fontSize = dimensionResource(DesignR.dimen.text_size_normal).value.sp
         )
     }
 }
@@ -294,7 +365,8 @@ fun PreparationStep(text: String) {
     ) {
         Text(
             text = text,
-            style = MaterialTheme.typography.bodyMedium
+            style = MaterialTheme.typography.bodyMedium,
+            fontSize = dimensionResource(DesignR.dimen.text_size_normal).value.sp
         )
     }
 }

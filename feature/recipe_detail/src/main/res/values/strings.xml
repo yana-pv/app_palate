@@ -6,4 +6,8 @@
     <string name="recipe_detail_ingredients">INGREDIENTS</string>
     <string name="recipe_detail_preparation">PREPARATION</string>
     <string name="recipe_detail_back_desc">Back</string>
+    <string name="recipe_not_found">Recipe not found</string>
+    <string name="retry">Retry</string>
+    <string name="back_to_home">Back to Home</string>
+    <string name="error_loading_recipe">Error loading recipe</string>
 </resources>

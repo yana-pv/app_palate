@@ -30,4 +30,9 @@
     <string name="error_password_min">Password must be at least 6 characters</string>
     <string name="error_confirm_password_required">Confirm password is required</string>
     <string name="error_password_mismatch">Passwords do not match</string>
+
+    <!-- Network & Server errors -->
+    <string name="error_no_network">No internet connection. Please check your network.</string>
+    <string name="error_invalid_credentials">Incorrect email or password</string>
+    <string name="error_unknown">An unexpected error occurred. Please try again later.</string>
 </resources>

@@ -28,4 +28,8 @@
     <color name="error_red">#F44336</color>
     <color name="gradient_start">#00000000</color>
     <color name="gradient_end">#CC000000</color>
+
+    <!-- Shimmer -->
+    <color name="shimmer_base">#EBEBF4</color>
+    <color name="shimmer_highlight">#F4F4F4</color>
 </resources>

@@ -35,15 +35,15 @@ class AuthViewModel @Inject constructor(
 
     fun register(name: String, email: String, password: String) {
         if (!validateName(name)) {
-            _registerState.value = RegisterUiState.Error("Введите имя")
+            _registerState.value = RegisterUiState.Error(com.example.auth.R.string.error_name_required)
             return
         }
         if (!validateEmail(email)) {
-            _registerState.value = RegisterUiState.Error("Введите корректный email")
+            _registerState.value = RegisterUiState.Error(com.example.auth.R.string.error_email_invalid)
             return
         }
         if (!validatePassword(password)) {
-            _registerState.value = RegisterUiState.Error("Пароль должен быть не менее 6 символов")
+            _registerState.value = RegisterUiState.Error(com.example.auth.R.string.error_password_min)
             return
         }
 
@@ -54,7 +54,7 @@ class AuthViewModel @Inject constructor(
                     _registerState.value = RegisterUiState.Success(result.data)
                 }
                 is Resource.Error -> {
-                    _registerState.value = RegisterUiState.Error(result.message)
+                    _registerState.value = RegisterUiState.Error(mapErrorToResource(result.message))
                 }
                 else -> {}
             }
@@ -63,11 +63,11 @@ class AuthViewModel @Inject constructor(
 
     fun login(email: String, password: String) {
         if (!validateEmail(email)) {
-            _loginState.value = LoginUiState.Error("Введите корректный email")
+            _loginState.value = LoginUiState.Error(com.example.auth.R.string.error_email_invalid)
             return
         }
         if (!validatePassword(password)) {
-            _loginState.value = LoginUiState.Error("Пароль должен быть не менее 6 символов")
+            _loginState.value = LoginUiState.Error(com.example.auth.R.string.error_password_min)
             return
         }
 
@@ -78,10 +78,25 @@ class AuthViewModel @Inject constructor(
                     _loginState.value = LoginUiState.Success(result.data)
                 }
                 is Resource.Error -> {
-                    _loginState.value = LoginUiState.Error(result.message)
+                    _loginState.value = LoginUiState.Error(mapErrorToResource(result.message))
                 }
                 else -> {}
             }
+        }
+    }
+
+    private fun mapErrorToResource(message: String?): Int {
+        val error = message?.lowercase() ?: ""
+        return when {
+            error.contains("network") || error.contains("unable to resolve host") || error.contains("timeout") -> 
+                com.example.auth.R.string.error_no_network
+            error.contains("password") || error.contains("credential") || 
+            error.contains("no user") || error.contains("identifier") ||
+            error.contains("invalid") -> 
+                com.example.auth.R.string.error_invalid_credentials
+            error.contains("blocked") || error.contains("unusual activity") ->
+                com.example.auth.R.string.error_unknown
+            else -> com.example.auth.R.string.error_unknown
         }
     }
 
@@ -98,12 +113,12 @@ sealed class RegisterUiState {
     object Idle : RegisterUiState()
     object Loading : RegisterUiState()
     data class Success(val user: User) : RegisterUiState()
-    data class Error(val message: String) : RegisterUiState()
+    data class Error(val messageRes: Int) : RegisterUiState()
 }
 
 sealed class LoginUiState {
     object Idle : LoginUiState()
     object Loading : LoginUiState()
     data class Success(val user: User) : LoginUiState()
-    data class Error(val message: String) : LoginUiState()
+    data class Error(val messageRes: Int) : LoginUiState()
 }

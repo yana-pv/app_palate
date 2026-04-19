@@ -30,4 +30,9 @@
     <string name="error_password_min">Пароль должен быть не менее 6 символов</string>
     <string name="error_confirm_password_required">Подтвердите пароль</string>
     <string name="error_password_mismatch">Пароли не совпадают</string>
+
+    <!-- Network & Server errors -->
+    <string name="error_no_network">Нет подключения к интернету. Проверьте сеть.</string>
+    <string name="error_invalid_credentials">Неверный email или пароль</string>
+    <string name="error_unknown">Произошла непредвиденная ошибка. Попробуйте позже.</string>
 </resources>

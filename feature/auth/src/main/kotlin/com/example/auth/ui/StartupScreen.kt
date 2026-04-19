@@ -18,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -32,6 +31,8 @@ import com.example.design.theme.CondimentFont
 import com.example.design.theme.PalateColors
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+
+import com.example.navigation.Destination
 
 @Composable
 fun StartupScreen(
@@ -94,7 +95,7 @@ fun StartupScreen(
                 Spacer(modifier = Modifier.height(dimensionResource(R.dimen.auth_vertical_padding)))
 
                 Button(
-                    onClick = { navController.navigate("register") },
+                    onClick = { navController.navigate(Destination.Register.route) },
                     modifier = Modifier
                         .width(dimensionResource(R.dimen.startup_button_width))
                         .height(dimensionResource(R.dimen.startup_button_height))
@@ -114,7 +115,7 @@ fun StartupScreen(
                 Spacer(modifier = Modifier.height(dimensionResource(com.example.design.R.dimen.padding_medium)))
 
                 Button(
-                    onClick = { navController.navigate("login") },
+                    onClick = { navController.navigate(Destination.Login.route) },
                     modifier = Modifier
                         .width(dimensionResource(R.dimen.startup_button_width))
                         .height(dimensionResource(R.dimen.startup_button_height))

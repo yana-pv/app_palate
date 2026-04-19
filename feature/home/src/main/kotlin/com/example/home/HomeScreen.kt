@@ -1,7 +1,5 @@
 package com.example.home
 
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -11,8 +9,10 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Search
@@ -28,23 +28,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.design.components.RecipeCard
+import com.example.design.components.RecipeCardPlaceholder
 import com.example.domain.model.Category
-import com.example.palate.feature.home.viewmodel.HomeViewModel
+import com.example.home.viewmodel.HomeViewModel
 import com.example.theme.CategoryUnselectedBg
 import com.example.theme.CategoryUnselectedText
 import com.example.theme.SearchBorder
 import com.example.theme.SearchPlaceholder
 import com.example.theme.SecondaryPurple
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
-import com.example.design.components.BottomNavItem
-import com.example.design.components.PalateBottomNav
-import com.example.my_recipes.MyRecipesScreen
-import com.example.plan.PlanScreen
-import com.example.profile.ProfileScreen
-import com.example.shopping_list.ShoppingListScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,53 +43,150 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
     onRecipeClick: (String) -> Unit = {},
 ) {
-    val navController = rememberNavController()
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route
+    val state by viewModel.uiState.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val sheetState = rememberModalBottomSheetState()
+
+    LaunchedEffect(state.errorMessage) {
+        state.errorMessage?.let {
+            snackbarHostState.showSnackbar(it)
+            viewModel.clearError()
+        }
+    }
 
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         modifier = Modifier.fillMaxSize(),
-        bottomBar = {
-            PalateBottomNav(
-                currentRoute = currentRoute,
-                onNavigate = { route ->
-                    navController.navigate(route) {
-                        popUpTo(BottomNavItem.Home.route) { saveState = true }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
-                }
+        topBar = {
+            HomeTopBar(
+                searchQuery = state.searchQuery,
+                onSearchQueryChanged = { viewModel.onSearchQueryChanged(it) },
+                categories = state.categories,
+                selectedCategoryIds = state.selectedCategoryIds,
+                onCategorySelected = { viewModel.onCategorySelected(it) },
+                onFilterSheetVisible = { viewModel.setFilterSheetVisible(it) }
             )
         },
-        containerColor = Color.White
+        containerColor = Color.White,
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
+        bottomBar = {
+            Spacer(Modifier.navigationBarsPadding())
+        }
     ) { paddingValues ->
-        NavHost(
-            navController = navController,
-            startDestination = BottomNavItem.Home.route,
-            modifier = Modifier
-                .padding(paddingValues)
-                .consumeWindowInsets(paddingValues)
-        ) {
-            composable(BottomNavItem.Home.route) {
-                val state by viewModel.uiState.collectAsState()
-                val sheetState = rememberModalBottomSheetState()
+        HomeContent(
+            paddingValues = paddingValues,
+            state = state,
+            onRecipeClick = onRecipeClick,
+            onSaveClick = { viewModel.toggleSaveRecipe(it) },
+            onFilterSheetVisible = { viewModel.setFilterSheetVisible(it) },
+            onCuisineSelected = { viewModel.onCuisineSelected(it) },
+            onResetFilters = { viewModel.resetFilters() },
+            onCategorySelected = { viewModel.onCategorySelected(it) },
+            sheetState = sheetState
+        )
+    }
+}
 
-                HomeContent(
-                    state = state,
-                    onSearchQueryChanged = { viewModel.onSearchQueryChanged(it) },
-                    onCategorySelected = { viewModel.onCategorySelected(it) },
-                    onFilterSheetVisible = { viewModel.setFilterSheetVisible(it) },
-                    onRecipeClick = onRecipeClick,
-                    onSaveClick = { viewModel.toggleSaveRecipe(it) },
-                    onCuisineSelected = { viewModel.onCuisineSelected(it) },
-                    onResetFilters = { viewModel.resetFilters() },
-                    sheetState = sheetState
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun HomeTopBar(
+    searchQuery: String,
+    onSearchQueryChanged: (String) -> Unit,
+    categories: List<Category>,
+    selectedCategoryIds: Set<String>,
+    onCategorySelected: (String) -> Unit,
+    onFilterSheetVisible: (Boolean) -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .background(Color.White)
+            .statusBarsPadding()
+            .padding(bottom = dimensionResource(com.example.design.R.dimen.padding_small))
+    ) {
+        // Поиск
+        var isFocused by remember { mutableStateOf(false) }
+        BasicTextField(
+            value = searchQuery,
+            onValueChange = onSearchQueryChanged,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    horizontal = dimensionResource(com.example.design.R.dimen.padding_large),
+                    vertical = dimensionResource(com.example.design.R.dimen.padding_medium)
                 )
+                .height(dimensionResource(R.dimen.search_bar_height))
+                .onFocusChanged { isFocused = it.isFocused }
+                .border(
+                    width = dimensionResource(com.example.design.R.dimen.recipe_card_border_width),
+                    color = if (isFocused) Color.Black else SearchBorder,
+                    shape = RoundedCornerShape(dimensionResource(R.dimen.search_bar_corner_radius))
+                )
+                .background(
+                    Color.White,
+                    RoundedCornerShape(dimensionResource(R.dimen.search_bar_corner_radius))
+                ),
+            singleLine = true,
+            textStyle = LocalTextStyle.current.copy(
+                color = Color.Black,
+                fontSize = dimensionResource(com.example.design.R.dimen.text_size_placeholder).value.sp
+            ),
+            cursorBrush = SolidColor(Color.Black),
+            decorationBox = { innerTextField ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = dimensionResource(R.dimen.search_bar_corner_radius)),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = null,
+                        tint = if (isFocused || searchQuery.isNotEmpty()) Color.Black else SearchPlaceholder,
+                        modifier = Modifier.size(dimensionResource(R.dimen.search_bar_icon_size))
+                    )
+                    Spacer(Modifier.width(dimensionResource(com.example.design.R.dimen.padding_medium)))
+                    Box(modifier = Modifier.weight(1f)) {
+                        if (searchQuery.isEmpty()) {
+                            Text(
+                                text = stringResource(R.string.search_placeholder),
+                                color = SearchPlaceholder,
+                                fontSize = dimensionResource(com.example.design.R.dimen.text_size_placeholder).value.sp
+                            )
+                        }
+                        innerTextField()
+                    }
+                }
             }
-            composable(BottomNavItem.Plan.route) { PlanScreen() }
-            composable(BottomNavItem.MyRecipes.route) { MyRecipesScreen() }
-            composable(BottomNavItem.ShoppingList.route) { ShoppingListScreen() }
-            composable(BottomNavItem.Profile.route) { ProfileScreen() }
+        )
+
+        // Категории
+        if (categories.isNotEmpty()) {
+            LazyRow(
+                modifier = Modifier.padding(vertical = dimensionResource(com.example.design.R.dimen.padding_small)),
+                contentPadding = PaddingValues(horizontal = dimensionResource(com.example.design.R.dimen.padding_large)),
+                horizontalArrangement = Arrangement.spacedBy(dimensionResource(com.example.design.R.dimen.padding_medium))
+            ) {
+                items(categories.take(9)) { category ->
+                    val isSelected = selectedCategoryIds.contains(category.id)
+                    val categoryName = if (category.id == "all") {
+                        stringResource(R.string.all_categories)
+                    } else {
+                        category.name
+                    }
+                    CategoryChip(
+                        name = categoryName,
+                        isSelected = isSelected,
+                        onClick = { onCategorySelected(category.id) }
+                    )
+                }
+                item {
+                    CategoryChip(
+                        name = stringResource(R.string.category_more),
+                        isSelected = false,
+                        onClick = { onFilterSheetVisible(true) }
+                    )
+                }
+            }
         }
     }
 }
@@ -106,197 +194,135 @@ fun HomeScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeContent(
+    paddingValues: PaddingValues,
     state: HomeUiState,
-    onSearchQueryChanged: (String) -> Unit,
-    onCategorySelected: (String) -> Unit,
-    onFilterSheetVisible: (Boolean) -> Unit,
     onRecipeClick: (String) -> Unit,
     onSaveClick: (String) -> Unit,
+    onFilterSheetVisible: (Boolean) -> Unit,
     onCuisineSelected: (String) -> Unit,
     onResetFilters: () -> Unit,
+    onCategorySelected: (String) -> Unit,
     sheetState: SheetState
 ) {
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        topBar = {
-            Column(
+    Box(
+        modifier = Modifier
+            .padding(paddingValues)
+            .fillMaxSize()
+            .background(Color.White)
+    ) {
+        Column {
+            Row(
                 modifier = Modifier
-                    .background(Color.White)
-                    .windowInsetsPadding(WindowInsets.statusBars)
-                    .padding(bottom = dimensionResource(com.example.design.R.dimen.padding_small))
-            ) {
-                // Поиск
-                var isFocused by remember { mutableStateOf(false) }
-                val searchQuery = (state as? HomeUiState.Success)?.searchQuery ?: ""
-                
-                BasicTextField(
-                    value = searchQuery,
-                    onValueChange = onSearchQueryChanged,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(
-                            horizontal = dimensionResource(com.example.design.R.dimen.padding_large),
-                            vertical = dimensionResource(com.example.design.R.dimen.padding_medium)
-                        )
-                        .height(dimensionResource(R.dimen.search_bar_height))
-                        .onFocusChanged { isFocused = it.isFocused }
-                        .border(
-                            width = dimensionResource(com.example.design.R.dimen.recipe_card_border_width),
-                            color = if (isFocused) Color.Black else SearchBorder,
-                            shape = RoundedCornerShape(dimensionResource(R.dimen.search_bar_corner_radius))
-                        )
-                        .background(
-                            Color.White,
-                            RoundedCornerShape(dimensionResource(R.dimen.search_bar_corner_radius))
-                        ),
-                    singleLine = true,
-                    textStyle = LocalTextStyle.current.copy(
-                        color = Color.Black,
-                        fontSize = 14.sp
+                    .fillMaxWidth()
+                    .padding(
+                        horizontal = dimensionResource(com.example.design.R.dimen.padding_large),
+                        vertical = dimensionResource(com.example.design.R.dimen.padding_small)
                     ),
-                    cursorBrush = SolidColor(Color.Black),
-                    decorationBox = { innerTextField ->
-                        Row(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(horizontal = dimensionResource(R.dimen.search_bar_corner_radius)),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Search,
-                                contentDescription = null,
-                                tint = if (isFocused || searchQuery.isNotEmpty()) Color.Black else SearchPlaceholder,
-                                modifier = Modifier.size(dimensionResource(R.dimen.search_bar_icon_size))
-                            )
-                            Spacer(Modifier.width(dimensionResource(com.example.design.R.dimen.padding_medium)))
-                            Box(modifier = Modifier.weight(1f)) {
-                                if (searchQuery.isEmpty()) {
-                                    Text(
-                                        text = stringResource(R.string.search_placeholder),
-                                        color = SearchPlaceholder,
-                                        fontSize = 14.sp
-                                    )
-                                }
-                                innerTextField()
-                            }
-                        }
-                    }
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(R.string.all_recipes),
+                    style = MaterialTheme.typography.titleMedium
                 )
-
-                // Категории
-                if (state is HomeUiState.Success) {
-                    val successState = state as HomeUiState.Success
-                    LazyRow(
-                        modifier = Modifier.padding(vertical = dimensionResource(com.example.design.R.dimen.padding_small)),
-                        contentPadding = PaddingValues(horizontal = dimensionResource(com.example.design.R.dimen.padding_large)),
-                        horizontalArrangement = Arrangement.spacedBy(dimensionResource(com.example.design.R.dimen.padding_medium))
-                    ) {
-                        items(successState.categories.take(9)) { category ->
-                            val isSelected = successState.selectedCategoryIds.contains(category.id)
-                            val categoryName = if (category.id == "all") {
-                                stringResource(R.string.all_categories)
-                            } else {
-                                category.name
-                            }
-                            CategoryChip(
-                                name = categoryName,
-                                isSelected = isSelected,
-                                onClick = { onCategorySelected(category.id) }
-                            )
-                        }
-                        item {
-                            CategoryChip(
-                                name = stringResource(R.string.category_more),
-                                isSelected = false,
-                                onClick = { onFilterSheetVisible(true) }
-                            )
-                        }
-                    }
-                }
-            }
-        },
-        containerColor = Color.White
-    ) { paddingValues ->
-        Box(modifier = Modifier.padding(paddingValues).fillMaxSize().background(Color.White)) {
-            when (val uiState = state) {
-                is HomeUiState.Loading -> {
-                    CircularProgressIndicator(
-                        modifier = Modifier.align(Alignment.Center),
-                        color = SecondaryPurple
-                    )
-                }
-                is HomeUiState.Success -> {
-                    Column {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(
-                                    horizontal = dimensionResource(com.example.design.R.dimen.padding_large),
-                                    vertical = dimensionResource(com.example.design.R.dimen.padding_small)
-                                ),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = stringResource(R.string.all_recipes),
-                                style = MaterialTheme.typography.titleMedium
-                            )
-                            IconButton(onClick = { onFilterSheetVisible(true) }) {
-                                Icon(
-                                    Icons.Default.FilterList,
-                                    contentDescription = stringResource(R.string.filters_content_desc)
-                                )
-                            }
-                        }
-
-                        LazyVerticalGrid(
-                            columns = GridCells.Fixed(3),
-                            contentPadding = PaddingValues(
-                                horizontal = dimensionResource(R.dimen.search_bar_corner_radius),
-                                vertical = dimensionResource(com.example.design.R.dimen.padding_small)
-                            ),
-                            modifier = Modifier.fillMaxSize()
-                        ) {
-                            items(uiState.recipes) { recipe ->
-                                RecipeCard(
-                                    name = recipe.name,
-                                    imageUrl = recipe.imageUrl,
-                                    category = recipe.categoryName,
-                                    isSaved = recipe.isSaved,
-                                    onSaveClick = { onSaveClick(recipe.id) },
-                                    onClick = { onRecipeClick(recipe.id) }
-                                )
-                            }
-                        }
-
-                        if (uiState.isFilterSheetVisible) {
-                            ModalBottomSheet(
-                                onDismissRequest = { onFilterSheetVisible(false) },
-                                sheetState = sheetState,
-                                containerColor = Color.White
-                            ) {
-                                FilterBottomSheetContent(
-                                    categories = uiState.categories,
-                                    cuisines = uiState.cuisines,
-                                    selectedCategoryIds = uiState.selectedCategoryIds,
-                                    selectedCuisines = uiState.selectedCuisines,
-                                    onCategoryClick = onCategorySelected,
-                                    onCuisineClick = onCuisineSelected,
-                                    onApply = { onFilterSheetVisible(false) },
-                                    onReset = onResetFilters
-                                )
-                            }
-                        }
-                    }
-                }
-                is HomeUiState.Error -> {
-                    Text(
-                        text = uiState.message,
-                        color = Color.Red,
-                        modifier = Modifier.align(Alignment.Center)
+                IconButton(onClick = { onFilterSheetVisible(true) }) {
+                    Icon(
+                        Icons.Default.FilterList,
+                        contentDescription = stringResource(R.string.filters_content_desc)
                     )
                 }
             }
+
+            val configuration = androidx.compose.ui.platform.LocalConfiguration.current
+            val columns = if (configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE) {
+                GridCells.Adaptive(minSize = dimensionResource(R.dimen.recipe_card_min_width))
+            } else {
+                GridCells.Fixed(3)
+            }
+
+            LazyVerticalGrid(
+                columns = columns,
+                contentPadding = PaddingValues(
+                    horizontal = dimensionResource(R.dimen.search_bar_corner_radius),
+                    vertical = dimensionResource(com.example.design.R.dimen.padding_small)
+                ),
+                modifier = Modifier.fillMaxSize(),
+                horizontalArrangement = Arrangement.spacedBy(dimensionResource(com.example.design.R.dimen.padding_small)),
+                verticalArrangement = Arrangement.spacedBy(dimensionResource(com.example.design.R.dimen.padding_small))
+            ) {
+                if (state.isLoading && state.recipes.isEmpty()) {
+                    items(12) { RecipeCardPlaceholder() }
+                } else if (state.recipes.isEmpty()) {
+                    item(span = { androidx.compose.foundation.lazy.grid.GridItemSpan(3) }) {
+                        HomeEmptyState(
+                            onRetry = { onResetFilters() }
+                        )
+                    }
+                } else {
+                    items(state.recipes) { recipe ->
+                        RecipeCard(
+                            name = recipe.name,
+                            imageUrl = recipe.imageUrl,
+                            category = recipe.categoryName,
+                            isSaved = recipe.isSaved,
+                            onSaveClick = { onSaveClick(recipe.id) },
+                            onClick = { onRecipeClick(recipe.id) }
+                        )
+                    }
+                }
+            }
+        }
+
+        if (state.isFilterSheetVisible) {
+            ModalBottomSheet(
+                onDismissRequest = { onFilterSheetVisible(false) },
+                sheetState = sheetState,
+                containerColor = Color.White
+            ) {
+                FilterBottomSheetContent(
+                    categories = state.categories,
+                    cuisines = state.cuisines,
+                    selectedCategoryIds = state.selectedCategoryIds,
+                    selectedCuisines = state.selectedCuisines,
+                    onCategoryClick = onCategorySelected,
+                    onCuisineClick = onCuisineSelected,
+                    onApply = { onFilterSheetVisible(false) },
+                    onReset = onResetFilters
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun HomeEmptyState(
+    onRetry: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = dimensionResource(com.example.design.R.dimen.placeholder_top_padding)),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Icon(
+            imageVector = Icons.Default.Search,
+            contentDescription = null,
+            modifier = Modifier.size(dimensionResource(com.example.design.R.dimen.placeholder_icon_size_large)),
+            tint = Color.LightGray
+        )
+        Spacer(modifier = Modifier.height(dimensionResource(com.example.design.R.dimen.padding_medium)))
+        Text(
+            text = stringResource(R.string.no_recipes_found),
+            style = MaterialTheme.typography.titleMedium,
+            color = Color.Gray
+        )
+        Spacer(modifier = Modifier.height(dimensionResource(com.example.design.R.dimen.padding_large)))
+        Button(
+            onClick = onRetry,
+            colors = ButtonDefaults.buttonColors(containerColor = SecondaryPurple)
+        ) {
+            Text(text = stringResource(R.string.retry))
         }
     }
 }
@@ -421,7 +447,7 @@ fun CategoryChip(
         ) {
             Text(
                 text = name,
-                fontSize = 12.sp
+                fontSize = dimensionResource(com.example.design.R.dimen.text_size_chip).value.sp
             )
         }
     }

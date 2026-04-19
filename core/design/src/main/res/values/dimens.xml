@@ -5,6 +5,12 @@
     <dimen name="padding_large">16dp</dimen>
     <dimen name="padding_extra_large">24dp</dimen>
 
+    <!-- Common Radius -->
+    <dimen name="radius_small">4dp</dimen>
+    <dimen name="radius_medium">8dp</dimen>
+    <dimen name="radius_large">12dp</dimen>
+    <dimen name="radius_extra_large">24dp</dimen>
+
     <!-- Common Navigation -->
     <dimen name="nav_bar_height">80dp</dimen>
     <dimen name="nav_bar_height_small">72dp</dimen>
@@ -20,6 +26,8 @@
     <dimen name="text_size_small">9sp</dimen>
     <dimen name="text_size_normal">14sp</dimen>
     <dimen name="text_size_action_button">14sp</dimen>
+    <dimen name="text_size_placeholder">14sp</dimen>
+    <dimen name="text_size_chip">12sp</dimen>
 
     <!-- Recipe Card -->
     <dimen name="recipe_card_height">180dp</dimen>
@@ -32,4 +40,16 @@
     <dimen name="recipe_card_elevation_pressed">8dp</dimen>
     <dimen name="recipe_card_border_width">1dp</dimen>
     <dimen name="text_size_recipe_name">11sp</dimen>
+
+    <!-- Placeholders -->
+    <dimen name="placeholder_icon_size_large">80dp</dimen>
+    <dimen name="placeholder_icon_size_extra_large">120dp</dimen>
+    <dimen name="placeholder_top_padding">100dp</dimen>
+    <dimen name="placeholder_shimmer_height_large">14dp</dimen>
+    <dimen name="placeholder_shimmer_height_small">12dp</dimen>
+    <dimen name="placeholder_shimmer_width_small">60dp</dimen>
+    <dimen name="placeholder_detail_image_height">300dp</dimen>
+    <dimen name="placeholder_detail_title_height">32dp</dimen>
+    <dimen name="placeholder_detail_section_height">24dp</dimen>
+    <dimen name="placeholder_detail_item_height">20dp</dimen>
 </resources>

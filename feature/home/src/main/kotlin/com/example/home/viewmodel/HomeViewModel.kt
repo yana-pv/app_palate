@@ -1,4 +1,4 @@
-package com.example.palate.feature.home.viewmodel
+package com.example.home.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,6 +9,8 @@ import com.example.home.HomeUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -17,12 +19,11 @@ class HomeViewModel @Inject constructor(
     private val getHomeDataUseCase: GetHomeDataUseCase
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
-    val uiState: StateFlow<HomeUiState> = _uiState
+    private val _uiState = MutableStateFlow(HomeUiState(isLoading = true))
+    val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
 
     private var allRecipes: List<RecipePreview> = emptyList()
     private var allCategories: List<Category> = emptyList()
-
     private val allCategory = Category(id = "all", name = "Все", imageUrl = "")
 
     init {
@@ -31,117 +32,124 @@ class HomeViewModel @Inject constructor(
 
     fun loadHomeData() {
         viewModelScope.launch {
-            _uiState.value = HomeUiState.Loading
+            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
             try {
                 val homeData = getHomeDataUseCase()
                 allCategories = listOf(allCategory) + homeData.categories
                 allRecipes = homeData.recipesByCategory.values.flatten()
                 
-                _uiState.value = HomeUiState.Success(
-                    categories = allCategories,
-                    cuisines = homeData.cuisines,
-                    recipes = allRecipes,
-                    selectedCategoryIds = setOf("all")
-                )
-            }
-
-            catch (e: Exception) {
-                _uiState.value = HomeUiState.Error(e.message ?: "Unknown Error")
+                _uiState.update { 
+                    it.copy(
+                        isLoading = false,
+                        categories = allCategories,
+                        cuisines = homeData.cuisines,
+                        recipes = allRecipes,
+                        errorMessage = if (allRecipes.isEmpty()) "No data available" else null
+                    )
+                }
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(
+                        isLoading = false, 
+                        errorMessage = "Network error. Showing cached data." 
+                    )
+                }
             }
         }
     }
 
     fun onSearchQueryChanged(query: String) {
-        val currentState = _uiState.value as? HomeUiState.Success ?: return
-        filterData(query, currentState.selectedCategoryIds, currentState.selectedCuisines)
+        _uiState.update { it.copy(searchQuery = query) }
+        applyFilters()
     }
 
     fun onCategorySelected(categoryId: String) {
-        val currentState = _uiState.value as? HomeUiState.Success ?: return
-        val currentSelected = currentState.selectedCategoryIds.toMutableSet()
-
-        if (categoryId == "all") {
-            currentSelected.clear()
-            currentSelected.add("all")
-        } else {
-            currentSelected.remove("all")
-            if (currentSelected.contains(categoryId)) {
-                currentSelected.remove(categoryId)
-            } else {
-                currentSelected.add(categoryId)
-            }
-            if (currentSelected.isEmpty()) {
+        _uiState.update { state ->
+            val currentSelected = state.selectedCategoryIds.toMutableSet()
+            if (categoryId == "all") {
+                currentSelected.clear()
                 currentSelected.add("all")
+            } else {
+                currentSelected.remove("all")
+                if (currentSelected.contains(categoryId)) {
+                    currentSelected.remove(categoryId)
+                } else {
+                    currentSelected.add(categoryId)
+                }
+                if (currentSelected.isEmpty()) currentSelected.add("all")
             }
+            state.copy(selectedCategoryIds = currentSelected)
         }
-
-        filterData(currentState.searchQuery, currentSelected, currentState.selectedCuisines)
+        applyFilters()
     }
 
     fun onCuisineSelected(cuisine: String) {
-        val currentState = _uiState.value as? HomeUiState.Success ?: return
-        val currentSelected = currentState.selectedCuisines.toMutableSet()
-
-        if (cuisine == "null") {
-            currentSelected.clear()
-        } else {
-            if (currentSelected.contains(cuisine)) {
-                currentSelected.remove(cuisine)
+        _uiState.update { state ->
+            val currentSelected = state.selectedCuisines.toMutableSet()
+            if (cuisine == "null") {
+                currentSelected.clear()
             } else {
-                currentSelected.add(cuisine)
+                if (currentSelected.contains(cuisine)) {
+                    currentSelected.remove(cuisine)
+                } else {
+                    currentSelected.add(cuisine)
+                }
             }
+            state.copy(selectedCuisines = currentSelected)
         }
-
-        filterData(currentState.searchQuery, currentState.selectedCategoryIds, currentSelected)
+        applyFilters()
     }
 
-    fun setFilterSheetVisible(visible: Boolean) {
-        val currentState = _uiState.value as? HomeUiState.Success ?: return
-        _uiState.value = currentState.copy(isFilterSheetVisible = visible)
-    }
-
-    fun resetFilters() {
-        filterData("", setOf("all"), emptySet())
-        setFilterSheetVisible(false)
-    }
-
-    private fun filterData(query: String, categoryIds: Set<String>, cuisines: Set<String>) {
-        val currentState = _uiState.value as? HomeUiState.Success ?: return
-        
+    private fun applyFilters() {
+        val state = _uiState.value
         val selectedCategoryNames = allCategories
-            .filter { it.id in categoryIds && it.id != "all" }
+            .filter { it.id in state.selectedCategoryIds && it.id != "all" }
             .map { it.name.lowercase() }
         
         val filteredRecipes = allRecipes.filter { recipe ->
-            val matchesQuery = recipe.name.contains(query, ignoreCase = true)
-            
-            val matchesCategory = categoryIds.contains("all") || 
+            val matchesQuery = recipe.name.contains(state.searchQuery, ignoreCase = true)
+            val matchesCategory = state.selectedCategoryIds.contains("all") || 
                                  selectedCategoryNames.any { it == recipe.categoryName.lowercase() }
-            
-            val matchesCuisine = cuisines.isEmpty() || 
-                                cuisines.any { cuisine -> recipe.name.contains(cuisine, ignoreCase = true) }
+            val matchesCuisine = state.selectedCuisines.isEmpty() || 
+                                state.selectedCuisines.any { cuisine -> recipe.name.contains(cuisine, ignoreCase = true) }
             
             matchesQuery && matchesCategory && matchesCuisine
         }
         
-        _uiState.value = currentState.copy(
-            recipes = filteredRecipes,
-            searchQuery = query,
-            selectedCategoryIds = categoryIds,
-            selectedCuisines = cuisines
-        )
+        _uiState.update { it.copy(recipes = filteredRecipes) }
+    }
+
+    fun setFilterSheetVisible(visible: Boolean) {
+        _uiState.update { it.copy(isFilterSheetVisible = visible) }
+    }
+
+    fun resetFilters() {
+        _uiState.update { 
+            it.copy(
+                searchQuery = "", 
+                selectedCategoryIds = setOf("all"), 
+                selectedCuisines = emptySet(),
+                isFilterSheetVisible = false
+            ) 
+        }
+        if (allRecipes.isEmpty()) {
+            loadHomeData()
+        } else {
+            applyFilters()
+        }
     }
 
     fun toggleSaveRecipe(recipeId: String) {
-        val currentState = _uiState.value
-        if (currentState is HomeUiState.Success) {
-            val updatedRecipes = currentState.recipes.map {
-                if (it.id == recipeId) it.copy(isSaved = !it.isSaved) else it
-            }
-            allRecipes = allRecipes.map {
-                if (it.id == recipeId) it.copy(isSaved = !it.isSaved) else it
-            }
-            _uiState.value = currentState.copy(recipes = updatedRecipes)
+        val updatedRecipes = _uiState.value.recipes.map {
+            if (it.id == recipeId) it.copy(isSaved = !it.isSaved) else it
         }
+        allRecipes = allRecipes.map {
+            if (it.id == recipeId) it.copy(isSaved = !it.isSaved) else it
+        }
+        _uiState.update { it.copy(recipes = updatedRecipes) }
+    }
+
+    fun clearError() {
+        _uiState.update { it.copy(errorMessage = null) }
     }
 }

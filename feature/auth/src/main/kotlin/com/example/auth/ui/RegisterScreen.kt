@@ -18,8 +18,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -49,14 +47,17 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.auth.R
+import com.example.navigation.Destination
 import com.example.design.theme.CondimentFont
+
 
 @Composable
 fun RegisterScreen(
     navController: NavController,
-    viewModel: AuthViewModel
+    viewModel: AuthViewModel = hiltViewModel()
 ) {
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -66,58 +67,57 @@ fun RegisterScreen(
     var passwordVisible by remember { mutableStateOf(false) }
     var confirmPasswordVisible by remember { mutableStateOf(false) }
 
-    var nameError by remember { mutableStateOf<String?>(null) }
-    var emailError by remember { mutableStateOf<String?>(null) }
-    var passwordError by remember { mutableStateOf<String?>(null) }
-    var confirmPasswordError by remember { mutableStateOf<String?>(null) }
+    var nameError by remember { mutableStateOf<Int?>(null) }
+    var emailError by remember { mutableStateOf<Int?>(null) }
+    var passwordError by remember { mutableStateOf<Int?>(null) }
+    var confirmPasswordError by remember { mutableStateOf<Int?>(null) }
 
     val registerState by viewModel.registerState.collectAsState()
-
-    val errorNameRequired = stringResource(R.string.error_name_required)
-    val errorEmailRequired = stringResource(R.string.error_email_required)
-    val errorEmailInvalid = stringResource(R.string.error_email_invalid)
-    val errorPasswordRequired = stringResource(R.string.error_password_required)
-    val errorPasswordMin = stringResource(R.string.error_password_min)
-    val errorConfirmRequired = stringResource(R.string.error_confirm_password_required)
-    val errorPasswordMismatch = stringResource(R.string.error_password_mismatch)
 
     fun validateFields(): Boolean {
         var isValid = true
 
         if (name.isBlank()) {
-            nameError = errorNameRequired
+            nameError = R.string.error_name_required
             isValid = false
-        } else {
+        }
+        else {
             nameError = null
         }
 
         if (email.isBlank()) {
-            emailError = errorEmailRequired
+            emailError = R.string.error_email_required
             isValid = false
-        } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            emailError = errorEmailInvalid
+        }
+        else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            emailError = R.string.error_email_invalid
             isValid = false
-        } else {
+        }
+        else {
             emailError = null
         }
 
         if (password.isBlank()) {
-            passwordError = errorPasswordRequired
+            passwordError = R.string.error_password_required
             isValid = false
-        } else if (password.length < 6) {
-            passwordError = errorPasswordMin
+        }
+        else if (password.length < 6) {
+            passwordError = R.string.error_password_min
             isValid = false
-        } else {
+        }
+        else {
             passwordError = null
         }
 
         if (confirmPassword.isBlank()) {
-            confirmPasswordError = errorConfirmRequired
+            confirmPasswordError = R.string.error_confirm_password_required
             isValid = false
-        } else if (password != confirmPassword) {
-            confirmPasswordError = errorPasswordMismatch
+        }
+        else if (password != confirmPassword) {
+            confirmPasswordError = R.string.error_password_mismatch
             isValid = false
-        } else {
+        }
+        else {
             confirmPasswordError = null
         }
 
@@ -126,8 +126,8 @@ fun RegisterScreen(
 
     if (registerState is RegisterUiState.Success) {
         LaunchedEffect(Unit) {
-            navController.navigate("home") {
-                popUpTo("startup") { inclusive = true }
+            navController.navigate(Destination.Home.route) {
+                popUpTo(Destination.Startup.route) { inclusive = true }
             }
         }
     }
@@ -206,7 +206,11 @@ fun RegisterScreen(
                         )
                     )
                     if (nameError != null) {
-                        Text(text = nameError!!, color = colorResource(com.example.design.R.color.error_red), fontSize = dimensionResource(R.dimen.auth_error_text_size).value.sp, modifier = Modifier.padding(start = dimensionResource(com.example.design.R.dimen.padding_small), top = dimensionResource(com.example.design.R.dimen.padding_small)))
+                        Text(
+                            text = stringResource(nameError!!),
+                            color = colorResource(com.example.design.R.color.error_red),
+                            fontSize = dimensionResource(R.dimen.auth_error_text_size).value.sp,
+                            modifier = Modifier.padding(start = dimensionResource(com.example.design.R.dimen.padding_small), top = dimensionResource(com.example.design.R.dimen.padding_small)))
                     }
 
                     Spacer(modifier = Modifier.height(dimensionResource(R.dimen.auth_field_spacing)))
@@ -234,7 +238,11 @@ fun RegisterScreen(
                         )
                     )
                     if (emailError != null) {
-                        Text(text = emailError!!, color = colorResource(com.example.design.R.color.error_red), fontSize = dimensionResource(R.dimen.auth_error_text_size).value.sp, modifier = Modifier.padding(start = dimensionResource(com.example.design.R.dimen.padding_small), top = dimensionResource(com.example.design.R.dimen.padding_small)))
+                        Text(
+                            text = stringResource(emailError!!),
+                            color = colorResource(com.example.design.R.color.error_red),
+                            fontSize = dimensionResource(R.dimen.auth_error_text_size).value.sp,
+                            modifier = Modifier.padding(start = dimensionResource(com.example.design.R.dimen.padding_small), top = dimensionResource(com.example.design.R.dimen.padding_small)))
                     }
 
                     Spacer(modifier = Modifier.height(dimensionResource(R.dimen.auth_field_spacing)))
@@ -276,7 +284,11 @@ fun RegisterScreen(
                         )
                     )
                     if (passwordError != null) {
-                        Text(text = passwordError!!, color = colorResource(com.example.design.R.color.error_red), fontSize = dimensionResource(R.dimen.auth_error_text_size).value.sp, modifier = Modifier.padding(start = dimensionResource(com.example.design.R.dimen.padding_small), top = dimensionResource(com.example.design.R.dimen.padding_small)))
+                        Text(
+                            text = stringResource(passwordError!!),
+                            color = colorResource(com.example.design.R.color.error_red),
+                            fontSize = dimensionResource(R.dimen.auth_error_text_size).value.sp,
+                            modifier = Modifier.padding(start = dimensionResource(com.example.design.R.dimen.padding_small), top = dimensionResource(com.example.design.R.dimen.padding_small)))
                     } else {
                         Text(
                             text = stringResource(R.string.password_min_hint),
@@ -325,13 +337,18 @@ fun RegisterScreen(
                         )
                     )
                     if (confirmPasswordError != null) {
-                        Text(text = confirmPasswordError!!, color = colorResource(com.example.design.R.color.error_red), fontSize = dimensionResource(R.dimen.auth_error_text_size).value.sp, modifier = Modifier.padding(start = dimensionResource(com.example.design.R.dimen.padding_small), top = dimensionResource(com.example.design.R.dimen.padding_small)))
+                        Text(
+                            text = stringResource(confirmPasswordError!!),
+                            color = colorResource(com.example.design.R.color.error_red),
+                            fontSize = dimensionResource(R.dimen.auth_error_text_size).value.sp,
+                            modifier = Modifier.padding(start = dimensionResource(com.example.design.R.dimen.padding_small), top = dimensionResource(com.example.design.R.dimen.padding_small)))
                     }
                 }
 
                 Spacer(modifier = Modifier.height(dimensionResource(com.example.design.R.dimen.padding_medium)))
 
-                Button(
+                com.example.design.components.PalatePrimaryButton(
+                    textResId = R.string.register_button,
                     onClick = {
                         if (validateFields()) {
                             viewModel.register(name, email, password)
@@ -340,20 +357,12 @@ fun RegisterScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(dimensionResource(R.dimen.startup_button_height))
-                        .shadow(elevation = 8.dp, shape = RoundedCornerShape(dimensionResource(R.dimen.startup_button_radius))),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = colorResource(com.example.design.R.color.primary_purple)
-                    ),
-                    shape = RoundedCornerShape(dimensionResource(R.dimen.startup_button_radius)),
+                        .shadow(
+                            elevation = 8.dp,
+                            shape = RoundedCornerShape(dimensionResource(R.dimen.startup_button_radius))
+                        ),
                     enabled = registerState !is RegisterUiState.Loading
-                ) {
-                    Text(
-                        text = stringResource(R.string.register_button),
-                        color = colorResource(com.example.design.R.color.white),
-                        fontSize = dimensionResource(com.example.design.R.dimen.text_size_normal).value.sp,
-                        fontWeight = FontWeight.Medium
-                    )
-                }
+                )
 
                 Spacer(modifier = Modifier.height(dimensionResource(com.example.design.R.dimen.padding_large)))
 
@@ -372,8 +381,8 @@ fun RegisterScreen(
                         fontSize = dimensionResource(com.example.design.R.dimen.text_size_normal).value.sp,
                         fontWeight = FontWeight.Medium,
                         modifier = Modifier.clickable {
-                            navController.navigate("login") {
-                                popUpTo("register") { inclusive = true }
+                            navController.navigate(Destination.Login.route) {
+                                popUpTo(Destination.Register.route) { inclusive = true }
                             }
                         }
                     )
@@ -390,7 +399,7 @@ fun RegisterScreen(
                 if (registerState is RegisterUiState.Error) {
                     Spacer(modifier = Modifier.height(dimensionResource(com.example.design.R.dimen.padding_medium)))
                     Text(
-                        text = (registerState as RegisterUiState.Error).message,
+                        text = stringResource((registerState as RegisterUiState.Error).messageRes),
                         color = colorResource(com.example.design.R.color.error_red),
                         fontSize = dimensionResource(R.dimen.auth_error_text_size).value.sp,
                         textAlign = TextAlign.Center

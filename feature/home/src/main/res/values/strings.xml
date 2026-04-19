@@ -12,4 +12,7 @@
     <string name="reset_button">Reset</string>
     <string name="apply_button">Apply</string>
     <string name="save_recipe_content_desc">Save</string>
+    <string name="no_recipes_found">No recipes found</string>
+    <string name="error_loading_home">Failed to load recipes</string>
+    <string name="retry">Retry</string>
 </resources>

@@ -18,8 +18,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -49,47 +47,45 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.auth.R
+import com.example.navigation.Destination
 import com.example.design.theme.CondimentFont
+
 
 @Composable
 fun LoginScreen(
     navController: NavController,
-    viewModel: AuthViewModel
+    viewModel: AuthViewModel = hiltViewModel()
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
 
-    var emailError by remember { mutableStateOf<String?>(null) }
-    var passwordError by remember { mutableStateOf<String?>(null) }
+    var emailError by remember { mutableStateOf<Int?>(null) }
+    var passwordError by remember { mutableStateOf<Int?>(null) }
 
     val loginState by viewModel.loginState.collectAsState()
-
-    val errorEmailRequired = stringResource(R.string.error_email_required)
-    val errorEmailInvalid = stringResource(R.string.error_email_invalid)
-    val errorPasswordRequired = stringResource(R.string.error_password_required)
-    val errorPasswordMin = stringResource(R.string.error_password_min)
 
     fun validateFields(): Boolean {
         var isValid = true
 
         if (email.isBlank()) {
-            emailError = errorEmailRequired
+            emailError = R.string.error_email_required
             isValid = false
         } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            emailError = errorEmailInvalid
+            emailError = R.string.error_email_invalid
             isValid = false
         } else {
             emailError = null
         }
 
         if (password.isBlank()) {
-            passwordError = errorPasswordRequired
+            passwordError = R.string.error_password_required
             isValid = false
         } else if (password.length < 6) {
-            passwordError = errorPasswordMin
+            passwordError = R.string.error_password_min
             isValid = false
         } else {
             passwordError = null
@@ -100,8 +96,8 @@ fun LoginScreen(
 
     if (loginState is LoginUiState.Success) {
         LaunchedEffect(Unit) {
-            navController.navigate("home") {
-                popUpTo("startup") { inclusive = true }
+            navController.navigate(Destination.Home.route) {
+                popUpTo(Destination.Startup.route) { inclusive = true }
             }
         }
     }
@@ -182,7 +178,11 @@ fun LoginScreen(
                         )
                     )
                     if (emailError != null) {
-                        Text(text = emailError!!, color = colorResource(com.example.design.R.color.error_red), fontSize = dimensionResource(R.dimen.auth_error_text_size).value.sp, modifier = Modifier.padding(start = dimensionResource(com.example.design.R.dimen.padding_small), top = dimensionResource(com.example.design.R.dimen.padding_small)))
+                        Text(text = stringResource(emailError!!),
+                            color = colorResource(com.example.design.R.color.error_red),
+                            fontSize = dimensionResource(R.dimen.auth_error_text_size).value.sp,
+                            modifier = Modifier.padding(start = dimensionResource(com.example.design.R.dimen.padding_small),
+                                top = dimensionResource(com.example.design.R.dimen.padding_small)))
                     }
 
                     Spacer(modifier = Modifier.height(dimensionResource(R.dimen.auth_field_spacing)))
@@ -225,8 +225,9 @@ fun LoginScreen(
                         )
                     )
                     if (passwordError != null) {
-                        Text(text = passwordError!!, color = colorResource(com.example.design.R.color.error_red), fontSize = dimensionResource(R.dimen.auth_error_text_size).value.sp, modifier = Modifier.padding(start = dimensionResource(com.example.design.R.dimen.padding_small), top = dimensionResource(com.example.design.R.dimen.padding_small)))
-                    } else {
+                        Text(text = stringResource(passwordError!!), color = colorResource(com.example.design.R.color.error_red), fontSize = dimensionResource(R.dimen.auth_error_text_size).value.sp, modifier = Modifier.padding(start = dimensionResource(com.example.design.R.dimen.padding_small), top = dimensionResource(com.example.design.R.dimen.padding_small)))
+                    }
+                    else {
                         Text(
                             text = stringResource(R.string.password_min_hint),
                             fontSize = dimensionResource(R.dimen.auth_error_text_size).value.sp,
@@ -238,7 +239,8 @@ fun LoginScreen(
 
                 Spacer(modifier = Modifier.height(dimensionResource(R.dimen.auth_vertical_padding)))
 
-                Button(
+                com.example.design.components.PalatePrimaryButton(
+                    textResId = R.string.login_button,
                     onClick = {
                         if (validateFields()) {
                             viewModel.login(email, password)
@@ -247,20 +249,12 @@ fun LoginScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(dimensionResource(R.dimen.startup_button_height))
-                        .shadow(elevation = 8.dp, shape = RoundedCornerShape(dimensionResource(R.dimen.startup_button_radius))),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = colorResource(com.example.design.R.color.primary_purple)
-                    ),
-                    shape = RoundedCornerShape(dimensionResource(R.dimen.startup_button_radius)),
+                        .shadow(
+                            elevation = 8.dp,
+                            shape = RoundedCornerShape(dimensionResource(R.dimen.startup_button_radius))
+                        ),
                     enabled = loginState !is LoginUiState.Loading
-                ) {
-                    Text(
-                        text = stringResource(R.string.login_button),
-                        color = colorResource(com.example.design.R.color.white),
-                        fontSize = dimensionResource(com.example.design.R.dimen.text_size_normal).value.sp,
-                        fontWeight = FontWeight.Medium
-                    )
-                }
+                )
 
                 Spacer(modifier = Modifier.height(dimensionResource(com.example.design.R.dimen.padding_large)))
 
@@ -279,8 +273,8 @@ fun LoginScreen(
                         fontSize = dimensionResource(com.example.design.R.dimen.text_size_normal).value.sp,
                         fontWeight = FontWeight.Medium,
                         modifier = Modifier.clickable {
-                            navController.navigate("register") {
-                                popUpTo("login") { inclusive = true }
+                            navController.navigate(Destination.Register.route) {
+                                popUpTo(Destination.Login.route) { inclusive = true }
                             }
                         }
                     )
@@ -297,7 +291,7 @@ fun LoginScreen(
                 if (loginState is LoginUiState.Error) {
                     Spacer(modifier = Modifier.height(dimensionResource(com.example.design.R.dimen.padding_medium)))
                     Text(
-                        text = (loginState as LoginUiState.Error).message,
+                        text = stringResource((loginState as LoginUiState.Error).messageRes),
                         color = colorResource(com.example.design.R.color.error_red),
                         fontSize = dimensionResource(R.dimen.auth_error_text_size).value.sp,
                         textAlign = TextAlign.Center

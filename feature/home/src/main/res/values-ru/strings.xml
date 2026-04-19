@@ -12,4 +12,7 @@
     <string name="reset_button">Сбросить</string>
     <string name="apply_button">Применить</string>
     <string name="save_recipe_content_desc">Сохранить</string>
+    <string name="no_recipes_found">Рецепты не найдены</string>
+    <string name="error_loading_home">Не удалось загрузить рецепты</string>
+    <string name="retry">Повторить</string>
 </resources>
