@@ -19,7 +19,7 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun register(name: String, email: String, password: String): Resource<User> {
         return try {
             val result = auth.createUserWithEmailAndPassword(email, password).await()
-            val firebaseUser = result.user ?: return Resource.Error("Ошибка создания пользователя")
+            val firebaseUser = result.user ?: return Resource.Error("User creation failed")
 
             val profileUpdates = UserProfileChangeRequest.Builder()
                 .setDisplayName(name)
@@ -35,14 +35,14 @@ class AuthRepositoryImpl @Inject constructor(
 
             Resource.Success(user)
         } catch (e: Exception) {
-            Resource.Error(e.message ?: "Ошибка регистрации")
+            Resource.Error(e.message ?: "Registration failed")
         }
     }
 
     override suspend fun login(email: String, password: String): Resource<User> {
         return try {
             val result = auth.signInWithEmailAndPassword(email, password).await()
-            val firebaseUser = result.user ?: return Resource.Error("Ошибка входа")
+            val firebaseUser = result.user ?: return Resource.Error("Login failed")
 
             val document = firestore.collection("users").document(firebaseUser.uid).get().await()
             val name = document.getString("name") ?: firebaseUser.displayName ?: ""
@@ -54,7 +54,7 @@ class AuthRepositoryImpl @Inject constructor(
             )
             Resource.Success(user)
         } catch (e: Exception) {
-            Resource.Error(e.message ?: "Ошибка входа")
+            Resource.Error(e.message ?: "Login failed")
         }
     }
 

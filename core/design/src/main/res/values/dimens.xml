@@ -1,19 +1,33 @@
 <resources>
-    <!-- Common -->
+    <!-- Common Padding -->
     <dimen name="padding_small">4dp</dimen>
     <dimen name="padding_medium">8dp</dimen>
     <dimen name="padding_large">16dp</dimen>
     <dimen name="padding_extra_large">24dp</dimen>
 
-    <!-- Search Bar -->
-    <dimen name="search_bar_height">42dp</dimen>
-    <dimen name="search_bar_corner_radius">12dp</dimen>
-    <dimen name="search_bar_icon_size">20dp</dimen>
+    <!-- Common Radius -->
+    <dimen name="radius_small">4dp</dimen>
+    <dimen name="radius_medium">8dp</dimen>
+    <dimen name="radius_large">12dp</dimen>
+    <dimen name="radius_extra_large">24dp</dimen>
 
-    <!-- Category Chip -->
-    <dimen name="category_chip_height">32dp</dimen>
-    <dimen name="category_chip_corner_radius">16dp</dimen>
-    <dimen name="category_chip_padding_horizontal">16dp</dimen>
+    <!-- Common Navigation -->
+    <dimen name="nav_bar_height">80dp</dimen>
+    <dimen name="nav_bar_height_small">72dp</dimen>
+    <dimen name="nav_bar_elevation">8dp</dimen>
+    <dimen name="nav_item_indicator_width">56dp</dimen>
+    <dimen name="nav_item_indicator_height">32dp</dimen>
+    <dimen name="nav_item_indicator_corner_radius">16dp</dimen>
+    <dimen name="nav_item_icon_size">24dp</dimen>
+    <dimen name="nav_item_text_size">10sp</dimen>
+    <dimen name="nav_item_line_height">12sp</dimen>
+
+    <!-- Common Text Sizes -->
+    <dimen name="text_size_small">9sp</dimen>
+    <dimen name="text_size_normal">14sp</dimen>
+    <dimen name="text_size_action_button">14sp</dimen>
+    <dimen name="text_size_placeholder">14sp</dimen>
+    <dimen name="text_size_chip">12sp</dimen>
 
     <!-- Recipe Card -->
     <dimen name="recipe_card_height">180dp</dimen>
@@ -25,34 +39,17 @@
     <dimen name="recipe_card_elevation_default">2dp</dimen>
     <dimen name="recipe_card_elevation_pressed">8dp</dimen>
     <dimen name="recipe_card_border_width">1dp</dimen>
-
-    <!-- Navigation Bar -->
-    <dimen name="nav_bar_height">80dp</dimen>
-    <dimen name="nav_bar_height_small">72dp</dimen>
-    <dimen name="nav_bar_elevation">8dp</dimen>
-    <dimen name="nav_item_indicator_width">56dp</dimen>
-    <dimen name="nav_item_indicator_height">32dp</dimen>
-    <dimen name="nav_item_indicator_corner_radius">16dp</dimen>
-    <dimen name="nav_item_icon_size">24dp</dimen>
-    <dimen name="nav_item_text_size">10sp</dimen>
-    <dimen name="nav_item_line_height">12sp</dimen>
-
-    <!-- Recipe Detail -->
-    <dimen name="recipe_detail_header_height">420dp</dimen>
-    <dimen name="recipe_detail_back_btn_width">32dp</dimen>
-    <dimen name="recipe_detail_back_btn_height">40dp</dimen>
-    <dimen name="recipe_detail_back_btn_radius">20dp</dimen>
-    <dimen name="recipe_detail_action_btn_height">38dp</dimen>
-    <dimen name="recipe_detail_action_btn_radius">8dp</dimen>
-    <dimen name="recipe_detail_section_title_height">38dp</dimen>
-    <dimen name="recipe_detail_section_title_radius">8dp</dimen>
-    <dimen name="recipe_detail_icon_size">18dp</dimen>
-    <dimen name="recipe_detail_back_btn_top_padding">48dp</dimen>
-
-    <!-- Text Sizes -->
-    <dimen name="text_size_small">9sp</dimen>
-    <dimen name="text_size_category_chip">12sp</dimen>
     <dimen name="text_size_recipe_name">11sp</dimen>
-    <dimen name="text_size_normal">14sp</dimen>
-    <dimen name="text_size_action_button">14sp</dimen>
+
+    <!-- Placeholders -->
+    <dimen name="placeholder_icon_size_large">80dp</dimen>
+    <dimen name="placeholder_icon_size_extra_large">120dp</dimen>
+    <dimen name="placeholder_top_padding">100dp</dimen>
+    <dimen name="placeholder_shimmer_height_large">14dp</dimen>
+    <dimen name="placeholder_shimmer_height_small">12dp</dimen>
+    <dimen name="placeholder_shimmer_width_small">60dp</dimen>
+    <dimen name="placeholder_detail_image_height">300dp</dimen>
+    <dimen name="placeholder_detail_title_height">32dp</dimen>
+    <dimen name="placeholder_detail_section_height">24dp</dimen>
+    <dimen name="placeholder_detail_item_height">20dp</dimen>
 </resources>

@@ -1,0 +1,18 @@
+<resources>
+    <!-- Search Bar -->
+    <dimen name="search_bar_height">42dp</dimen>
+    <dimen name="search_bar_corner_radius">12dp</dimen>
+    <dimen name="search_bar_icon_size">20dp</dimen>
+
+    <!-- Category Chip -->
+    <dimen name="category_chip_height">32dp</dimen>
+    <dimen name="category_chip_corner_radius">16dp</dimen>
+    <dimen name="category_chip_padding_horizontal">16dp</dimen>
+
+    <!-- Text Sizes -->
+    <dimen name="text_size_category_chip">12sp</dimen>
+    <dimen name="text_size_recipe_name">11sp</dimen>
+
+    <!-- Grid -->
+    <dimen name="recipe_card_min_width">110dp</dimen>
+</resources>

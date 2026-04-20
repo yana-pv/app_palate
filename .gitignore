@@ -1,18 +1,57 @@
-*.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
-local.properties
+# Built artifacts
+**/build
+*.apk
+*.ap_
+*.dex
+*.class
 
-/.idea
-/.kotlin
+# Android Studio / IntelliJ
+.idea/
+*.iml
+*.iws
+*.ipr
+/out
+.shelf
+.navigation/
+
+# Gradle
+.gradle/
+build/
+gradlew
+gradlew.bat
+gradle/wrapper/gradle-wrapper.jar
+/gradle.properties
+# Note: usually we keep gradle.properties but ignore local.properties
+!gradle.properties
+
+# Local configuration (secrets, SDK paths)
+local.properties
+.externalNativeBuild
+.cxx/
+captures/
+
+# Signing files
+*.jks
+*.keystore
+*.p12
+*.google-services.json
+# (Note: google-services.json can be tracked if it's a public project,
+# but often it's ignored for security if contains sensitive IDs)
+
+# Kotlin
+.kotlin/
+*.kotlin_module
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# Log files
+*.log
+
+# Proguard / R8
+/proguard/
+
+# Backup files
+*.bak
+*.swp

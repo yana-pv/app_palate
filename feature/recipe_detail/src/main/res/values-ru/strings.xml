@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Recipe Detail -->
+    <string name="recipe_detail_want_to_cook">Хочу приготовить</string>
+    <string name="recipe_detail_to_list">В список</string>
+    <string name="recipe_detail_ingredients">ИНГРЕДИЕНТЫ</string>
+    <string name="recipe_detail_preparation">ПРИГОТОВЛЕНИЕ</string>
+    <string name="recipe_detail_back_desc">Назад</string>
+    <string name="recipe_not_found">Рецепт не найден</string>
+    <string name="retry">Повторить</string>
+    <string name="back_to_home">На главную</string>
+    <string name="error_loading_recipe">Ошибка при загрузке рецепта</string>
+</resources>

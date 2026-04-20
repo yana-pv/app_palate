@@ -4,7 +4,7 @@
     "type": "AAPT_FRIENDLY_MERGED_MANIFESTS",
     "kind": "Directory"
   },
-  "applicationId": "com.example.palate.core.navigation",
+  "applicationId": "com.example.navigation",
   "variantName": "debug",
   "elements": [
     {

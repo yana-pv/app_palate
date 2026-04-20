@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.palate.feature.home"
+    namespace = "com.example.home"
 }
 
 dependencies {
@@ -21,10 +21,6 @@ dependencies {
     implementation(project(":core:design"))
     implementation(project(":core:data"))
     implementation(project(":core:navigation"))
-    implementation(project(":feature:plan"))
-    implementation(project(":feature:my_recipes"))
-    implementation(project(":feature:shopping_list"))
-    implementation(project(":feature:profile"))
 
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.hilt.navigation.compose)

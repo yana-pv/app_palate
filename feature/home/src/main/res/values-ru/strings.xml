@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Home screen -->
+    <string name="search_placeholder">Найти рецепт…</string>
+    <string name="category_more">Ещё</string>
+    <string name="all_recipes">Все рецепты</string>
+    <string name="filters_content_desc">Фильтры</string>
+    <string name="filters_title">Фильтры</string>
+    <string name="categories_title">Категории</string>
+    <string name="all_categories">Все</string>
+    <string name="cuisine_title">Кухня</string>
+    <string name="reset_button">Сбросить</string>
+    <string name="apply_button">Применить</string>
+    <string name="save_recipe_content_desc">Сохранить</string>
+    <string name="no_recipes_found">Рецепты не найдены</string>
+    <string name="error_loading_home">Не удалось загрузить рецепты</string>
+    <string name="retry">Повторить</string>
+</resources>

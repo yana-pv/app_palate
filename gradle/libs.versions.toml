@@ -1,7 +1,7 @@
 [versions]
 agp = "9.1.0"
 kotlin = "2.3.10"
-ksp = "2.3.5" # KSP and Kotlin version compatibility
+ksp = "2.3.6"
 
 # Используется в Convention plugin-ах
 min-sdk = "26"
@@ -30,6 +30,9 @@ javax-inject = "1"
 
 # Retrofit
 retrofit = "3.0.0"
+
+# Room
+room = "2.6.1"
 
 # Google
 google-services = "4.4.4"
@@ -66,6 +69,11 @@ compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling
 compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "compose-material3" }
 compose-navigation = { group = "androidx.navigation", name = "navigation-compose", version.ref = "compose-navigation" }
 androidx-compose-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended", version.ref = "compose" }
+
+# Room
+room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 
 # Hilt & Dagger
 hilt = { group = "com.google.dagger", name = "hilt-android", version.ref = "dagger" }

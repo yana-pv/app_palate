@@ -1,26 +1,14 @@
 <resources>
+    <!-- App Information -->
     <string name="app_name">Palate</string>
-    <string name="search_placeholder">Найти рецепт...</string>
-    <string name="category_more">Ещё</string>
-    <string name="all_recipes">Все рецепты</string>
-    <string name="filters_content_desc">Фильтры</string>
-    <string name="filters_title">Фильтры</string>
-    <string name="categories_title">Категории</string>
-    <string name="all_categories">Все</string>
-    <string name="cuisine_title">Кухня</string>
-    <string name="reset_button">Сбросить</string>
-    <string name="apply_button">Применить</string>
-    <string name="save_recipe_content_desc">Сохранить</string>
-    <string name="nav_plan">План</string>
-    <string name="nav_my_recipes">Рецепты</string>
+
+    <!-- Navigation -->
     <string name="nav_home">Главная</string>
+    <string name="nav_my_recipes">Рецепты</string>
+    <string name="nav_plan">План</string>
     <string name="nav_shopping_list">Покупки</string>
     <string name="nav_profile">Профиль</string>
 
-    <!-- Детали рецепта -->
-    <string name="recipe_detail_want_to_cook">Хочу приготовить</string>
-    <string name="recipe_detail_to_list">В список</string>
-    <string name="recipe_detail_ingredients">ИНГРЕДИЕНТЫ</string>
-    <string name="recipe_detail_preparation">ПРИГОТОВЛЕНИЕ</string>
-    <string name="recipe_detail_back_desc">Назад</string>
+    <!-- Recipe Card -->
+    <string name="save_recipe_content_desc">Сохранить</string>
 </resources>

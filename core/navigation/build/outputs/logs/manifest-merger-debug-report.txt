@@ -1,16 +1,16 @@
 -- Merging decision tree log ---
 manifest
-ADDED from C:\Projects\Palate\core\navigation\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest15932061822017713201.xml:2:13-83
-INJECTED from C:\Projects\Palate\core\navigation\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest15932061822017713201.xml:2:13-83
+ADDED from D:\Project_Tbank\app_palate\core\navigation\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest10446995234397106701.xml:2:13-83
+INJECTED from D:\Project_Tbank\app_palate\core\navigation\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest10446995234397106701.xml:2:13-83
 	package
-		INJECTED from C:\Projects\Palate\core\navigation\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest15932061822017713201.xml
+		INJECTED from D:\Project_Tbank\app_palate\core\navigation\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest10446995234397106701.xml
 	xmlns:android
-		ADDED from C:\Projects\Palate\core\navigation\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest15932061822017713201.xml:2:23-81
+		ADDED from D:\Project_Tbank\app_palate\core\navigation\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest10446995234397106701.xml:2:23-81
 uses-sdk
-INJECTED from C:\Projects\Palate\core\navigation\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest15932061822017713201.xml reason: use-sdk injection requested
-INJECTED from C:\Projects\Palate\core\navigation\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest15932061822017713201.xml
-INJECTED from C:\Projects\Palate\core\navigation\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest15932061822017713201.xml
+INJECTED from D:\Project_Tbank\app_palate\core\navigation\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest10446995234397106701.xml reason: use-sdk injection requested
+INJECTED from D:\Project_Tbank\app_palate\core\navigation\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest10446995234397106701.xml
+INJECTED from D:\Project_Tbank\app_palate\core\navigation\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest10446995234397106701.xml
 	android:targetSdkVersion
-		INJECTED from C:\Projects\Palate\core\navigation\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest15932061822017713201.xml
+		INJECTED from D:\Project_Tbank\app_palate\core\navigation\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest10446995234397106701.xml
 	android:minSdkVersion
-		INJECTED from C:\Projects\Palate\core\navigation\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest15932061822017713201.xml
+		INJECTED from D:\Project_Tbank\app_palate\core\navigation\build\intermediates\tmp\ProcessLibraryManifest\debug\tempAndroidManifest10446995234397106701.xml

@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.palate.feature.profile"
+    namespace = "com.example.profile"
 }
 
 dependencies {

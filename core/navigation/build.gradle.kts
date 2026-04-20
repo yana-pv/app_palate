@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.palate.core.navigation"
+    namespace = "com.example.navigation"
 }
 
 dependencies {

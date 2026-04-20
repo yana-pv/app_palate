@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.palate.feature.shopping_list"
+    namespace = "com.example.shopping_list"
 }
 
 dependencies {

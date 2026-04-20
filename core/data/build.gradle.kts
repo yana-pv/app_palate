@@ -11,6 +11,7 @@ dependencies {
 
     implementation(project(":core:domain"))
     implementation(project(":core:utils"))
+    implementation(project(":core:network"))
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth.ktx)
@@ -22,14 +23,16 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
 
-    implementation(project(":core:network"))
-
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.gson)
     implementation(libs.javax.inject)
 
     implementation(libs.hilt)
     ksp(libs.hilt.compiler)
+
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
+    ksp(libs.room.compiler)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

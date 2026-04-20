@@ -21,8 +21,6 @@ android {
 }
 
 dependencies {
-    implementation(project(":feature:auth"))
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -47,6 +45,9 @@ dependencies {
     implementation(project(":feature:my_recipes"))
     implementation(project(":feature:shopping_list"))
     implementation(project(":feature:profile"))
+    implementation(project(":feature:auth"))
+    implementation(project(":feature:main"))
+
 
     implementation(libs.hilt)
     ksp(libs.hilt.compiler)
