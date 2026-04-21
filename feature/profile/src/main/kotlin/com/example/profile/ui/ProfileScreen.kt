@@ -1,5 +1,8 @@
 package com.example.profile.ui
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -11,10 +14,12 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -23,6 +28,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.rememberAsyncImagePainter
 import com.example.design.theme.PrimaryGreen
 import com.example.profile.R
 
@@ -35,6 +41,13 @@ fun ProfileScreen(
     val uiState by viewModel.uiState.collectAsState()
     val context = androidx.compose.ui.platform.LocalContext.current
 
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri ->
+        uri?.let {
+            viewModel.uploadAvatar(it, context.contentResolver)
+        }
+    }
 
     LaunchedEffect(uiState.isLoggedOut) {
         if (uiState.isLoggedOut) {
@@ -66,18 +79,35 @@ fun ProfileScreen(
                 Box(
                     modifier = Modifier
                         .size(dimensionResource(R.dimen.profile_avatar_size))
-                        .background(
-                            color = MaterialTheme.colorScheme.surfaceVariant,
-                            shape = RoundedCornerShape(dimensionResource(R.dimen.profile_avatar_radius))
-                        ),
+                        .clip(RoundedCornerShape(dimensionResource(R.dimen.profile_avatar_radius)))
+                        .background(color = MaterialTheme.colorScheme.surfaceVariant),
                     contentAlignment = Alignment.Center
                 ) {
+                    val avatarUrl = uiState.user?.avatarUrl
+                    
                     Icon(
                         painter = painterResource(com.example.design.R.drawable.user),
                         contentDescription = null,
                         modifier = Modifier.size(dimensionResource(R.dimen.profile_avatar_icon_size)),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        tint = if (uiState.isDarkMode) Color.LightGray else Color.Gray
                     )
+
+                    if (!avatarUrl.isNullOrBlank()) {
+                        Image(
+                            painter = rememberAsyncImagePainter(model = avatarUrl),
+                            contentDescription = null,
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+
+                    if (uiState.isLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(32.dp),
+                            color = PrimaryGreen,
+                            strokeWidth = 3.dp
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.width(dimensionResource(com.example.design.R.dimen.padding_large)))
@@ -97,7 +127,7 @@ fun ProfileScreen(
                     Spacer(modifier = Modifier.height(dimensionResource(com.example.design.R.dimen.padding_large)))
 
                     Button(
-                        onClick = { /* TODO: Upload photo */ },
+                        onClick = { launcher.launch("image/*") },
                         modifier = Modifier.height(dimensionResource(R.dimen.profile_button_height)),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = PrimaryGreen

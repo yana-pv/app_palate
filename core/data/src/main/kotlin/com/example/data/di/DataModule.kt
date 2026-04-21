@@ -28,6 +28,12 @@ abstract class DataModule {
 
     @Binds
     @Singleton
+    abstract fun bindUserRepository(
+        impl: com.example.data.repository.UserRepositoryImpl
+    ): com.example.domain.repository.UserRepository
+
+    @Binds
+    @Singleton
     abstract fun bindSettingsRepository(
         impl: com.example.data.repository.SettingsRepositoryImpl
     ): com.example.domain.repository.SettingsRepository
