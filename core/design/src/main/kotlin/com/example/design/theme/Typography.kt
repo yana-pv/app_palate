@@ -12,26 +12,22 @@ val CondimentFont = FontFamily(
 )
 
 val PalateTypography = androidx.compose.material3.Typography(
-    // Заголовок "Palate"
     displayLarge = TextStyle(
         fontFamily = CondimentFont,
         fontWeight = FontWeight.W400,
         fontSize = 48.sp,
         lineHeight = 25.sp,
-        letterSpacing = 0.1.sp,
-        color = PalateColors.White
+        letterSpacing = 0.1.sp
     ),
-    // Описание
+
     bodyLarge = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.W400,
         fontSize = 16.sp,
         lineHeight = 25.sp,
-        letterSpacing = 0.1.sp,
-        color = PalateColors.White
+        letterSpacing = 0.1.sp
     ),
 
-    // Текст кнопок
     labelLarge = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.W500,

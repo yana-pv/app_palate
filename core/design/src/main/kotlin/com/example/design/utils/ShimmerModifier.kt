@@ -12,9 +12,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.IntSize
-
-import androidx.compose.ui.res.colorResource
-import com.example.design.R
+import com.example.design.theme.ShimmerBase
+import com.example.design.theme.ShimmerHighlight
 
 fun Modifier.shimmerEffect(): Modifier = composed {
     var size by remember { mutableStateOf(IntSize.Zero) }
@@ -31,9 +30,9 @@ fun Modifier.shimmerEffect(): Modifier = composed {
     background(
         brush = Brush.linearGradient(
             colors = listOf(
-                colorResource(R.color.shimmer_base),
-                colorResource(R.color.shimmer_highlight),
-                colorResource(R.color.shimmer_base),
+                ShimmerBase,
+                ShimmerHighlight,
+                ShimmerBase,
             ),
             start = Offset(startOffsetX, 0f),
             end = Offset(startOffsetX + size.width.toFloat(), size.height.toFloat())

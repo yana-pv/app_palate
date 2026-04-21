@@ -12,5 +12,6 @@ data class HomeUiState(
     val selectedCuisines: Set<String> = emptySet(),
     val searchQuery: String = "",
     val isFilterSheetVisible: Boolean = false,
+    val isDarkMode: Boolean = false,
     val errorMessage: String? = null
 )

@@ -38,11 +38,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.example.theme.GrayText
-import com.example.theme.FavoriteRed
-import com.example.theme.PrimaryGreen
-import com.example.theme.SurfaceWhite
-import com.example.theme.UnsavedGray
+import com.example.design.theme.*
 
 @Composable
 fun RecipeCard(
@@ -56,7 +52,7 @@ fun RecipeCard(
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
-    
+
     Card(
         modifier = modifier
             .padding(dimensionResource(R.dimen.padding_small))
@@ -67,7 +63,7 @@ fun RecipeCard(
             )
             .border(
                 width = dimensionResource(R.dimen.recipe_card_border_width),
-                color = if (isPressed) PrimaryGreen else GrayText,
+                color = if (isPressed) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.outline,
                 shape = RoundedCornerShape(dimensionResource(R.dimen.recipe_card_corner_radius))
             )
             .clickable(
@@ -76,12 +72,12 @@ fun RecipeCard(
                 onClick = onClick
             ),
         shape = RoundedCornerShape(dimensionResource(R.dimen.recipe_card_corner_radius)),
-        colors = CardDefaults.cardColors(containerColor = SurfaceWhite),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp) 
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxWidth().padding(top = dimensionResource(R.dimen.padding_medium)) 
+            modifier = Modifier.fillMaxWidth().padding(top = dimensionResource(R.dimen.padding_medium))
         ) {
             Box(
                 modifier = Modifier
@@ -108,7 +104,7 @@ fun RecipeCard(
                         Icon(
                             painter = painterResource(id = R.drawable.icon),
                             contentDescription = stringResource(R.string.save_recipe_content_desc),
-                            tint = if (isSaved) FavoriteRed else UnsavedGray,
+                            tint = if (isSaved) FavoriteRed else MaterialTheme.colorScheme.outline,
                             modifier = Modifier.size(dimensionResource(R.dimen.recipe_card_favorite_icon_size))
                         )
                     }
@@ -133,7 +129,7 @@ fun RecipeCard(
                     style = MaterialTheme.typography.bodySmall.copy(
                         fontSize = dimensionResource(R.dimen.text_size_small).value.sp
                     ),
-                    color = UnsavedGray,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(top = dimensionResource(R.dimen.recipe_card_border_width))
                 )
             }

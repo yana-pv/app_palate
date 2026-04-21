@@ -21,6 +21,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -36,7 +37,6 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -123,7 +123,7 @@ fun LoginScreen(
                         topEnd = dimensionResource(R.dimen.auth_container_radius)
                     )
                 )
-                .background(colorResource(com.example.design.R.color.white))
+                .background(MaterialTheme.colorScheme.background)
         ) {
             Column(
                 modifier = Modifier
@@ -137,7 +137,7 @@ fun LoginScreen(
                     fontFamily = CondimentFont,
                     fontSize = dimensionResource(R.dimen.auth_logo_size).value.sp,
                     fontWeight = FontWeight.Normal,
-                    color = colorResource(com.example.design.R.color.primary_green),
+                    color = MaterialTheme.colorScheme.tertiary,
                     letterSpacing = dimensionResource(R.dimen.auth_logo_letter_spacing).value.sp,
                     lineHeight = dimensionResource(R.dimen.auth_logo_line_height).value.sp
                 )
@@ -149,7 +149,7 @@ fun LoginScreen(
                         .fillMaxWidth()
                         .border(
                             width = dimensionResource(R.dimen.auth_field_border_width),
-                            color = colorResource(com.example.design.R.color.gray_light_bg),
+                            color = MaterialTheme.colorScheme.outline,
                             shape = RoundedCornerShape(8.dp)
                         )
                         .padding(dimensionResource(R.dimen.auth_field_padding))
@@ -168,18 +168,18 @@ fun LoginScreen(
                         isError = emailError != null,
                         shape = RoundedCornerShape(8.dp),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = colorResource(com.example.design.R.color.gray_light_bg),
-                            unfocusedBorderColor = colorResource(com.example.design.R.color.gray_light_bg),
-                            focusedLabelColor = colorResource(com.example.design.R.color.primary_green),
-                            unfocusedLabelColor = colorResource(com.example.design.R.color.gray_text),
-                            focusedTextColor = colorResource(com.example.design.R.color.black),
-                            unfocusedTextColor = colorResource(com.example.design.R.color.black),
-                            cursorColor = colorResource(com.example.design.R.color.primary_green)
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                            focusedLabelColor = MaterialTheme.colorScheme.primary,
+                            unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            cursorColor = MaterialTheme.colorScheme.primary
                         )
                     )
                     if (emailError != null) {
                         Text(text = stringResource(emailError!!),
-                            color = colorResource(com.example.design.R.color.error_red),
+                            color = MaterialTheme.colorScheme.error,
                             fontSize = dimensionResource(R.dimen.auth_error_text_size).value.sp,
                             modifier = Modifier.padding(start = dimensionResource(com.example.design.R.dimen.padding_small),
                                 top = dimensionResource(com.example.design.R.dimen.padding_small)))
@@ -215,23 +215,27 @@ fun LoginScreen(
                             }
                         },
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = colorResource(com.example.design.R.color.gray_light_bg),
-                            unfocusedBorderColor = colorResource(com.example.design.R.color.gray_light_bg),
-                            focusedLabelColor = colorResource(com.example.design.R.color.primary_green),
-                            unfocusedLabelColor = colorResource(com.example.design.R.color.gray_text),
-                            focusedTextColor = colorResource(com.example.design.R.color.black),
-                            unfocusedTextColor = colorResource(com.example.design.R.color.black),
-                            cursorColor = colorResource(com.example.design.R.color.primary_green)
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                            focusedLabelColor = MaterialTheme.colorScheme.primary,
+                            unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            cursorColor = MaterialTheme.colorScheme.primary
                         )
                     )
                     if (passwordError != null) {
-                        Text(text = stringResource(passwordError!!), color = colorResource(com.example.design.R.color.error_red), fontSize = dimensionResource(R.dimen.auth_error_text_size).value.sp, modifier = Modifier.padding(start = dimensionResource(com.example.design.R.dimen.padding_small), top = dimensionResource(com.example.design.R.dimen.padding_small)))
+                        Text(
+                            text = stringResource(passwordError!!),
+                            color = MaterialTheme.colorScheme.error,
+                            fontSize = dimensionResource(R.dimen.auth_error_text_size).value.sp,
+                            modifier = Modifier.padding(start = dimensionResource(com.example.design.R.dimen.padding_small), top = dimensionResource(com.example.design.R.dimen.padding_small)))
                     }
                     else {
                         Text(
                             text = stringResource(R.string.password_min_hint),
                             fontSize = dimensionResource(R.dimen.auth_error_text_size).value.sp,
-                            color = colorResource(com.example.design.R.color.gray_text),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.padding(start = dimensionResource(com.example.design.R.dimen.padding_small), top = dimensionResource(com.example.design.R.dimen.padding_small))
                         )
                     }
@@ -264,12 +268,12 @@ fun LoginScreen(
                 ) {
                     Text(
                         text = stringResource(R.string.no_account),
-                        color = colorResource(com.example.design.R.color.black),
+                        color = MaterialTheme.colorScheme.onSurface,
                         fontSize = dimensionResource(com.example.design.R.dimen.text_size_normal).value.sp
                     )
                     Text(
                         text = stringResource(R.string.register_link),
-                        color = colorResource(com.example.design.R.color.primary_purple),
+                        color = MaterialTheme.colorScheme.primary,
                         fontSize = dimensionResource(com.example.design.R.dimen.text_size_normal).value.sp,
                         fontWeight = FontWeight.Medium,
                         modifier = Modifier.clickable {
@@ -284,7 +288,7 @@ fun LoginScreen(
                     Spacer(modifier = Modifier.height(dimensionResource(com.example.design.R.dimen.padding_medium)))
                     CircularProgressIndicator(
                         modifier = Modifier.width(dimensionResource(R.dimen.auth_vertical_padding)),
-                        color = colorResource(com.example.design.R.color.primary_purple)
+                        color = MaterialTheme.colorScheme.primary
                     )
                 }
 
@@ -292,7 +296,7 @@ fun LoginScreen(
                     Spacer(modifier = Modifier.height(dimensionResource(com.example.design.R.dimen.padding_medium)))
                     Text(
                         text = stringResource((loginState as LoginUiState.Error).messageRes),
-                        color = colorResource(com.example.design.R.color.error_red),
+                        color = MaterialTheme.colorScheme.error,
                         fontSize = dimensionResource(R.dimen.auth_error_text_size).value.sp,
                         textAlign = TextAlign.Center
                     )

@@ -49,8 +49,8 @@ fun MealDto.toDomain(): Recipe {
     }
 
     val instructions = this.instructions?.split("\r\n", "\n")
+        ?.map { it.trim() }
         ?.filter { it.isNotBlank() }
-        ?.map { it.trim().removePrefix("Step ").removePrefix("1. ").removePrefix("2. ") }
         ?: emptyList()
 
     return Recipe(

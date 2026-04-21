@@ -1,7 +1,7 @@
 package com.example.main
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -22,12 +22,13 @@ import com.example.navigation.Destination
 import com.example.plan.PlanScreen
 import com.example.my_recipes.MyRecipesScreen
 import com.example.shopping_list.ShoppingListScreen
-import com.example.profile.ProfileScreen
+import com.example.profile.ui.ProfileScreen
 import com.example.design.R as DesignR
 
 @Composable
 fun MainScreen(
-    onRecipeClick: (String) -> Unit
+    onRecipeClick: (String) -> Unit,
+    onLogout: () -> Unit
 ) {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -78,7 +79,7 @@ fun MainScreen(
             )
         },
         contentWindowInsets = WindowInsets(0, 0, 0, 0)
-    ) { _ ->
+    ) { paddingValues ->
         NavHost(
             navController = navController,
             startDestination = Destination.Home.route,
@@ -87,10 +88,26 @@ fun MainScreen(
             composable(Destination.Home.route) {
                 HomeScreen(onRecipeClick = onRecipeClick)
             }
-            composable(Destination.Plan.route) { PlanScreen() }
-            composable(Destination.MyRecipes.route) { MyRecipesScreen() }
-            composable(Destination.ShoppingList.route) { ShoppingListScreen() }
-            composable(Destination.Profile.route) { ProfileScreen() }
+            composable(Destination.Plan.route) { 
+                Box(modifier = Modifier.padding(paddingValues)) {
+                    PlanScreen() 
+                }
+            }
+            composable(Destination.MyRecipes.route) { 
+                Box(modifier = Modifier.padding(paddingValues)) {
+                    MyRecipesScreen() 
+                }
+            }
+            composable(Destination.ShoppingList.route) { 
+                Box(modifier = Modifier.padding(paddingValues)) {
+                    ShoppingListScreen() 
+                }
+            }
+            composable(Destination.Profile.route) { 
+                Box(modifier = Modifier.padding(paddingValues)) {
+                    ProfileScreen(onLogout = onLogout)
+                }
+            }
         }
     }
 }

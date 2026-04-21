@@ -6,19 +6,26 @@ import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import com.example.palate.navigation.PalateNavGraph
 import com.example.palate.navigation.PalateNavigator
-import com.example.palate.ui.theme.PalateTheme
+import com.example.design.theme.PalateTheme
+import com.example.utils.LocaleHelper
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    private val viewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge(
@@ -28,7 +35,15 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            PalateTheme {
+            val isDarkMode by viewModel.isDarkMode.collectAsStateWithLifecycle()
+            val language by viewModel.language.collectAsStateWithLifecycle()
+
+            val context = androidx.compose.ui.platform.LocalContext.current
+            LaunchedEffect(language) {
+                LocaleHelper.setLocale(context, language)
+            }
+
+            PalateTheme(darkTheme = isDarkMode) {
                 val navController = rememberNavController()
                 val navigator = remember(navController) { PalateNavigator(navController) }
 

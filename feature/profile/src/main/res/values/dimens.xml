@@ -1,0 +1,15 @@
+<resources>
+    <dimen name="profile_avatar_size">100dp</dimen>
+    <dimen name="profile_avatar_radius">50dp</dimen>
+    <dimen name="profile_avatar_icon_size">48dp</dimen>
+    <dimen name="profile_user_name_text_size">22sp</dimen>
+    <dimen name="profile_section_title_text_size">20sp</dimen>
+    <dimen name="profile_button_height">36dp</dimen>
+    <dimen name="profile_logout_button_height">48dp</dimen>
+    <dimen name="profile_settings_item_height">42dp</dimen>
+    <dimen name="profile_stat_card_height">90dp</dimen>
+    <dimen name="profile_stat_card_radius">10dp</dimen>
+    <dimen name="profile_stat_card_elevation">4dp</dimen>
+    <dimen name="profile_stat_value_text_size">28sp</dimen>
+    <dimen name="profile_stat_label_line_height">14sp</dimen>
+</resources>

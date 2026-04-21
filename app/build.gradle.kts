@@ -25,7 +25,9 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.x.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.x.activity.compose)
+    implementation(libs.androidx.activity.ktx)
     implementation(libs.retrofit)
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
@@ -38,6 +40,7 @@ dependencies {
     implementation(project(":core:data"))
     implementation(project(":core:network"))
     implementation(project(":core:navigation"))
+    implementation(project(":core:utils"))
     
     implementation(project(":feature:home"))
     implementation(project(":feature:recipe_detail"))
