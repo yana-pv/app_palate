@@ -37,6 +37,11 @@ fun PalateNavGraph(
             MainScreen(
                 onRecipeClick = { recipeId ->
                     navigator.openRecipeDetail(recipeId)
+                },
+                onLogout = {
+                    navController.navigate(Destination.Startup.route) {
+                        popUpTo(0) { inclusive = true }
+                    }
                 }
             )
         }

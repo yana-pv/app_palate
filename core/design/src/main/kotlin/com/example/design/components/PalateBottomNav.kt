@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,9 +19,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import com.example.design.R
-import com.example.theme.GrayText
-import com.example.theme.SecondaryPurple
-import com.example.theme.SurfaceWhite
 
 data class BottomNavItemData(
     val route: String,
@@ -36,7 +34,7 @@ fun PalateBottomNav(
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = SurfaceWhite,
+        color = MaterialTheme.colorScheme.surface,
         shadowElevation = dimensionResource(R.dimen.nav_bar_elevation)
     ) {
         Row(
@@ -59,13 +57,15 @@ fun PalateBottomNav(
 }
 
 @Composable
-private fun NavItem(
+fun NavItem(
     modifier: Modifier = Modifier,
     item: BottomNavItemData,
     isSelected: Boolean,
     onClick: () -> Unit
 ) {
     val title = stringResource(item.titleRes)
+    val contentColor = if (isSelected) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+    
     Column(
         modifier = modifier
             .clickable { onClick() }
@@ -80,13 +80,13 @@ private fun NavItem(
                     height = dimensionResource(R.dimen.nav_item_indicator_height)
                 )
                 .clip(RoundedCornerShape(dimensionResource(R.dimen.nav_item_indicator_corner_radius)))
-                .background(if (isSelected) SecondaryPurple else Color.Transparent),
+                .background(if (isSelected) MaterialTheme.colorScheme.secondary else Color.Transparent),
             contentAlignment = Alignment.Center
         ) {
             Icon(
                 imageVector = item.icon,
                 contentDescription = title,
-                tint = if (isSelected) Color.White else GrayText,
+                tint = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                 modifier = Modifier.size(dimensionResource(R.dimen.nav_item_icon_size))
             )
         }
@@ -94,7 +94,7 @@ private fun NavItem(
         Text(
             text = title,
             fontSize = 10.sp,
-            color = if (isSelected) SecondaryPurple else GrayText,
+            color = contentColor,
             textAlign = TextAlign.Center,
             lineHeight = 12.sp
         )

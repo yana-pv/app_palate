@@ -16,7 +16,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val getHomeDataUseCase: GetHomeDataUseCase
+    private val getHomeDataUseCase: GetHomeDataUseCase,
+    private val settingsRepository: com.example.domain.repository.SettingsRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState(isLoading = true))
@@ -28,6 +29,15 @@ class HomeViewModel @Inject constructor(
 
     init {
         loadHomeData()
+        observeSettings()
+    }
+
+    private fun observeSettings() {
+        viewModelScope.launch {
+            settingsRepository.isDarkMode().collect { isDark ->
+                _uiState.update { it.copy(isDarkMode = isDark) }
+            }
+        }
     }
 
     fun loadHomeData() {

@@ -50,7 +50,8 @@ class AuthRepositoryImpl @Inject constructor(
             val user = User(
                 id = firebaseUser.uid,
                 name = name,
-                email = firebaseUser.email ?: email
+                email = firebaseUser.email ?: email,
+                avatarUrl = firebaseUser.photoUrl?.toString()
             )
             Resource.Success(user)
         } catch (e: Exception) {
@@ -60,15 +61,6 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun logout() {
         auth.signOut()
-    }
-
-    override fun getCurrentUser(): User? {
-        val firebaseUser = auth.currentUser ?: return null
-        return User(
-            id = firebaseUser.uid,
-            name = firebaseUser.displayName ?: "",
-            email = firebaseUser.email ?: ""
-        )
     }
 
     override fun isUserLoggedIn(): Boolean {

@@ -1,0 +1,16 @@
+<resources>
+    <string name="profile_title">Profile</string>
+    <string name="upload_photo">Upload photo</string>
+    <string name="statistics_title">Statistics</string>
+    <string name="stat_cooked">Cooked</string>
+    <string name="stat_planned">Planned</string>
+    <string name="stat_own_recipes">Own recipes</string>
+    <string name="settings_title">Settings</string>
+    <string name="dark_theme">Dark theme</string>
+    <string name="language">Language</string>
+    <string name="logout_button">Logout</string>
+    <string name="language_russian">Russian</string>
+    <string name="language_english">English</string>
+    <string name="default_user_name">User</string>
+    <string name="default_user_email">email@example.com</string>
+</resources>

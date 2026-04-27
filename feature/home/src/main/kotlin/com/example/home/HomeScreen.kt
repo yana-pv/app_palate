@@ -1,5 +1,6 @@
 package com.example.home
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -31,11 +32,7 @@ import com.example.design.components.RecipeCard
 import com.example.design.components.RecipeCardPlaceholder
 import com.example.domain.model.Category
 import com.example.home.viewmodel.HomeViewModel
-import com.example.theme.CategoryUnselectedBg
-import com.example.theme.CategoryUnselectedText
-import com.example.theme.SearchBorder
-import com.example.theme.SearchPlaceholder
-import com.example.theme.SecondaryPurple
+import com.example.design.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -64,10 +61,11 @@ fun HomeScreen(
                 categories = state.categories,
                 selectedCategoryIds = state.selectedCategoryIds,
                 onCategorySelected = { viewModel.onCategorySelected(it) },
-                onFilterSheetVisible = { viewModel.setFilterSheetVisible(it) }
+                onFilterSheetVisible = { viewModel.setFilterSheetVisible(it) },
+                isDarkMode = state.isDarkMode
             )
         },
-        containerColor = Color.White,
+        containerColor = MaterialTheme.colorScheme.background,
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         bottomBar = {
             Spacer(Modifier.navigationBarsPadding())
@@ -95,11 +93,12 @@ fun HomeTopBar(
     categories: List<Category>,
     selectedCategoryIds: Set<String>,
     onCategorySelected: (String) -> Unit,
-    onFilterSheetVisible: (Boolean) -> Unit
+    onFilterSheetVisible: (Boolean) -> Unit,
+    isDarkMode: Boolean
 ) {
     Column(
         modifier = Modifier
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.background)
             .statusBarsPadding()
             .padding(bottom = dimensionResource(com.example.design.R.dimen.padding_small))
     ) {
@@ -118,19 +117,23 @@ fun HomeTopBar(
                 .onFocusChanged { isFocused = it.isFocused }
                 .border(
                     width = dimensionResource(com.example.design.R.dimen.recipe_card_border_width),
-                    color = if (isFocused) Color.Black else SearchBorder,
+                    color = if (isDarkMode) {
+                        if (isFocused) Color.White else InactiveGray
+                    } else {
+                        if (isFocused) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.outline
+                    },
                     shape = RoundedCornerShape(dimensionResource(R.dimen.search_bar_corner_radius))
                 )
                 .background(
-                    Color.White,
+                    MaterialTheme.colorScheme.background,
                     RoundedCornerShape(dimensionResource(R.dimen.search_bar_corner_radius))
                 ),
             singleLine = true,
             textStyle = LocalTextStyle.current.copy(
-                color = Color.Black,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontSize = dimensionResource(com.example.design.R.dimen.text_size_placeholder).value.sp
             ),
-            cursorBrush = SolidColor(Color.Black),
+            cursorBrush = SolidColor(MaterialTheme.colorScheme.onSurface),
             decorationBox = { innerTextField ->
                 Row(
                     modifier = Modifier
@@ -141,7 +144,11 @@ fun HomeTopBar(
                     Icon(
                         imageVector = Icons.Default.Search,
                         contentDescription = null,
-                        tint = if (isFocused || searchQuery.isNotEmpty()) Color.Black else SearchPlaceholder,
+                        tint = if (isDarkMode) {
+                            if (isFocused || searchQuery.isNotEmpty()) Color.White else InactiveGray
+                        } else {
+                            if (isFocused || searchQuery.isNotEmpty()) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.outlineVariant
+                        },
                         modifier = Modifier.size(dimensionResource(R.dimen.search_bar_icon_size))
                     )
                     Spacer(Modifier.width(dimensionResource(com.example.design.R.dimen.padding_medium)))
@@ -149,7 +156,7 @@ fun HomeTopBar(
                         if (searchQuery.isEmpty()) {
                             Text(
                                 text = stringResource(R.string.search_placeholder),
-                                color = SearchPlaceholder,
+                                color = if (isDarkMode) InactiveGray else MaterialTheme.colorScheme.outlineVariant,
                                 fontSize = dimensionResource(com.example.design.R.dimen.text_size_placeholder).value.sp
                             )
                         }
@@ -176,14 +183,16 @@ fun HomeTopBar(
                     CategoryChip(
                         name = categoryName,
                         isSelected = isSelected,
-                        onClick = { onCategorySelected(category.id) }
+                        onClick = { onCategorySelected(category.id) },
+                        isDarkMode = isDarkMode
                     )
                 }
                 item {
                     CategoryChip(
                         name = stringResource(R.string.category_more),
                         isSelected = false,
-                        onClick = { onFilterSheetVisible(true) }
+                        onClick = { onFilterSheetVisible(true) },
+                        isDarkMode = isDarkMode
                     )
                 }
             }
@@ -208,7 +217,7 @@ fun HomeContent(
         modifier = Modifier
             .padding(paddingValues)
             .fillMaxSize()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         Column {
             Row(
@@ -277,7 +286,7 @@ fun HomeContent(
             ModalBottomSheet(
                 onDismissRequest = { onFilterSheetVisible(false) },
                 sheetState = sheetState,
-                containerColor = Color.White
+                containerColor = MaterialTheme.colorScheme.surface
             ) {
                 FilterBottomSheetContent(
                     categories = state.categories,
@@ -287,7 +296,8 @@ fun HomeContent(
                     onCategoryClick = onCategorySelected,
                     onCuisineClick = onCuisineSelected,
                     onApply = { onFilterSheetVisible(false) },
-                    onReset = onResetFilters
+                    onReset = onResetFilters,
+                    isDarkMode = state.isDarkMode
                 )
             }
         }
@@ -309,18 +319,18 @@ fun HomeEmptyState(
             imageVector = Icons.Default.Search,
             contentDescription = null,
             modifier = Modifier.size(dimensionResource(com.example.design.R.dimen.placeholder_icon_size_large)),
-            tint = Color.LightGray
+            tint = MaterialTheme.colorScheme.outlineVariant
         )
         Spacer(modifier = Modifier.height(dimensionResource(com.example.design.R.dimen.padding_medium)))
         Text(
             text = stringResource(R.string.no_recipes_found),
             style = MaterialTheme.typography.titleMedium,
-            color = Color.Gray
+            color = MaterialTheme.colorScheme.outline
         )
         Spacer(modifier = Modifier.height(dimensionResource(com.example.design.R.dimen.padding_large)))
         Button(
             onClick = onRetry,
-            colors = ButtonDefaults.buttonColors(containerColor = SecondaryPurple)
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
         ) {
             Text(text = stringResource(R.string.retry))
         }
@@ -337,7 +347,8 @@ fun FilterBottomSheetContent(
     onCategoryClick: (String) -> Unit,
     onCuisineClick: (String) -> Unit,
     onApply: () -> Unit,
-    onReset: () -> Unit
+    onReset: () -> Unit,
+    isDarkMode: Boolean
 ) {
     Column(
         modifier = Modifier
@@ -352,9 +363,9 @@ fun FilterBottomSheetContent(
         ) {
             Spacer(Modifier.height(dimensionResource(com.example.design.R.dimen.padding_medium)))
             Text(stringResource(R.string.filters_title), style = MaterialTheme.typography.headlineSmall)
-            
+
             Spacer(Modifier.height(dimensionResource(com.example.design.R.dimen.padding_large)))
-            
+
             Text(stringResource(R.string.categories_title), style = MaterialTheme.typography.titleMedium)
             FlowRow(
                 modifier = Modifier.padding(vertical = dimensionResource(com.example.design.R.dimen.padding_medium)),
@@ -364,13 +375,15 @@ fun FilterBottomSheetContent(
                 CategoryChip(
                     name = stringResource(R.string.all_categories),
                     isSelected = selectedCategoryIds.contains("all"),
-                    onClick = { onCategoryClick("all") }
+                    onClick = { onCategoryClick("all") },
+                    isDarkMode = isDarkMode
                 )
                 categories.filter { it.id != "all" }.forEach { category ->
                     CategoryChip(
                         name = category.name,
                         isSelected = selectedCategoryIds.contains(category.id),
-                        onClick = { onCategoryClick(category.id) }
+                        onClick = { onCategoryClick(category.id) },
+                        isDarkMode = isDarkMode
                     )
                 }
             }
@@ -386,13 +399,15 @@ fun FilterBottomSheetContent(
                 CategoryChip(
                     name = stringResource(R.string.all_categories),
                     isSelected = selectedCuisines.isEmpty(),
-                    onClick = { onCuisineClick("null") }
+                    onClick = { onCuisineClick("null") },
+                    isDarkMode = isDarkMode
                 )
                 cuisines.forEach { cuisine ->
                     CategoryChip(
                         name = cuisine,
                         isSelected = selectedCuisines.contains(cuisine),
-                        onClick = { onCuisineClick(cuisine) }
+                        onClick = { onCuisineClick(cuisine) },
+                        isDarkMode = isDarkMode
                     )
                 }
             }
@@ -410,7 +425,14 @@ fun FilterBottomSheetContent(
                 OutlinedButton(
                     onClick = onReset,
                     modifier = Modifier.weight(1f),
-                    shape = RoundedCornerShape(dimensionResource(R.dimen.search_bar_corner_radius))
+                    shape = RoundedCornerShape(dimensionResource(R.dimen.search_bar_corner_radius)),
+                    border = BorderStroke(
+                        width = dimensionResource(com.example.design.R.dimen.recipe_card_border_width),
+                        color = if (isDarkMode) Color.White else MaterialTheme.colorScheme.onSurfaceVariant
+                    ),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        contentColor = if (isDarkMode) Color.White else MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 ) {
                     Text(stringResource(R.string.reset_button))
                 }
@@ -418,7 +440,7 @@ fun FilterBottomSheetContent(
                     onClick = onApply,
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(dimensionResource(R.dimen.search_bar_corner_radius)),
-                    colors = ButtonDefaults.buttonColors(containerColor = SecondaryPurple)
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                 ) {
                     Text(stringResource(R.string.apply_button))
                 }
@@ -431,15 +453,20 @@ fun FilterBottomSheetContent(
 fun CategoryChip(
     name: String,
     isSelected: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    isDarkMode: Boolean = false
 ) {
     Surface(
         modifier = Modifier
             .height(dimensionResource(R.dimen.category_chip_height))
             .clickable { onClick() },
         shape = RoundedCornerShape(dimensionResource(R.dimen.category_chip_corner_radius)),
-        color = if (isSelected) SecondaryPurple else CategoryUnselectedBg,
-        contentColor = if (isSelected) Color.White else CategoryUnselectedText
+        color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
+        contentColor = if (isSelected) {
+            MaterialTheme.colorScheme.onPrimary
+        } else {
+            if (isDarkMode) LightOnSurfaceVariant else MaterialTheme.colorScheme.onSurfaceVariant
+        }
     ) {
         Box(
             modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.category_chip_padding_horizontal)),

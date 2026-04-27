@@ -12,5 +12,6 @@ dependencies {
     implementation(libs.material)
 
     implementation(project(":core:utils"))
+
     implementation(libs.javax.inject)
 }

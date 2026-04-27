@@ -4,7 +4,7 @@
 
     <!-- Navigation -->
     <string name="nav_home">Главная</string>
-    <string name="nav_my_recipes">Рецепты</string>
+    <string name="nav_my_recipes">Мои Рецепты</string>
     <string name="nav_plan">План</string>
     <string name="nav_shopping_list">Покупки</string>
     <string name="nav_profile">Профиль</string>

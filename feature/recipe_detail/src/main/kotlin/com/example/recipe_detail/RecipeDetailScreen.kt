@@ -15,7 +15,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -24,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import com.example.design.theme.*
 import com.example.design.R as DesignR
 import com.example.design.components.RecipeDetailPlaceholder
 import com.example.domain.model.Recipe
@@ -46,14 +46,14 @@ fun RecipeDetailScreen(
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
-        containerColor = Color.White,
+        containerColor = MaterialTheme.colorScheme.background,
         contentWindowInsets = WindowInsets(0, 0, 0, 0)
     ) { paddingValues ->
         Box(
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize()
-                .background(Color.White)
+                .background(MaterialTheme.colorScheme.background)
         ) {
             if (uiState.isLoading && uiState.recipe == null) {
                 RecipeDetailPlaceholder()
@@ -85,28 +85,29 @@ fun RecipeErrorState(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Icon(
-            painter = painterResource(id = DesignR.drawable.icon),
+            painter = painterResource(id = com.example.design.R.drawable.icon),
             contentDescription = null,
-            modifier = Modifier.size(dimensionResource(DesignR.dimen.placeholder_icon_size_extra_large)),
-            tint = Color.LightGray
+            modifier = Modifier.size(dimensionResource(com.example.design.R.dimen.placeholder_icon_size_extra_large)),
+            tint = MaterialTheme.colorScheme.onSurfaceVariant
         )
-        Spacer(modifier = Modifier.height(dimensionResource(DesignR.dimen.padding_large)))
+        Spacer(modifier = Modifier.height(dimensionResource(com.example.design.R.dimen.padding_large)))
         Text(
             text = stringResource(R.string.recipe_not_found),
             style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onSurface
         )
-        Spacer(modifier = Modifier.height(dimensionResource(DesignR.dimen.padding_medium)))
+        Spacer(modifier = Modifier.height(dimensionResource(com.example.design.R.dimen.padding_medium)))
         Text(
             text = stringResource(R.string.error_loading_recipe),
             style = MaterialTheme.typography.bodyMedium,
-            color = Color.Gray
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
-        Spacer(modifier = Modifier.height(dimensionResource(DesignR.dimen.padding_extra_large)))
+        Spacer(modifier = Modifier.height(dimensionResource(com.example.design.R.dimen.padding_extra_large)))
         Button(
             onClick = onRetryClick,
             modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(containerColor = colorResource(DesignR.color.primary_green))
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.tertiary)
         ) {
             Text(text = stringResource(R.string.retry))
         }
@@ -186,8 +187,8 @@ fun RecipeHeader(
                     Brush.verticalGradient(
                         colors = listOf(
                             Color.Transparent,
-                            colorResource(DesignR.color.gradient_end).copy(alpha = 0.5f),
-                            colorResource(DesignR.color.gradient_end)
+                            GradientEnd.copy(alpha = 0.5f),
+                            GradientEnd
                         ),
                         startY = 0f
                     )
@@ -207,14 +208,14 @@ fun RecipeHeader(
                     height = dimensionResource(R.dimen.recipe_detail_back_btn_height)
                 )
                 .background(
-                    colorResource(DesignR.color.white_65),
+                    LightWhite65,
                     RoundedCornerShape(dimensionResource(R.dimen.recipe_detail_back_btn_radius))
                 )
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                 contentDescription = stringResource(R.string.recipe_detail_back_desc),
-                tint = colorResource(DesignR.color.back_button_icon)
+                tint = LightBackButtonIcon
             )
         }
 
@@ -238,9 +239,9 @@ fun RecipeHeader(
                 style = MaterialTheme.typography.bodyMedium,
                 color = Color.White.copy(alpha = 0.8f)
             )
-            
+
             Spacer(modifier = Modifier.height(dimensionResource(DesignR.dimen.padding_large)))
-            
+
             ActionButtons(
                 onWantToCookClick = onWantToCookClick,
                 onToListClick = onToListClick
@@ -263,19 +264,19 @@ fun ActionButtons(
             modifier = Modifier
                 .weight(1f)
                 .height(dimensionResource(R.dimen.recipe_detail_action_btn_height)),
-            colors = ButtonDefaults.buttonColors(containerColor = colorResource(DesignR.color.secondary_purple)),
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary),
             shape = RoundedCornerShape(dimensionResource(R.dimen.recipe_detail_action_btn_radius)),
             contentPadding = PaddingValues(vertical = 0.dp)
         ) {
             Icon(
-                painter = painterResource(id = DesignR.drawable.icon),
+                painter = painterResource(id = com.example.design.R.drawable.icon),
                 contentDescription = null,
                 modifier = Modifier.size(dimensionResource(R.dimen.recipe_detail_icon_size))
             )
-            Spacer(Modifier.width(dimensionResource(DesignR.dimen.padding_medium)))
+            Spacer(Modifier.width(dimensionResource(com.example.design.R.dimen.padding_medium)))
             Text(
                 text = stringResource(R.string.recipe_detail_want_to_cook),
-                fontSize = dimensionResource(DesignR.dimen.text_size_action_button).value.sp
+                fontSize = dimensionResource(com.example.design.R.dimen.text_size_action_button).value.sp
             )
         }
         Button(
@@ -283,19 +284,19 @@ fun ActionButtons(
             modifier = Modifier
                 .weight(1f)
                 .height(dimensionResource(R.dimen.recipe_detail_action_btn_height)),
-            colors = ButtonDefaults.buttonColors(containerColor = colorResource(DesignR.color.primary_green)),
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.tertiary),
             shape = RoundedCornerShape(dimensionResource(R.dimen.recipe_detail_action_btn_radius)),
             contentPadding = PaddingValues(vertical = 0.dp)
         ) {
             Icon(
-                painter = painterResource(id = DesignR.drawable.shopping_cart),
+                painter = painterResource(id = com.example.design.R.drawable.shopping_cart),
                 contentDescription = null,
                 modifier = Modifier.size(dimensionResource(R.dimen.recipe_detail_icon_size))
             )
-            Spacer(Modifier.width(dimensionResource(DesignR.dimen.padding_medium)))
+            Spacer(Modifier.width(dimensionResource(com.example.design.R.dimen.padding_medium)))
             Text(
                 text = stringResource(R.string.recipe_detail_to_list),
-                fontSize = dimensionResource(DesignR.dimen.text_size_action_button).value.sp
+                fontSize = dimensionResource(com.example.design.R.dimen.text_size_action_button).value.sp
             )
         }
     }
@@ -304,12 +305,12 @@ fun ActionButtons(
 @Composable
 fun SectionTitle(title: String) {
     Surface(
-        color = colorResource(DesignR.color.section_bg),
+        color = MaterialTheme.colorScheme.surfaceVariant,
         modifier = Modifier
             .fillMaxWidth()
             .padding(
-                horizontal = dimensionResource(DesignR.dimen.padding_large),
-                vertical = dimensionResource(DesignR.dimen.padding_medium)
+                horizontal = dimensionResource(com.example.design.R.dimen.padding_large),
+                vertical = dimensionResource(com.example.design.R.dimen.padding_medium)
             )
             .height(dimensionResource(R.dimen.recipe_detail_section_title_height))
             .clip(RoundedCornerShape(dimensionResource(R.dimen.recipe_detail_section_title_radius)))
@@ -320,10 +321,10 @@ fun SectionTitle(title: String) {
         ) {
             Text(
                 text = title,
-                modifier = Modifier.padding(horizontal = dimensionResource(DesignR.dimen.padding_large)),
+                modifier = Modifier.padding(horizontal = dimensionResource(com.example.design.R.dimen.padding_large)),
                 style = MaterialTheme.typography.labelLarge,
                 fontWeight = FontWeight.Bold,
-                color = Color.DarkGray
+                color = MaterialTheme.colorScheme.onSurface
             )
         }
     }
@@ -348,7 +349,8 @@ fun IngredientItem(name: String, amount: String) {
         Text(
             text = "$name — $amount",
             style = MaterialTheme.typography.bodyMedium,
-            fontSize = dimensionResource(DesignR.dimen.text_size_normal).value.sp
+            fontSize = dimensionResource(com.example.design.R.dimen.text_size_normal).value.sp,
+            color = MaterialTheme.colorScheme.onSurface
         )
     }
 }

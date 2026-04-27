@@ -4,6 +4,7 @@
     <color name="primary_purple">#B351F4</color>
     <color name="secondary_purple">#A855F7</color>
     <color name="primary_green">#84CC16</color>
+    <color name="upload_photo_green">#87E638</color>
 
     <!-- Нейтральные цвета -->
     <color name="white">#FFFFFF</color>
@@ -26,6 +27,9 @@
 
     <!-- Состояния и градиенты -->
     <color name="error_red">#F44336</color>
+    <color name="avatar_bg">#F5F5F5</color>
+    <color name="avatar_icon">#9E9E9E</color>
+    <color name="stat_label_gray">#9E9E9E</color>
     <color name="gradient_start">#00000000</color>
     <color name="gradient_end">#CC000000</color>
 

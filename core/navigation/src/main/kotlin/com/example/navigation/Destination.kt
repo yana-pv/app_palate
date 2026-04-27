@@ -4,8 +4,6 @@ sealed class Destination(val route: String) {
     data object Startup : Destination("startup")
     data object Login : Destination("login")
     data object Register : Destination("register")
-    
-    // Bottom Navigation Destinations
     data object Home : Destination("home")
     data object Plan : Destination("plan")
     data object MyRecipes : Destination("my_recipes")
