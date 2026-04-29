@@ -20,6 +20,8 @@ val LightBackButtonIcon = Color(0xFF625B71)
 val LightCategoryUnselectedBg = Color(0xFFEAEAEA)
 val LightCategoryUnselectedText = Color(0xFF1D1B20)
 val LightWhite65 = Color(0xA6FFFFFF)
+val LightCheckedItemBg = Color(0xFFF2F2F2)
+val LightGrayBorder = Color(0xFFB3B3B3)
 
 
 val DarkBackground = Color(0xFF000000)

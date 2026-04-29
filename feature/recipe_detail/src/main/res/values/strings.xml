@@ -10,4 +10,10 @@
     <string name="retry">Retry</string>
     <string name="back_to_home">Back to Home</string>
     <string name="error_loading_recipe">Error loading recipe</string>
+    <string name="error_failed_to_add">Failed to add ingredients</string>
+    <string name="already_added_title">Ingredients already in list</string>
+    <string name="already_added_message">The ingredients for this recipe are already in your shopping list. Do you want to add them again?</string>
+    <string name="ingredients_added">Ingredients added to shopping list</string>
+    <string name="add_more">Add more</string>
+    <string name="cancel">Cancel</string>
 </resources>

@@ -37,10 +37,17 @@ fun RecipeDetailScreen(
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
 
-    LaunchedEffect(uiState.errorMessage) {
+    val successMessage = stringResource(R.string.ingredients_added)
+    val genericErrorMessage = stringResource(R.string.error_failed_to_add)
+
+    LaunchedEffect(uiState.errorMessage, uiState.successMessage) {
         uiState.errorMessage?.let {
-            snackbarHostState.showSnackbar(it)
+            snackbarHostState.showSnackbar(genericErrorMessage)
             viewModel.clearError()
+        }
+        uiState.successMessage?.let {
+            snackbarHostState.showSnackbar(successMessage)
+            viewModel.clearSuccess()
         }
     }
 
@@ -61,7 +68,8 @@ fun RecipeDetailScreen(
                 uiState.recipe?.let { recipe ->
                     RecipeDetailContent(
                         recipe = recipe,
-                        onBackClick = onBackClick
+                        onBackClick = onBackClick,
+                        onToListClick = { viewModel.addIngredientsToShoppingList() }
                     )
                 } ?: RecipeErrorState(
                     onBackClick = onBackClick,
@@ -69,6 +77,27 @@ fun RecipeDetailScreen(
                 )
             }
         }
+    }
+
+    if (uiState.showAlreadyAddedDialog) {
+        AlertDialog(
+            onDismissRequest = { viewModel.dismissAlreadyAddedDialog() },
+            title = { Text(stringResource(R.string.already_added_title)) },
+            text = { Text(stringResource(R.string.already_added_message)) },
+            confirmButton = {
+                TextButton(onClick = { 
+                    viewModel.addIngredientsToShoppingList(force = true)
+                    viewModel.dismissAlreadyAddedDialog()
+                }) {
+                    Text(stringResource(R.string.add_more))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { viewModel.dismissAlreadyAddedDialog() }) {
+                    Text(stringResource(R.string.cancel))
+                }
+            }
+        )
     }
 }
 
@@ -124,7 +153,8 @@ fun RecipeErrorState(
 @Composable
 fun RecipeDetailContent(
     recipe: Recipe,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onToListClick: () -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -137,7 +167,7 @@ fun RecipeDetailContent(
                 recipe = recipe,
                 onBackClick = onBackClick,
                 onWantToCookClick = { /* TODO */ },
-                onToListClick = { /* TODO */ }
+                onToListClick = onToListClick
             )
             Spacer(modifier = Modifier.height(dimensionResource(DesignR.dimen.padding_medium)))
         }

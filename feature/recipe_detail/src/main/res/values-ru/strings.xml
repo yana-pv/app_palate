@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Recipe Detail -->
     <string name="recipe_detail_want_to_cook">Хочу приготовить</string>
     <string name="recipe_detail_to_list">В список</string>
     <string name="recipe_detail_ingredients">ИНГРЕДИЕНТЫ</string>
@@ -10,4 +8,10 @@
     <string name="retry">Повторить</string>
     <string name="back_to_home">На главную</string>
     <string name="error_loading_recipe">Ошибка при загрузке рецепта</string>
+    <string name="error_failed_to_add">Не удалось добавить ингредиенты</string>
+    <string name="already_added_title">Ингредиенты уже в списке</string>
+    <string name="already_added_message">Ингредиенты этого рецепта уже есть в списке покупок. Хотите добавить их еще раз?</string>
+    <string name="ingredients_added">Ингредиенты добавлены в список</string>
+    <string name="add_more">Добавить еще</string>
+    <string name="cancel">Отмена</string>
 </resources>
