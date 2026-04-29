@@ -55,7 +55,7 @@ fun RecipeCard(
 
     Card(
         modifier = modifier
-            .padding(dimensionResource(R.dimen.padding_small))
+            .padding(dimensionResource(R.dimen.padding_extra_small))
             .height(dimensionResource(R.dimen.recipe_card_height))
             .shadow(
                 elevation = if (isPressed) dimensionResource(R.dimen.recipe_card_elevation_pressed) else dimensionResource(R.dimen.recipe_card_elevation_default),
@@ -68,12 +68,12 @@ fun RecipeCard(
             )
             .clickable(
                 interactionSource = interactionSource,
-                indication = null, 
+                indication = null,
                 onClick = onClick
             ),
         shape = RoundedCornerShape(dimensionResource(R.dimen.recipe_card_corner_radius)),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp) 
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,

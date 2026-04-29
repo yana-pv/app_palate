@@ -99,9 +99,7 @@ fun MainScreen(
                 }
             }
             composable(Destination.ShoppingList.route) { 
-                Box(modifier = Modifier.padding(paddingValues)) {
-                    ShoppingListScreen() 
-                }
+                ShoppingListScreen()
             }
             composable(Destination.Profile.route) { 
                 Box(modifier = Modifier.padding(paddingValues)) {

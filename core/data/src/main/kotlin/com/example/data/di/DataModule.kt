@@ -37,4 +37,10 @@ abstract class DataModule {
     abstract fun bindSettingsRepository(
         impl: com.example.data.repository.SettingsRepositoryImpl
     ): com.example.domain.repository.SettingsRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindShoppingListRepository(
+        impl: com.example.data.repository.ShoppingListRepositoryImpl
+    ): com.example.domain.repository.ShoppingListRepository
 }
