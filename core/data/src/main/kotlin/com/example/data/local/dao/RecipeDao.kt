@@ -17,8 +17,14 @@ interface RecipeDao {
     @Query("SELECT * FROM categories")
     fun getCategories(): Flow<List<CategoryEntity>>
 
+    @Query("SELECT * FROM recipe_previews WHERE id IN (:ids)")
+    suspend fun getPreviewsByIds(ids: List<String>): List<RecipePreviewEntity>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertRecipePreviews(previews: List<RecipePreviewEntity>): List<Long>
+
+    @Update
+    suspend fun updateRecipePreview(preview: RecipePreviewEntity): Int
 
     @Query("SELECT * FROM recipe_previews WHERE categoryName = :categoryName")
     fun getRecipesByCategory(categoryName: String): Flow<List<RecipePreviewEntity>>

@@ -7,7 +7,7 @@ import javax.inject.Inject
 class GetRecipeByIdUseCase @Inject constructor(
     private val repository: RecipeRepository
 ) {
-    suspend operator fun invoke(id: String): Recipe? {
-        return repository.getRecipeById(id)
+    suspend operator fun invoke(id: String, language: String = "en"): Recipe? {
+        return repository.getRecipeById(id, language)
     }
 }

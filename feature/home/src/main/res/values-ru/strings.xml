@@ -8,6 +8,7 @@
     <string name="filters_title">Фильтры</string>
     <string name="categories_title">Категории</string>
     <string name="all_categories">Все</string>
+    <string name="all_cuisines">Все</string>
     <string name="cuisine_title">Кухня</string>
     <string name="reset_button">Сбросить</string>
     <string name="apply_button">Применить</string>

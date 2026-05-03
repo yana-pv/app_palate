@@ -1,8 +1,6 @@
 package com.example.domain.model
 
-data class Category(
-    val id: String,
+data class Cuisine(
     val name: String,
-    val imageUrl: String,
     val originalName: String
 )

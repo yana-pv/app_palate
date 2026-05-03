@@ -41,6 +41,7 @@ dependencies {
     implementation(project(":core:network"))
     implementation(project(":core:navigation"))
     implementation(project(":core:utils"))
+    implementation(project(":core:di"))
     
     implementation(project(":feature:home"))
     implementation(project(":feature:recipe_detail"))

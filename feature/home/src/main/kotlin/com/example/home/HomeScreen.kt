@@ -33,6 +33,7 @@ import com.example.design.components.RecipeCardPlaceholder
 import com.example.domain.model.Category
 import com.example.home.viewmodel.HomeViewModel
 import com.example.design.theme.*
+import com.example.domain.model.Cuisine
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -66,10 +67,7 @@ fun HomeScreen(
             )
         },
         containerColor = MaterialTheme.colorScheme.background,
-        contentWindowInsets = WindowInsets(0, 0, 0, 0),
-        bottomBar = {
-            Spacer(Modifier.navigationBarsPadding())
-        }
+        contentWindowInsets = WindowInsets(0, 0, 0, 0)
     ) { paddingValues ->
         HomeContent(
             paddingValues = paddingValues,
@@ -252,12 +250,14 @@ fun HomeContent(
             LazyVerticalGrid(
                 columns = columns,
                 contentPadding = PaddingValues(
-                    horizontal = dimensionResource(R.dimen.search_bar_corner_radius),
-                    vertical = dimensionResource(com.example.design.R.dimen.padding_small)
+                    start = dimensionResource(R.dimen.search_bar_corner_radius),
+                    end = dimensionResource(R.dimen.search_bar_corner_radius),
+                    top = dimensionResource(com.example.design.R.dimen.padding_extra_small),
+                    bottom = dimensionResource(com.example.design.R.dimen.nav_bar_height) + dimensionResource(com.example.design.R.dimen.padding_extra_large) * 2
                 ),
                 modifier = Modifier.fillMaxSize(),
-                horizontalArrangement = Arrangement.spacedBy(dimensionResource(com.example.design.R.dimen.padding_small)),
-                verticalArrangement = Arrangement.spacedBy(dimensionResource(com.example.design.R.dimen.padding_small))
+                horizontalArrangement = Arrangement.spacedBy(dimensionResource(com.example.design.R.dimen.padding_extra_small)),
+                verticalArrangement = Arrangement.spacedBy(dimensionResource(com.example.design.R.dimen.padding_extra_small))
             ) {
                 if (state.isLoading && state.recipes.isEmpty()) {
                     items(12) { RecipeCardPlaceholder() }
@@ -341,7 +341,7 @@ fun HomeEmptyState(
 @Composable
 fun FilterBottomSheetContent(
     categories: List<Category>,
-    cuisines: List<String>,
+    cuisines: List<Cuisine>,
     selectedCategoryIds: Set<String>,
     selectedCuisines: Set<String>,
     onCategoryClick: (String) -> Unit,
@@ -397,16 +397,16 @@ fun FilterBottomSheetContent(
                 verticalArrangement = Arrangement.spacedBy(dimensionResource(com.example.design.R.dimen.padding_medium))
             ) {
                 CategoryChip(
-                    name = stringResource(R.string.all_categories),
+                    name = stringResource(R.string.all_cuisines),
                     isSelected = selectedCuisines.isEmpty(),
-                    onClick = { onCuisineClick("null") },
+                    onClick = { onCuisineClick("all") },
                     isDarkMode = isDarkMode
                 )
                 cuisines.forEach { cuisine ->
                     CategoryChip(
-                        name = cuisine,
-                        isSelected = selectedCuisines.contains(cuisine),
-                        onClick = { onCuisineClick(cuisine) },
+                        name = cuisine.name,
+                        isSelected = selectedCuisines.contains(cuisine.originalName),
+                        onClick = { onCuisineClick(cuisine.originalName) },
                         isDarkMode = isDarkMode
                     )
                 }

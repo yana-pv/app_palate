@@ -8,6 +8,7 @@
     <string name="filters_title">Filters</string>
     <string name="categories_title">Categories</string>
     <string name="all_categories">All</string>
+    <string name="all_cuisines">All</string>
     <string name="cuisine_title">Cuisine</string>
     <string name="reset_button">Reset</string>
     <string name="apply_button">Apply</string>

@@ -14,9 +14,11 @@ import com.example.data.local.entity.RecipePreviewEntity
         RecipePreviewEntity::class,
         RecipeEntity::class
     ],
-    version = 1,
+    version = 3,
     exportSchema = false
 )
+
+
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun recipeDao(): RecipeDao

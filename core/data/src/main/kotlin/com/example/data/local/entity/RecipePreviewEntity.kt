@@ -8,22 +8,29 @@ import com.example.domain.model.RecipePreview
 data class RecipePreviewEntity(
     @PrimaryKey val id: String,
     val name: String,
+    val originalName: String,
     val imageUrl: String,
     val categoryName: String,
+    val categoryId: String = "",
     val cuisine: String? = null
 )
 
 fun RecipePreviewEntity.toDomain() = RecipePreview(
     id = id,
     name = name,
+    originalName = originalName,
     imageUrl = imageUrl,
-    categoryName = categoryName
+    categoryName = categoryName,
+    categoryId = categoryId,
+    cuisine = cuisine ?: ""
 )
 
 fun RecipePreview.toEntity(cuisine: String? = null) = RecipePreviewEntity(
     id = id,
     name = name,
+    originalName = originalName,
     imageUrl = imageUrl,
     categoryName = categoryName,
-    cuisine = cuisine
+    categoryId = categoryId,
+    cuisine = cuisine ?: this.cuisine
 )

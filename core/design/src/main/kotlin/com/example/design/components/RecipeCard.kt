@@ -55,7 +55,6 @@ fun RecipeCard(
 
     Card(
         modifier = modifier
-            .padding(dimensionResource(R.dimen.padding_extra_small))
             .height(dimensionResource(R.dimen.recipe_card_height))
             .shadow(
                 elevation = if (isPressed) dimensionResource(R.dimen.recipe_card_elevation_pressed) else dimensionResource(R.dimen.recipe_card_elevation_default),
@@ -77,11 +76,11 @@ fun RecipeCard(
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxWidth().padding(top = dimensionResource(R.dimen.padding_medium))
+            modifier = Modifier.fillMaxWidth().padding(top = dimensionResource(R.dimen.padding_small))
         ) {
             Box(
                 modifier = Modifier
-                    .padding(horizontal = dimensionResource(R.dimen.padding_medium))
+                    .padding(horizontal = dimensionResource(R.dimen.padding_small))
                     .fillMaxWidth()
                     .aspectRatio(1f)
                     .clip(RoundedCornerShape(dimensionResource(R.dimen.recipe_card_image_corner_radius)))
@@ -113,7 +112,7 @@ fun RecipeCard(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = dimensionResource(R.dimen.padding_medium), vertical = dimensionResource(R.dimen.padding_small))
+                    .padding(horizontal = dimensionResource(R.dimen.padding_small), vertical = dimensionResource(R.dimen.padding_extra_small))
             ) {
                 Text(
                     text = name,
