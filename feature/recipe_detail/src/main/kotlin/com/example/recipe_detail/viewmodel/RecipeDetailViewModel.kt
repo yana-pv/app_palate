@@ -3,6 +3,9 @@ package com.example.recipe_detail.viewmodel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.domain.repository.AuthRepository
+import com.example.domain.repository.SettingsRepository
+import com.example.domain.repository.ShoppingListRepository
 import com.example.domain.usecase.GetRecipeByIdUseCase
 import com.example.recipe_detail.RecipeDetailUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,8 +19,9 @@ import javax.inject.Inject
 @HiltViewModel
 class RecipeDetailViewModel @Inject constructor(
     private val getRecipeByIdUseCase: GetRecipeByIdUseCase,
-    private val shoppingRepository: com.example.domain.repository.ShoppingListRepository,
-    private val authRepository: com.example.domain.repository.AuthRepository,
+    private val shoppingRepository: ShoppingListRepository,
+    private val authRepository: AuthRepository,
+    private val settingsRepository: SettingsRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -27,14 +31,22 @@ class RecipeDetailViewModel @Inject constructor(
     val uiState: StateFlow<RecipeDetailUiState> = _uiState.asStateFlow()
 
     init {
-        loadRecipe()
+        observeSettings()
     }
 
-    fun loadRecipe() {
+    private fun observeSettings() {
+        viewModelScope.launch {
+            settingsRepository.getLanguage().collect { language ->
+                loadRecipe(language)
+            }
+        }
+    }
+
+    fun loadRecipe(language: String = "en") {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
             try {
-                val recipe = getRecipeByIdUseCase(recipeId)
+                val recipe = getRecipeByIdUseCase(recipeId, language)
                 if (recipe != null) {
                     _uiState.update { it.copy(isLoading = false, recipe = recipe) }
                 } else {
@@ -102,7 +114,6 @@ class RecipeDetailViewModel @Inject constructor(
         val trimmed = amountStr.trim()
         if (trimmed.isEmpty()) return Pair("", "")
 
-        // Regex to separate numeric part from the rest (unit)
         val regex = Regex("""^([\d\s./,]+)(.*)$""")
         val matchResult = regex.find(trimmed)
 
@@ -110,7 +121,6 @@ class RecipeDetailViewModel @Inject constructor(
             val amountPart = matchResult.groupValues[1].trim()
             val unitPart = matchResult.groupValues[2].trim()
 
-            // Handle fractions like "1/2"
             val numericAmount = if (amountPart.contains("/")) {
                 try {
                     val parts = amountPart.split("/")

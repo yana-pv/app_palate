@@ -11,16 +11,24 @@ fun CategoryDto.toDomain(): Category {
     return Category(
         id = this.id,
         name = this.name,
-        imageUrl = this.imageUrl
+        imageUrl = this.imageUrl,
+        originalName = this.name
     )
 }
 
-fun MealDto.toDomainPreview(): RecipePreview {
+fun MealDto.toDomainPreview(
+    categoryName: String? = null,
+    categoryId: String? = null,
+    cuisine: String? = null
+): RecipePreview {
     return RecipePreview(
         id = this.idMeal,
         name = this.name,
+        originalName = this.name,
         imageUrl = this.imageUrl,
-        categoryName = this.category ?: ""
+        categoryName = categoryName ?: this.category ?: "",
+        categoryId = categoryId ?: "",
+        cuisine = cuisine ?: this.area ?: ""
     )
 }
 

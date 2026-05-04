@@ -83,7 +83,7 @@ fun MainScreen(
         NavHost(
             navController = navController,
             startDestination = Destination.Home.route,
-            modifier = Modifier
+            modifier = Modifier.padding(paddingValues)
         ) {
             composable(Destination.Home.route) {
                 HomeScreen(onRecipeClick = onRecipeClick)
@@ -102,9 +102,7 @@ fun MainScreen(
                 ShoppingListScreen()
             }
             composable(Destination.Profile.route) { 
-                Box(modifier = Modifier.padding(paddingValues)) {
-                    ProfileScreen(onLogout = onLogout)
-                }
+                ProfileScreen(onLogout = onLogout)
             }
         }
     }

@@ -5,11 +5,15 @@ import androidx.lifecycle.viewModelScope
 import com.example.domain.model.Category
 import com.example.domain.model.RecipePreview
 import com.example.domain.usecase.GetHomeDataUseCase
+import com.example.domain.usecase.GetRecipesByCuisineUseCase
+import com.example.domain.repository.SettingsRepository
 import com.example.home.HomeUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -17,7 +21,8 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val getHomeDataUseCase: GetHomeDataUseCase,
-    private val settingsRepository: com.example.domain.repository.SettingsRepository
+    private val getRecipesByCuisineUseCase: GetRecipesByCuisineUseCase,
+    private val settingsRepository: SettingsRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState(isLoading = true))
@@ -25,10 +30,13 @@ class HomeViewModel @Inject constructor(
 
     private var allRecipes: List<RecipePreview> = emptyList()
     private var allCategories: List<Category> = emptyList()
-    private val allCategory = Category(id = "all", name = "Все", imageUrl = "")
+    
+    private val allCategory = Category(id = "all", name = "", imageUrl = "", originalName = "All")
+
+    private var settingsJob: Job? = null
+    private var loadingJob: Job? = null
 
     init {
-        loadHomeData()
         observeSettings()
     }
 
@@ -38,32 +46,52 @@ class HomeViewModel @Inject constructor(
                 _uiState.update { it.copy(isDarkMode = isDark) }
             }
         }
+        
+        settingsJob?.cancel()
+        settingsJob = viewModelScope.launch {
+            settingsRepository.getLanguage().collect { language ->
+                loadHomeData(language)
+            }
+        }
     }
 
-    fun loadHomeData() {
-        viewModelScope.launch {
+    fun loadHomeData(language: String = "en") {
+        loadingJob?.cancel()
+        loadingJob = viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
             try {
-                val homeData = getHomeDataUseCase()
-                allCategories = listOf(allCategory) + homeData.categories
-                allRecipes = homeData.recipesByCategory.values.flatten()
-                
-                _uiState.update { 
-                    it.copy(
-                        isLoading = false,
-                        categories = allCategories,
-                        cuisines = homeData.cuisines,
-                        recipes = allRecipes,
-                        errorMessage = if (allRecipes.isEmpty()) "No data available" else null
-                    )
+                getHomeDataUseCase(language).collect { homeData ->
+                    allCategories = listOf(allCategory) + homeData.categories
+                    
+                    val newRecipes = homeData.recipesByCategory.values.flatten()
+                    if (newRecipes.isNotEmpty() || homeData.categories.isEmpty()) {
+                        val currentRecipesMap = allRecipes.associateBy { it.id }.toMutableMap()
+                        newRecipes.forEach { newRecipe ->
+                            val existing = currentRecipesMap[newRecipe.id]
+                            currentRecipesMap[newRecipe.id] = if (existing != null) {
+                                newRecipe.copy(cuisine = newRecipe.cuisine.ifEmpty { existing.cuisine })
+                            } else newRecipe
+                        }
+                        allRecipes = currentRecipesMap.values.toList()
+                        
+                        _uiState.update { state ->
+                            val isStillLoading = homeData.recipesByCategory.isEmpty() || 
+                                (homeData.recipesByCategory.size < homeData.categories.take(8).size && homeData.categories.isNotEmpty())
+                            
+                            state.copy(
+                                isLoading = isStillLoading && allRecipes.isEmpty(),
+                                categories = allCategories,
+                                cuisines = homeData.cuisines,
+                                errorMessage = null
+                            )
+                        }
+                        applyFilters()
+                    } else if (homeData.categories.isNotEmpty() && allRecipes.isEmpty()) {
+                         _uiState.update { it.copy(categories = allCategories, cuisines = homeData.cuisines) }
+                    }
                 }
             } catch (e: Exception) {
-                _uiState.update {
-                    it.copy(
-                        isLoading = false, 
-                        errorMessage = "Network error. Showing cached data." 
-                    )
-                }
+                _uiState.update { it.copy(isLoading = false) }
             }
         }
     }
@@ -81,10 +109,8 @@ class HomeViewModel @Inject constructor(
                 currentSelected.add("all")
             } else {
                 currentSelected.remove("all")
-                if (currentSelected.contains(categoryId)) {
+                if (!currentSelected.add(categoryId)) {
                     currentSelected.remove(categoryId)
-                } else {
-                    currentSelected.add(categoryId)
                 }
                 if (currentSelected.isEmpty()) currentSelected.add("all")
             }
@@ -96,36 +122,55 @@ class HomeViewModel @Inject constructor(
     fun onCuisineSelected(cuisine: String) {
         _uiState.update { state ->
             val currentSelected = state.selectedCuisines.toMutableSet()
-            if (cuisine == "null") {
+            if (cuisine in listOf("all", "null", "Any", "Все")) {
                 currentSelected.clear()
             } else {
-                if (currentSelected.contains(cuisine)) {
+                if (!currentSelected.add(cuisine)) {
                     currentSelected.remove(cuisine)
-                } else {
-                    currentSelected.add(cuisine)
                 }
             }
             state.copy(selectedCuisines = currentSelected)
+        }
+        
+        val selectedCuisines = _uiState.value.selectedCuisines
+        if (selectedCuisines.isNotEmpty()) {
+            viewModelScope.launch {
+                val language = settingsRepository.getLanguage().first()
+                selectedCuisines.forEach { cuisineName ->
+                    try {
+                        val newRecipes = getRecipesByCuisineUseCase(cuisineName, language)
+                        val currentRecipesMap = allRecipes.associateBy { it.id }.toMutableMap()
+                        
+                        newRecipes.forEach { newRecipe ->
+                            val existing = currentRecipesMap[newRecipe.id]
+                            currentRecipesMap[newRecipe.id] = if (existing != null) {
+                                existing.copy(cuisine = cuisineName)
+                            } else newRecipe.copy(cuisine = cuisineName)
+                        }
+                        
+                        allRecipes = currentRecipesMap.values.toList()
+                        applyFilters()
+                    } catch (e: Exception) { }
+                }
+            }
         }
         applyFilters()
     }
 
     private fun applyFilters() {
         val state = _uiState.value
-        val selectedCategoryNames = allCategories
-            .filter { it.id in state.selectedCategoryIds && it.id != "all" }
-            .map { it.name.lowercase() }
-        
         val filteredRecipes = allRecipes.filter { recipe ->
-            val matchesQuery = recipe.name.contains(state.searchQuery, ignoreCase = true)
-            val matchesCategory = state.selectedCategoryIds.contains("all") || 
-                                 selectedCategoryNames.any { it == recipe.categoryName.lowercase() }
-            val matchesCuisine = state.selectedCuisines.isEmpty() || 
-                                state.selectedCuisines.any { cuisine -> recipe.name.contains(cuisine, ignoreCase = true) }
+            val matchesQuery = recipe.name.contains(state.searchQuery, ignoreCase = true) ||
+                recipe.originalName.contains(state.searchQuery, ignoreCase = true)
+            
+            val matchesCategory = state.selectedCategoryIds.contains("all") ||
+                state.selectedCategoryIds.contains(recipe.categoryId)
+
+            val matchesCuisine = state.selectedCuisines.isEmpty() ||
+                state.selectedCuisines.contains(recipe.cuisine)
             
             matchesQuery && matchesCategory && matchesCuisine
         }
-        
         _uiState.update { it.copy(recipes = filteredRecipes) }
     }
 
@@ -142,21 +187,15 @@ class HomeViewModel @Inject constructor(
                 isFilterSheetVisible = false
             ) 
         }
-        if (allRecipes.isEmpty()) {
-            loadHomeData()
-        } else {
-            applyFilters()
-        }
+        if (allRecipes.isEmpty()) loadHomeData() else applyFilters()
     }
 
     fun toggleSaveRecipe(recipeId: String) {
-        val updatedRecipes = _uiState.value.recipes.map {
-            if (it.id == recipeId) it.copy(isSaved = !it.isSaved) else it
+        val toggle: (RecipePreview) -> RecipePreview = { 
+            if (it.id == recipeId) it.copy(isSaved = !it.isSaved) else it 
         }
-        allRecipes = allRecipes.map {
-            if (it.id == recipeId) it.copy(isSaved = !it.isSaved) else it
-        }
-        _uiState.update { it.copy(recipes = updatedRecipes) }
+        allRecipes = allRecipes.map(toggle)
+        _uiState.update { it.copy(recipes = it.recipes.map(toggle)) }
     }
 
     fun clearError() {

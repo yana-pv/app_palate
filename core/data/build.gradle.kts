@@ -12,6 +12,7 @@ dependencies {
     implementation(project(":core:domain"))
     implementation(project(":core:utils"))
     implementation(project(":core:network"))
+    implementation(project(":core:translation"))
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth.ktx)
