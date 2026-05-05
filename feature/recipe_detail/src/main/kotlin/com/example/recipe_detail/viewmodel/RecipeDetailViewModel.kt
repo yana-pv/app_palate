@@ -3,6 +3,8 @@ package com.example.recipe_detail.viewmodel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.domain.repository.UserRecipeRepository
+import com.example.domain.repository.UserRepository
 import com.example.domain.usecase.GetRecipeByIdUseCase
 import com.example.recipe_detail.RecipeDetailUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,8 +18,13 @@ import javax.inject.Inject
 @HiltViewModel
 class RecipeDetailViewModel @Inject constructor(
     private val getRecipeByIdUseCase: GetRecipeByIdUseCase,
+    private val userRecipeRepository: UserRecipeRepository,
+    private val userRepository: UserRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
+
+    private val userId: String
+        get() = userRepository.getCurrentUser()?.id ?: ""
 
     private val recipeId: String = checkNotNull(savedStateHandle["recipeId"])
 
@@ -51,5 +58,19 @@ class RecipeDetailViewModel @Inject constructor(
     
     fun clearError() {
         _uiState.update { it.copy(errorMessage = null) }
+    }
+    fun addToWantToCook(recipeId: String) {
+        viewModelScope.launch {
+            val recipe = _uiState.value.recipe ?: return@launch
+            userRecipeRepository.addToWantToCook(userId, recipe)
+        }
+    }
+
+    fun addToShoppingList(recipeId: String) {
+        viewModelScope.launch {
+            val recipe = _uiState.value.recipe ?: return@launch
+            // Здесь будет вызов репозитория для списка покупок
+            // userShoppingRepository.addToList(userId, recipe)
+        }
     }
 }

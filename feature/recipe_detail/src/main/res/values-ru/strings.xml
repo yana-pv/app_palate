@@ -10,4 +10,10 @@
     <string name="retry">Повторить</string>
     <string name="back_to_home">На главную</string>
     <string name="error_loading_recipe">Ошибка при загрузке рецепта</string>
+
+    <!-- Cooked Note Screen -->
+    <string name="my_notes_section">Мои заметки</string>
+    <string name="note_placeholder">Ваши заметки и изменения рецепта</string>
+    <string name="save_button">Сохранить</string>
+    <string name="your_rating">Ваша оценка</string>
 </resources>

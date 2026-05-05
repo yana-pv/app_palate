@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="create_recipe_title">Create recipe</string>
+    <string name="save">Save</string>
+    <string name="add_photo">Add photo</string>
+    <string name="recipe_name_hint">Recipe name</string>
+    <string name="cuisine_hint">Cuisine</string>
+    <string name="category_hint">Category</string>
+    <string name="ingredients_title">INGREDIENTS</string>
+    <string name="ingredient_name_hint">Name</string>
+    <string name="ingredient_amount_hint">Amount</string>
+    <string name="ingredient_unit_hint">Unit</string>
+    <string name="add_ingredient">Add ingredient</string>
+    <string name="preparation_title">PREPARATION</string>
+    <string name="preparation_hint">Enter cooking instructions. Each step on a new line</string>
+
+    <string name="error_name_required">Recipe name is required</string>
+    <string name="error_ingredients_empty">Add at least one ingredient</string>
+    <string name="error_instructions_empty">Enter cooking instructions</string>
+
+    <string name="recipe_saved">Recipe saved</string>
+</resources>

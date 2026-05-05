@@ -10,4 +10,10 @@
     <string name="retry">Retry</string>
     <string name="back_to_home">Back to Home</string>
     <string name="error_loading_recipe">Error loading recipe</string>
+
+    <!-- Cooked Note Screen -->
+    <string name="my_notes_section">My notes</string>
+    <string name="note_placeholder">Your notes and recipe changes</string>
+    <string name="save_button">Save</string>
+    <string name="your_rating">Your rating</string>
 </resources>

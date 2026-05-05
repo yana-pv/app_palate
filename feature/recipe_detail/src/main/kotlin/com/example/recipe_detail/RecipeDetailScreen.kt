@@ -61,7 +61,9 @@ fun RecipeDetailScreen(
                 uiState.recipe?.let { recipe ->
                     RecipeDetailContent(
                         recipe = recipe,
-                        onBackClick = onBackClick
+                        onBackClick = onBackClick,
+                        onWantToCookClick = { viewModel.addToWantToCook(recipe.id) },
+                        onToListClick = { viewModel.addToShoppingList(recipe.id) }
                     )
                 } ?: RecipeErrorState(
                     onBackClick = onBackClick,
@@ -124,7 +126,9 @@ fun RecipeErrorState(
 @Composable
 fun RecipeDetailContent(
     recipe: Recipe,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onWantToCookClick: () -> Unit,
+    onToListClick: () -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -136,8 +140,8 @@ fun RecipeDetailContent(
             RecipeHeader(
                 recipe = recipe,
                 onBackClick = onBackClick,
-                onWantToCookClick = { /* TODO */ },
-                onToListClick = { /* TODO */ }
+                onWantToCookClick = onWantToCookClick,
+                onToListClick = onToListClick
             )
             Spacer(modifier = Modifier.height(dimensionResource(DesignR.dimen.padding_medium)))
         }

@@ -1,8 +1,8 @@
-com.example.navigation-pngs-0 D:\Project_Tbank\app_palate\core\navigation\build\generated\res\pngs\debug
-com.example.navigation-updated_navigation_xml-1 D:\Project_Tbank\app_palate\core\navigation\build\generated\updated_navigation_xml\debug
-com.example.navigation-mergeDebugResources-2 D:\Project_Tbank\app_palate\core\navigation\build\intermediates\incremental\debug\mergeDebugResources\merged.dir
-com.example.navigation-mergeDebugResources-3 D:\Project_Tbank\app_palate\core\navigation\build\intermediates\incremental\debug\mergeDebugResources\stripped.dir
-com.example.navigation-debug-4 D:\Project_Tbank\app_palate\core\navigation\build\intermediates\merged_res\debug\mergeDebugResources
-com.example.navigation-debug-5 D:\Project_Tbank\app_palate\core\navigation\build\intermediates\packaged_res\debug\packageDebugResources
-com.example.navigation-debug-6 D:\Project_Tbank\app_palate\core\navigation\src\debug\res
-com.example.navigation-main-7 D:\Project_Tbank\app_palate\core\navigation\src\main\res
+com.example.navigation-pngs-0 C:\Projects\Palate\core\navigation\build\generated\res\pngs\debug
+com.example.navigation-updated_navigation_xml-1 C:\Projects\Palate\core\navigation\build\generated\updated_navigation_xml\debug
+com.example.navigation-mergeDebugResources-2 C:\Projects\Palate\core\navigation\build\intermediates\incremental\debug\mergeDebugResources\merged.dir
+com.example.navigation-mergeDebugResources-3 C:\Projects\Palate\core\navigation\build\intermediates\incremental\debug\mergeDebugResources\stripped.dir
+com.example.navigation-debug-4 C:\Projects\Palate\core\navigation\build\intermediates\merged_res\debug\mergeDebugResources
+com.example.navigation-debug-5 C:\Projects\Palate\core\navigation\build\intermediates\packaged_res\debug\packageDebugResources
+com.example.navigation-debug-6 C:\Projects\Palate\core\navigation\src\debug\res
+com.example.navigation-main-7 C:\Projects\Palate\core\navigation\src\main\res

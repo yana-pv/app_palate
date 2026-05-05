@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="create_recipe_title">Создать рецепт</string>
+    <string name="save">Сохранить</string>
+    <string name="add_photo">Добавить фото</string>
+    <string name="recipe_name_hint">Название рецепта</string>
+    <string name="cuisine_hint">Кухня</string>
+    <string name="category_hint">Категория</string>
+    <string name="ingredients_title">ИНГРЕДИЕНТЫ</string>
+    <string name="ingredient_name_hint">Название</string>
+    <string name="ingredient_amount_hint">Кол-во</string>
+    <string name="ingredient_unit_hint">Ед.</string>
+    <string name="add_ingredient">Добавить ингредиент</string>
+    <string name="preparation_title">ПРИГОТОВЛЕНИЕ</string>
+    <string name="preparation_hint">Введите инструкции приготовления. Каждый шаг с новой строки</string>
+
+    <!-- Ошибки валидации -->
+    <string name="error_name_required">Введите название рецепта</string>
+    <string name="error_ingredients_empty">Добавьте хотя бы один ингредиент</string>
+    <string name="error_instructions_empty">Введите инструкцию приготовления</string>
+
+    <!-- Успех -->
+    <string name="recipe_saved">Рецепт сохранён</string>
+</resources>
