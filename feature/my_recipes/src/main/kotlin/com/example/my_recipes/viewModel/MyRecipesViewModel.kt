@@ -68,7 +68,7 @@ class MyRecipesViewModel @Inject constructor(
         viewModelScope.launch {
             val recipe = _uiState.value.wantToCook.find { it.id == recipeId }
             if (recipe != null) {
-                addToCookedUseCase(userId, recipe, 0, "", null)
+                addToCookedUseCase(userId, recipe, 5, "", null)
                 removeFromWantToCookUseCase(userId, recipeId)
             }
         }
@@ -103,8 +103,7 @@ class MyRecipesViewModel @Inject constructor(
 
     fun moveUserRecipeToCooked(recipe: UserRecipe) {
         viewModelScope.launch {
-            addUserRecipeToCookedUseCase(userId, recipe, 0, "", null)
-            // Обновить список
+            addUserRecipeToCookedUseCase(userId, recipe, 5, "", null)
         }
     }
 

@@ -20,9 +20,10 @@
     <string name="cancel">Cancel</string>
 
     <!-- Empty states -->
-    <string name="empty_want_to_cook">No recipes in "Want to cook" list</string>
+    <string name="empty_want_to_cook">No recipes in \"Want to cook\" list</string>
     <string name="empty_cooked">No cooked recipes yet</string>
     <string name="empty_my_recipes">No custom recipes yet</string>
+    <string name="add_recipe_btn">Add recipe</string>
 
     <!-- Notifications -->
     <string name="recipe_moved_to_cooked">Cooked</string>

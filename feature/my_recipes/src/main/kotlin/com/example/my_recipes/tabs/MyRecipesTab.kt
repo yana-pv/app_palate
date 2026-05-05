@@ -59,7 +59,6 @@ fun MyRecipesTab(
             }
         }
 
-        // Зелёная кнопка "+"
         FloatingActionButton(
             onClick = onAddClick,
             modifier = Modifier

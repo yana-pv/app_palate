@@ -1,19 +1,25 @@
 package com.example.my_recipes.components
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -21,20 +27,25 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.example.design.theme.PalateColors
+import com.example.design.theme.ErrorRed
+import com.example.design.theme.PrimaryGreen
 import com.example.my_recipes.R
-
+import com.example.design.R as DesignR
 
 @Composable
 fun WantToCookCard(
@@ -48,16 +59,24 @@ fun WantToCookCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .height(123.dp)
+            .height(110.dp)
             .border(
-                width = 1.dp,
-                color = Color(0xFFB3B3B3),
-                shape = RoundedCornerShape(10.dp)
+                width = dimensionResource(DesignR.dimen.recipe_card_border_width),
+                color = if (isPressed) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.outline,
+                shape = RoundedCornerShape(dimensionResource(DesignR.dimen.recipe_card_corner_radius))
+            )
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null,
+                onClick = onClick
             ),
-        shape = RoundedCornerShape(10.dp),
+        shape = RoundedCornerShape(dimensionResource(DesignR.dimen.recipe_card_corner_radius)),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
@@ -66,91 +85,87 @@ fun WantToCookCard(
         Row(
             modifier = Modifier
                 .fillMaxSize()
-                .clickable {
-                    Log.d("CLICK_DEBUG", "Card clicked for ID: $id")
-                    onClick()
-                }
-                .padding(6.dp, 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                .padding(dimensionResource(DesignR.dimen.padding_medium)),
+            horizontalArrangement = Arrangement.spacedBy(dimensionResource(DesignR.dimen.padding_medium))
         ) {
-            // Картинка слева
             Box(
                 modifier = Modifier
-                    .size(107.dp, 107.dp)
-                    .clip(RoundedCornerShape(10.dp))
+                    .size(94.dp)
+                    .clip(RoundedCornerShape(dimensionResource(DesignR.dimen.recipe_card_image_corner_radius)))
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
             ) {
                 AsyncImage(
                     model = imageUrl,
                     contentDescription = name,
                     modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
+                    contentScale = ContentScale.Crop,
+                    placeholder = painterResource(DesignR.drawable.ic_photo)
                 )
             }
 
-            // Контент справа
             Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxSize(),
-                verticalArrangement = Arrangement.SpaceBetween
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(2.dp)
             ) {
-                // Название
                 Text(
                     text = name,
-                    style = MaterialTheme.typography.titleMedium,
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
+                    ),
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    fontSize = 16.sp
+                    overflow = TextOverflow.Ellipsis
                 )
 
-                // Категория
                 Text(
                     text = category,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color(0xFFB3B3B3),
-                    fontSize = 14.sp
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        fontSize = 14.sp
+                    ),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
-                // Кнопка "Приготовлено" зелёная
+                Spacer(modifier = Modifier.weight(1f))
+
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Зелёная кнопка "Приготовлено" с галочкой
-                    Row(
+                    Button(
+                        onClick = onCookedClick,
                         modifier = Modifier
-                            .height(35.dp)
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(PalateColors.GreenPrimary)
-                            .clickable { onCookedClick() }
-                            .padding(horizontal = 12.dp, vertical = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            .height(36.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = PrimaryGreen
+                        ),
+                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 0.dp),
+                        shape = RoundedCornerShape(8.dp)
                     ) {
                         Icon(
-                            painter = painterResource(com.example.design.R.drawable.ic_check),
+                            painter = painterResource(DesignR.drawable.ic_check),
                             contentDescription = null,
                             tint = Color.White,
-                            modifier = Modifier.size(18.dp)
+                            modifier = Modifier.size(16.dp)
                         )
+                        Spacer(Modifier.width(6.dp))
                         Text(
                             text = stringResource(R.string.move_to_cooked),
-                            fontSize = 14.sp,
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Medium,
                             color = Color.White
                         )
                     }
 
-                    // Кнопка удаления
                     IconButton(
                         onClick = onDeleteClick,
-                        modifier = Modifier.size(32.dp)
+                        modifier = Modifier.size(28.dp)
                     ) {
                         Icon(
-                            painter = painterResource(com.example.design.R.drawable.ic_delete),
+                            painter = painterResource(DesignR.drawable.ic_delete),
                             contentDescription = stringResource(R.string.delete_recipe),
-                            tint = com.example.design.theme.ErrorRed,
-                            modifier = Modifier.size(24.dp)
+                            tint = ErrorRed,
+                            modifier = Modifier.size(18.dp)
                         )
                     }
                 }

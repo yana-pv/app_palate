@@ -20,9 +20,10 @@
     <string name="cancel">Отмена</string>
 
     <!-- Пустые состояния -->
-    <string name="empty_want_to_cook">Нет рецептов в списке "Хочу приготовить"</string>
-    <string name="empty_cooked">Нет приготовленных рецептов</string>
-    <string name="empty_my_recipes">Нет собственных рецептов</string>
+    <string name="empty_want_to_cook">В списке «Хочу приготовить» пока нет рецептов</string>
+    <string name="empty_cooked">Вы еще не отметили ни одного приготовленного рецепта</string>
+    <string name="empty_my_recipes">У вас пока нет своих рецептов</string>
+    <string name="add_recipe_btn">Добавить рецепт</string>
 
     <!-- Уведомления -->
     <string name="recipe_moved_to_cooked">Приготовлено</string>
@@ -39,5 +40,4 @@
 
     <string name="recipe_detail_want_to_cook">Хочу приготовить</string>
     <string name="recipe_detail_to_list">В список</string>
-
 </resources>
