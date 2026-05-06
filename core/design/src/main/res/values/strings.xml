@@ -11,4 +11,8 @@
 
     <!-- Recipe Card -->
     <string name="save_recipe_content_desc">Save recipe</string>
+
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
+    <string name="edit_recipe">Edit</string>
 </resources>

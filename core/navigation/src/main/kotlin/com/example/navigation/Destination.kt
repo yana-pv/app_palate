@@ -10,9 +10,26 @@ sealed class Destination(val route: String) {
     data object ShoppingList : Destination("shopping_list")
     data object Profile : Destination("profile")
 
+    data object CreateRecipe : Destination("create_recipe")
+
+
     data object RecipeDetail : Destination("recipe_detail/{recipeId}") {
         fun createRoute(recipeId: String) = "recipe_detail/$recipeId"
     }
+
+    data object CookedNote : Destination("cooked_note/{recipeId}") {
+        fun createRoute(recipeId: String) = "cooked_note/$recipeId"
+    }
+
+    data object MyRecipeDetail : Destination("my_recipe_detail/{recipeId}") {
+        fun createRoute(recipeId: String) = "my_recipe_detail/$recipeId"
+    }
+
+    data object EditRecipe : Destination("edit_recipe/{recipeId}") {
+        fun createRoute(recipeId: String) = "edit_recipe/$recipeId"
+    }
+
+
 
     companion object {
         val bottomNavItems = listOf(

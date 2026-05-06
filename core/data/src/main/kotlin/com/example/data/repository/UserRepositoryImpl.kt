@@ -41,13 +41,28 @@ class UserRepositoryImpl @Inject constructor(
 
             val url = bucket.publicUrl(path)
 
-            // Sync with Firebase Authentication
             val profileUpdates = UserProfileChangeRequest.Builder()
                 .setPhotoUri(url.toUri())
                 .build()
 
             firebaseUser.updateProfile(profileUpdates).await()
 
+            Resource.Success(url)
+        } catch (e: Exception) {
+            Resource.Error(e.message ?: "Upload failed")
+        }
+    }
+
+    override suspend fun uploadRecipeImage(bytes: ByteArray, recipeId: String): Resource<String> {
+        return try {
+            val bucket = supabase.storage.from("palate-images")
+            val path = "recipes/$recipeId/main.jpg"
+
+            bucket.upload(path, bytes) {
+                upsert = true
+            }
+
+            val url = bucket.publicUrl(path)
             Resource.Success(url)
         } catch (e: Exception) {
             Resource.Error(e.message ?: "Upload failed")

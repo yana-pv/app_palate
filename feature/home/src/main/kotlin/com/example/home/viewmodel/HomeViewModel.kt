@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.model.Category
 import com.example.domain.model.RecipePreview
+import com.example.domain.repository.UserRecipeRepository
+import com.example.domain.repository.UserRepository
 import com.example.domain.usecase.GetHomeDataUseCase
 import com.example.domain.usecase.GetRecipesByCuisineUseCase
 import com.example.domain.repository.SettingsRepository
@@ -22,21 +24,28 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val getHomeDataUseCase: GetHomeDataUseCase,
     private val getRecipesByCuisineUseCase: GetRecipesByCuisineUseCase,
-    private val settingsRepository: SettingsRepository
+    private val settingsRepository: SettingsRepository,
+    private val userRecipeRepository: UserRecipeRepository,
+    private val userRepository: UserRepository
+
 ) : ViewModel() {
+
+    private val userId: String
+        get() = userRepository.getCurrentUser()?.id ?: ""
 
     private val _uiState = MutableStateFlow(HomeUiState(isLoading = true))
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
 
     private var allRecipes: List<RecipePreview> = emptyList()
     private var allCategories: List<Category> = emptyList()
-    
+
     private val allCategory = Category(id = "all", name = "", imageUrl = "", originalName = "All")
 
     private var settingsJob: Job? = null
     private var loadingJob: Job? = null
 
     init {
+        loadHomeData()
         observeSettings()
     }
 
@@ -46,7 +55,7 @@ class HomeViewModel @Inject constructor(
                 _uiState.update { it.copy(isDarkMode = isDark) }
             }
         }
-        
+
         settingsJob?.cancel()
         settingsJob = viewModelScope.launch {
             settingsRepository.getLanguage().collect { language ->
@@ -62,7 +71,7 @@ class HomeViewModel @Inject constructor(
             try {
                 getHomeDataUseCase(language).collect { homeData ->
                     allCategories = listOf(allCategory) + homeData.categories
-                    
+
                     val newRecipes = homeData.recipesByCategory.values.flatten()
                     if (newRecipes.isNotEmpty() || homeData.categories.isEmpty()) {
                         val currentRecipesMap = allRecipes.associateBy { it.id }.toMutableMap()
@@ -73,11 +82,11 @@ class HomeViewModel @Inject constructor(
                             } else newRecipe
                         }
                         allRecipes = currentRecipesMap.values.toList()
-                        
+
                         _uiState.update { state ->
-                            val isStillLoading = homeData.recipesByCategory.isEmpty() || 
+                            val isStillLoading = homeData.recipesByCategory.isEmpty() ||
                                 (homeData.recipesByCategory.size < homeData.categories.take(8).size && homeData.categories.isNotEmpty())
-                            
+
                             state.copy(
                                 isLoading = isStillLoading && allRecipes.isEmpty(),
                                 categories = allCategories,
@@ -131,7 +140,7 @@ class HomeViewModel @Inject constructor(
             }
             state.copy(selectedCuisines = currentSelected)
         }
-        
+
         val selectedCuisines = _uiState.value.selectedCuisines
         if (selectedCuisines.isNotEmpty()) {
             viewModelScope.launch {
@@ -140,14 +149,14 @@ class HomeViewModel @Inject constructor(
                     try {
                         val newRecipes = getRecipesByCuisineUseCase(cuisineName, language)
                         val currentRecipesMap = allRecipes.associateBy { it.id }.toMutableMap()
-                        
+
                         newRecipes.forEach { newRecipe ->
                             val existing = currentRecipesMap[newRecipe.id]
                             currentRecipesMap[newRecipe.id] = if (existing != null) {
                                 existing.copy(cuisine = cuisineName)
                             } else newRecipe.copy(cuisine = cuisineName)
                         }
-                        
+
                         allRecipes = currentRecipesMap.values.toList()
                         applyFilters()
                     } catch (e: Exception) { }
@@ -162,7 +171,7 @@ class HomeViewModel @Inject constructor(
         val filteredRecipes = allRecipes.filter { recipe ->
             val matchesQuery = recipe.name.contains(state.searchQuery, ignoreCase = true) ||
                 recipe.originalName.contains(state.searchQuery, ignoreCase = true)
-            
+
             val matchesCategory = state.selectedCategoryIds.contains("all") ||
                 state.selectedCategoryIds.contains(recipe.categoryId)
 
@@ -191,11 +200,39 @@ class HomeViewModel @Inject constructor(
     }
 
     fun toggleSaveRecipe(recipeId: String) {
-        val toggle: (RecipePreview) -> RecipePreview = { 
-            if (it.id == recipeId) it.copy(isSaved = !it.isSaved) else it 
+        // Найти рецепт по ID
+        val recipe = allRecipes.find { it.id == recipeId } ?: return
+
+        viewModelScope.launch {
+            // Проверить, есть ли уже в "Хочу приготовить"
+            val isSaved = userRecipeRepository.isInWantToCook(userId, recipeId)
+
+            if (isSaved) {
+                // Удалить из "Хочу приготовить"
+                userRecipeRepository.removeFromWantToCook(userId, recipeId)
+            } else {
+                // Получить полный рецепт (с ингредиентами)
+                val fullRecipe = com.example.domain.model.Recipe(
+                    id = recipe.id,
+                    name = recipe.name,
+                    cuisine = "",
+                    imageUrl = recipe.imageUrl,
+                    category = recipe.categoryName,
+                    ingredients = emptyList(),
+                    instructions = emptyList()
+                )
+                userRecipeRepository.addToWantToCook(userId, fullRecipe)
+            }
+
+            // Обновить UI
+            val updatedRecipes = _uiState.value.recipes.map {
+                if (it.id == recipeId) it.copy(isSaved = !isSaved) else it
+            }
+            allRecipes = allRecipes.map {
+                if (it.id == recipeId) it.copy(isSaved = !isSaved) else it
+            }
+            _uiState.update { it.copy(recipes = updatedRecipes) }
         }
-        allRecipes = allRecipes.map(toggle)
-        _uiState.update { it.copy(recipes = it.recipes.map(toggle)) }
     }
 
     fun clearError() {

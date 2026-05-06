@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="my_collection">Моя коллекция</string>
+
+    <!-- Вкладки -->
+    <string name="tab_want_to_cook">Хочу приготовить</string>
+    <string name="tab_cooked">Приготовлено</string>
+    <string name="tab_my_recipes">Мои рецепты</string>
+
+    <!-- Карточки рецептов -->
+    <string name="move_to_cooked">Приготовлено</string>
+    <string name="delete_recipe">Удалить рецепт</string>
+    <string name="edit_recipe">Редактировать</string>
+    <string name="my_notes">Мои заметки</string>
+
+    <!-- Диалог удаления -->
+    <string name="delete_confirmation_title">Удаление рецепта</string>
+    <string name="delete_confirmation_message">Вы уверены, что хотите удалить этот рецепт?</string>
+    <string name="delete">Удалить</string>
+    <string name="cancel">Отмена</string>
+
+    <!-- Пустые состояния -->
+    <string name="empty_want_to_cook">В списке «Хочу приготовить» пока нет рецептов</string>
+    <string name="empty_cooked">Вы еще не отметили ни одного приготовленного рецепта</string>
+    <string name="empty_my_recipes">У вас пока нет своих рецептов</string>
+    <string name="add_recipe_btn">Добавить рецепт</string>
+
+    <!-- Уведомления -->
+    <string name="recipe_moved_to_cooked">Приготовлено</string>
+    <string name="recipe_deleted">Рецепт удалён</string>
+
+    <string name="recipe_detail_ingredients">ИНГРЕДИЕНТЫ</string>
+    <string name="recipe_detail_preparation">ПРИГОТОВЛЕНИЕ</string>
+    <string name="recipe_detail_back_desc">Назад</string>
+
+    <string name="recipe_not_found">Рецепт не найден</string>
+    <string name="error_loading_recipe">Ошибка при загрузке рецепта</string>
+    <string name="retry">Повторить</string>
+    <string name="back_to_home">На главную</string>
+
+    <string name="recipe_detail_want_to_cook">Хочу приготовить</string>
+    <string name="recipe_detail_to_list">В список</string>
+</resources>

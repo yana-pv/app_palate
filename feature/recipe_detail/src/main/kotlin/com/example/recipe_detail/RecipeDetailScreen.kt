@@ -69,7 +69,8 @@ fun RecipeDetailScreen(
                     RecipeDetailContent(
                         recipe = recipe,
                         onBackClick = onBackClick,
-                        onToListClick = { viewModel.addIngredientsToShoppingList() }
+                        onToListClick = { viewModel.addIngredientsToShoppingList() },
+                        onWantToCookClick = { viewModel.addToWantToCook() },
                     )
                 } ?: RecipeErrorState(
                     onBackClick = onBackClick,
@@ -85,7 +86,7 @@ fun RecipeDetailScreen(
             title = { Text(stringResource(R.string.already_added_title)) },
             text = { Text(stringResource(R.string.already_added_message)) },
             confirmButton = {
-                TextButton(onClick = { 
+                TextButton(onClick = {
                     viewModel.addIngredientsToShoppingList(force = true)
                     viewModel.dismissAlreadyAddedDialog()
                 }) {
@@ -154,6 +155,7 @@ fun RecipeErrorState(
 fun RecipeDetailContent(
     recipe: Recipe,
     onBackClick: () -> Unit,
+    onWantToCookClick: () -> Unit,
     onToListClick: () -> Unit
 ) {
     LazyColumn(
@@ -166,7 +168,7 @@ fun RecipeDetailContent(
             RecipeHeader(
                 recipe = recipe,
                 onBackClick = onBackClick,
-                onWantToCookClick = { /* TODO */ },
+                onWantToCookClick = onWantToCookClick,
                 onToListClick = onToListClick
             )
             Spacer(modifier = Modifier.height(dimensionResource(DesignR.dimen.padding_medium)))

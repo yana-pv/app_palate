@@ -33,6 +33,7 @@ dependencies {
     implementation(libs.retrofit.converter.gson)
     implementation(libs.javax.inject)
 
+    implementation("com.google.dagger:hilt-android:2.48")
     implementation(libs.hilt)
     ksp(libs.hilt.compiler)
 

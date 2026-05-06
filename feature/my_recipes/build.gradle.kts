@@ -9,6 +9,16 @@ android {
 }
 
 dependencies {
+
+    implementation(project(":core:domain"))
+    implementation(project(":core:design"))
+    implementation(project(":feature:recipe_detail"))
+
+
+    implementation(libs.coil.compose)
+    implementation("androidx.compose.material:material-icons-extended:1.7.5")
+
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

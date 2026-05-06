@@ -34,6 +34,7 @@ dependencies {
     implementation(libs.firebase.auth.ktx)
     implementation(libs.firebase.firestore.ktx)
     implementation(libs.firebase.storage.ktx)
+    implementation(libs.androidx.hilt.navigation.compose)
 
     implementation(project(":core:design"))
     implementation(project(":core:domain"))
@@ -48,6 +49,7 @@ dependencies {
     implementation(project(":feature:plan"))
     implementation(project(":feature:my_recipes"))
     implementation(project(":feature:shopping_list"))
+    implementation(project(":feature:create_recipe"))
     implementation(project(":feature:profile"))
     implementation(project(":feature:auth"))
     implementation(project(":feature:main"))

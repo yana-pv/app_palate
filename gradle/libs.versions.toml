@@ -1,7 +1,7 @@
 [versions]
 agp = "9.1.0"
 kotlin = "2.3.10"
-ksp = "2.3.6"
+ksp = "2.3.7"
 
 # Используется в Convention plugin-ах
 min-sdk = "26"
@@ -32,7 +32,7 @@ javax-inject = "1"
 retrofit = "3.0.0"
 
 # Room
-room = "2.6.1"
+room = "2.7.0"
 
 # Google
 google-services = "4.4.4"
