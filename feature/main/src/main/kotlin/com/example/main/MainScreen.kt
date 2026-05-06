@@ -28,6 +28,10 @@ import com.example.design.R as DesignR
 @Composable
 fun MainScreen(
     onRecipeClick: (String) -> Unit,
+    onCookedNoteClick: (String) -> Unit,
+    onCreateRecipeClick: () -> Unit,
+    onMyRecipesClick: (String) -> Unit,
+    onEditRecipeClick: (String) -> Unit,
     onLogout: () -> Unit
 ) {
     val navController = rememberNavController()
@@ -93,11 +97,16 @@ fun MainScreen(
                     PlanScreen() 
                 }
             }
-            composable(Destination.MyRecipes.route) { 
-                Box(modifier = Modifier.padding(paddingValues)) {
-                    MyRecipesScreen() 
-                }
+            composable(Destination.MyRecipes.route) {
+                MyRecipesScreen(
+                    onWantToCookClick = onRecipeClick,
+                    onCookedNotesClick = onCookedNoteClick,
+                    onMyRecipesClick = onMyRecipesClick,
+                    onMyRecipesEditClick = onEditRecipeClick,
+                    onCreateRecipeClick = onCreateRecipeClick
+                )
             }
+
             composable(Destination.ShoppingList.route) { 
                 ShoppingListScreen()
             }

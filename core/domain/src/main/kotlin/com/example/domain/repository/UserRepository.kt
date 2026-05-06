@@ -6,4 +6,5 @@ import com.example.utils.Resource
 interface UserRepository {
     suspend fun uploadAvatar(bytes: ByteArray): Resource<String>
     fun getCurrentUser(): User?
+    suspend fun uploadRecipeImage(bytes: ByteArray, recipeId: String): Resource<String> // Добавлено
 }

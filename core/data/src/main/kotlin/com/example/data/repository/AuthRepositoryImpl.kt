@@ -2,6 +2,7 @@ package com.example.data.repository
 
 import com.example.domain.model.User
 import com.example.domain.repository.AuthRepository
+import com.example.domain.repository.UserRecipeRepository
 import com.example.utils.Resource
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
@@ -13,7 +14,8 @@ import kotlinx.coroutines.tasks.await
 @Singleton
 class AuthRepositoryImpl @Inject constructor(
     private val auth: FirebaseAuth,
-    private val firestore: FirebaseFirestore
+    private val firestore: FirebaseFirestore,
+    private val userRecipeRepository: UserRecipeRepository
 ) : AuthRepository {
 
     override suspend fun register(name: String, email: String, password: String): Resource<User> {
@@ -53,6 +55,7 @@ class AuthRepositoryImpl @Inject constructor(
                 email = firebaseUser.email ?: email,
                 avatarUrl = firebaseUser.photoUrl?.toString()
             )
+            userRecipeRepository.syncAllDataFromFirestore(user.id)
             Resource.Success(user)
         } catch (e: Exception) {
             Resource.Error(e.message ?: "Login failed")

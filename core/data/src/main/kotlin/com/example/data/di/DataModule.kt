@@ -1,11 +1,14 @@
 package com.example.data.di
 
 import com.example.data.repository.AuthRepositoryImpl
+import com.example.data.repository.FirestoreUserRecipeRepository
 import com.example.data.repository.RecipeRepositoryImpl
 import com.example.domain.repository.AuthRepository
 import com.example.domain.repository.RecipeRepository
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Binds
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
@@ -43,4 +46,23 @@ abstract class DataModule {
     abstract fun bindShoppingListRepository(
         impl: com.example.data.repository.ShoppingListRepositoryImpl
     ): com.example.domain.repository.ShoppingListRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindUserRecipeRepository(
+        impl: com.example.data.repository.UserRecipeRepositoryImpl
+    ): com.example.domain.repository.UserRecipeRepository
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+class FirestoreModule {
+
+    @Provides
+    @Singleton
+    fun provideFirestoreUserRecipeRepository(
+        firestore: FirebaseFirestore
+    ): FirestoreUserRecipeRepository {
+        return FirestoreUserRecipeRepository(firestore)
+    }
 }

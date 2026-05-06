@@ -8,6 +8,7 @@ import com.example.domain.model.User
 import com.example.domain.repository.AuthRepository
 import com.example.domain.repository.UserRepository
 import com.example.domain.repository.SettingsRepository
+import com.example.domain.repository.UserRecipeRepository
 import com.example.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -35,15 +36,20 @@ data class ProfileUiState(
 class ProfileViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val userRepository: UserRepository,
-    private val settingsRepository: SettingsRepository
+    private val settingsRepository: SettingsRepository,
+
+    private val userRecipeRepository: UserRecipeRepository
 ) : ViewModel() {
 
+    private val userId: String
+        get() = userRepository.getCurrentUser()?.id ?: ""
     private val _uiState = MutableStateFlow(ProfileUiState())
     val uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
 
     init {
         loadUserProfile()
         observeSettings()
+        loadStatistics()
     }
 
     private fun observeSettings() {
@@ -127,6 +133,24 @@ class ProfileViewModel @Inject constructor(
                     }
                     else -> state.copy(isLoading = false)
                 }
+            }
+        }
+    }
+
+    private fun loadStatistics() {
+        viewModelScope.launch {
+            userRecipeRepository.getCookedCount(userId).collect { cookedCount ->
+                _uiState.update { it.copy(cookedCount = cookedCount) }
+            }
+        }
+        viewModelScope.launch {
+            userRecipeRepository.getWantToCookCount(userId).collect { plannedCount ->
+                _uiState.update { it.copy(plannedCount = plannedCount) }
+            }
+        }
+        viewModelScope.launch {
+            userRecipeRepository.getUserRecipesCount(userId).collect { ownRecipesCount ->
+                _uiState.update { it.copy(ownRecipesCount = ownRecipesCount) }
             }
         }
     }

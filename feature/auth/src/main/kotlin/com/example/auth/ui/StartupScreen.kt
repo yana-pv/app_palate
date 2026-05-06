@@ -31,105 +31,154 @@ import com.example.design.theme.CondimentFont
 import com.example.design.theme.PalateColors
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.domain.repository.AuthRepository
 
 import com.example.navigation.Destination
+import kotlinx.coroutines.delay
 
 @Composable
 fun StartupScreen(
-    navController: NavController
+    navController: NavController,
+    viewModel: StartupViewModel = hiltViewModel()
 ) {
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .clip(RoundedCornerShape(bottomStart = dimensionResource(R.dimen.startup_bg_radius), bottomEnd = dimensionResource(R.dimen.startup_bg_radius)))
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.startup_background),
-                contentDescription = stringResource(com.example.design.R.string.app_name),
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
-            )
+
+    val isLoggedIn = viewModel.isUserLoggedIn()
+    var isChecking by remember { mutableStateOf(true) }
+
+
+    LaunchedEffect(Unit) {
+        delay(500)
+        isChecking = false
+        if (isLoggedIn) {
+            navController.navigate("home") {
+                popUpTo("startup") { inclusive = true }
+            }
         }
+    }
+
+    if (isChecking) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
+    } else if (!isLoggedIn) {
 
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(dimensionResource(R.dimen.startup_bottom_sheet_height))
-                .align(Alignment.BottomCenter)
-                .background(
-                    color = PalateColors.GreenPrimary,
-                    shape = RoundedCornerShape(topStart = dimensionResource(R.dimen.startup_bottom_sheet_radius), topEnd = dimensionResource(R.dimen.startup_bottom_sheet_radius))
-                )
+            modifier = Modifier.fillMaxSize()
         ) {
-            Column(
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(
+                        RoundedCornerShape(
+                            bottomStart = dimensionResource(R.dimen.startup_bg_radius),
+                            bottomEnd = dimensionResource(R.dimen.startup_bg_radius)
+                        )
+                    )
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.startup_background),
+                    contentDescription = stringResource(com.example.design.R.string.app_name),
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
+            }
+
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = dimensionResource(com.example.design.R.dimen.padding_extra_large))
-                    .align(Alignment.TopCenter),
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .height(dimensionResource(R.dimen.startup_bottom_sheet_height))
+                    .align(Alignment.BottomCenter)
+                    .background(
+                        color = PalateColors.GreenPrimary,
+                        shape = RoundedCornerShape(
+                            topStart = dimensionResource(R.dimen.startup_bottom_sheet_radius),
+                            topEnd = dimensionResource(R.dimen.startup_bottom_sheet_radius)
+                        )
+                    )
             ) {
-                Spacer(modifier = Modifier.height(dimensionResource(R.dimen.auth_vertical_padding)))
-
-                Text(
-                    text = stringResource(com.example.design.R.string.app_name),
-                    fontFamily = CondimentFont,
-                    fontSize = dimensionResource(R.dimen.startup_logo_text_size).value.sp,
-                    fontWeight = FontWeight.Normal,
-                    color = Color.White,
-                    letterSpacing = 0.5.sp
-                )
-
-                Spacer(modifier = Modifier.height(dimensionResource(com.example.design.R.dimen.padding_large)))
-
-                Text(
-                    text = stringResource(R.string.app_description),
-                    fontSize = dimensionResource(R.dimen.startup_description_text_size).value.sp,
-                    color = Color.White,
-                    lineHeight = dimensionResource(R.dimen.startup_description_line_height).value.sp,
-                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
-                )
-
-                Spacer(modifier = Modifier.height(dimensionResource(R.dimen.auth_vertical_padding)))
-
-                Button(
-                    onClick = { navController.navigate(Destination.Register.route) },
+                Column(
                     modifier = Modifier
-                        .width(dimensionResource(R.dimen.startup_button_width))
-                        .height(dimensionResource(R.dimen.startup_button_height))
-                        .shadow(elevation = 8.dp, shape = RoundedCornerShape(dimensionResource(R.dimen.startup_button_radius))),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = PalateColors.PurpleButton
-                    ),
-                    shape = RoundedCornerShape(dimensionResource(R.dimen.startup_button_radius))
+                        .fillMaxWidth()
+                        .padding(horizontal = dimensionResource(com.example.design.R.dimen.padding_extra_large))
+                        .align(Alignment.TopCenter),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    Spacer(modifier = Modifier.height(dimensionResource(R.dimen.auth_vertical_padding)))
+
                     Text(
-                        text = stringResource(R.string.register),
+                        text = stringResource(com.example.design.R.string.app_name),
+                        fontFamily = CondimentFont,
+                        fontSize = dimensionResource(R.dimen.startup_logo_text_size).value.sp,
+                        fontWeight = FontWeight.Normal,
                         color = Color.White,
-                        fontSize = 14.sp
+                        letterSpacing = 0.5.sp
                     )
-                }
 
-                Spacer(modifier = Modifier.height(dimensionResource(com.example.design.R.dimen.padding_medium)))
+                    Spacer(modifier = Modifier.height(dimensionResource(com.example.design.R.dimen.padding_large)))
 
-                Button(
-                    onClick = { navController.navigate(Destination.Login.route) },
-                    modifier = Modifier
-                        .width(dimensionResource(R.dimen.startup_button_width))
-                        .height(dimensionResource(R.dimen.startup_button_height))
-                        .shadow(elevation = 8.dp, shape = RoundedCornerShape(dimensionResource(R.dimen.startup_button_radius))),
-                    shape = RoundedCornerShape(dimensionResource(R.dimen.startup_button_radius)),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.White
-                    )
-                ) {
                     Text(
-                        text = stringResource(R.string.login),
-                        color = PalateColors.PurpleButton,
-                        fontSize = 14.sp
+                        text = stringResource(R.string.app_description),
+                        fontSize = dimensionResource(R.dimen.startup_description_text_size).value.sp,
+                        color = Color.White,
+                        lineHeight = dimensionResource(R.dimen.startup_description_line_height).value.sp,
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
                     )
+
+                    Spacer(modifier = Modifier.height(dimensionResource(R.dimen.auth_vertical_padding)))
+
+                    Button(
+                        onClick = { navController.navigate(Destination.Register.route) },
+                        modifier = Modifier
+                            .width(dimensionResource(R.dimen.startup_button_width))
+                            .height(dimensionResource(R.dimen.startup_button_height))
+                            .shadow(
+                                elevation = 8.dp,
+                                shape = RoundedCornerShape(dimensionResource(R.dimen.startup_button_radius))
+                            ),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = PalateColors.PurpleButton
+                        ),
+                        shape = RoundedCornerShape(dimensionResource(R.dimen.startup_button_radius))
+                    ) {
+                        Text(
+                            text = stringResource(R.string.register),
+                            color = Color.White,
+                            fontSize = 14.sp
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(dimensionResource(com.example.design.R.dimen.padding_medium)))
+
+                    Button(
+                        onClick = { navController.navigate(Destination.Login.route) },
+                        modifier = Modifier
+                            .width(dimensionResource(R.dimen.startup_button_width))
+                            .height(dimensionResource(R.dimen.startup_button_height))
+                            .shadow(
+                                elevation = 8.dp,
+                                shape = RoundedCornerShape(dimensionResource(R.dimen.startup_button_radius))
+                            ),
+                        shape = RoundedCornerShape(dimensionResource(R.dimen.startup_button_radius)),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.White
+                        )
+                    ) {
+                        Text(
+                            text = stringResource(R.string.login),
+                            color = PalateColors.PurpleButton,
+                            fontSize = 14.sp
+                        )
+                    }
                 }
             }
         }
