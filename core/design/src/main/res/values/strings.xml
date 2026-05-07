@@ -15,4 +15,9 @@
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
     <string name="edit_recipe">Edit</string>
+
+    <!-- Selection Flow -->
+    <string name="selection_option_title">Select recipe</string>
+    <string name="selection_option_view">View Recipe</string>
+    <string name="selection_option_select">Select</string>
 </resources>

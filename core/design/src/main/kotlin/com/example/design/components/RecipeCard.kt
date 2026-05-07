@@ -89,7 +89,9 @@ fun RecipeCard(
                     model = imageUrl,
                     contentDescription = name,
                     modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
+                    contentScale = ContentScale.Crop,
+                    placeholder = painterResource(id = R.drawable.ic_photo),
+                    error = painterResource(id = R.drawable.ic_photo)
                 )
                 Surface(
                     modifier = Modifier

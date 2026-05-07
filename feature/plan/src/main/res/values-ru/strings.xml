@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="plan_title">План питания</string>
+    <string name="plan_assemble_list">Собрать список</string>
+    <string name="plan_breakfast">ЗАВТРАК</string>
+    <string name="plan_lunch">ОБЕД</string>
+    <string name="plan_dinner">УЖИН</string>
+    <string name="plan_snack">ПЕРЕКУС</string>
+    <string name="plan_select">Выбрать</string>
+    <string name="plan_add_snack">Добавить перекус</string>
+    <string name="plan_delete_title">Удалить рецепт?</string>
+    <string name="plan_delete_message">Вы уверены, что хотите удалить этот рецепт из плана?</string>
+    <string name="plan_cancel">Отмена</string>
+    <string name="plan_delete">Удалить</string>
+    <string name="plan_select_option_title">Выбрать рецепт</string>
+    <string name="plan_option_my_recipes">Мои рецепты</string>
+    <string name="plan_option_search">Поиск</string>
+    <string name="plan_select_now">Выбрать</string>
+    <string name="plan_view_recipe">Посмотреть рецепт</string>
+
+
+    <string name="monday">ПОНЕДЕЛЬНИК</string>
+    <string name="tuesday">ВТОРНИК</string>
+    <string name="wednesday">СРЕДА</string>
+    <string name="thursday">ЧЕТВЕРГ</string>
+    <string name="friday">ПЯТНИЦА</string>
+    <string name="saturday">СУББОТА</string>
+    <string name="sunday">ВОСКРЕСЕНЬЕ</string>
+</resources>

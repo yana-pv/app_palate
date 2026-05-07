@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -40,6 +41,12 @@ fun RecipeDetailScreen(
     val successMessage = stringResource(R.string.ingredients_added)
     val genericErrorMessage = stringResource(R.string.error_failed_to_add)
 
+    LaunchedEffect(uiState.isSelected) {
+        if (uiState.isSelected) {
+            onBackClick()
+        }
+    }
+
     LaunchedEffect(uiState.errorMessage, uiState.successMessage) {
         uiState.errorMessage?.let {
             snackbarHostState.showSnackbar(genericErrorMessage)
@@ -68,9 +75,11 @@ fun RecipeDetailScreen(
                 uiState.recipe?.let { recipe ->
                     RecipeDetailContent(
                         recipe = recipe,
+                        isSelectionMode = uiState.isSelectionMode,
                         onBackClick = onBackClick,
                         onToListClick = { viewModel.addIngredientsToShoppingList() },
                         onWantToCookClick = { viewModel.addToWantToCook() },
+                        onSelectClick = { viewModel.selectRecipe() }
                     )
                 } ?: RecipeErrorState(
                     onBackClick = onBackClick,
@@ -154,9 +163,11 @@ fun RecipeErrorState(
 @Composable
 fun RecipeDetailContent(
     recipe: Recipe,
+    isSelectionMode: Boolean,
     onBackClick: () -> Unit,
     onWantToCookClick: () -> Unit,
-    onToListClick: () -> Unit
+    onToListClick: () -> Unit,
+    onSelectClick: () -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -167,9 +178,11 @@ fun RecipeDetailContent(
         item {
             RecipeHeader(
                 recipe = recipe,
+                isSelectionMode = isSelectionMode,
                 onBackClick = onBackClick,
                 onWantToCookClick = onWantToCookClick,
-                onToListClick = onToListClick
+                onToListClick = onToListClick,
+                onSelectClick = onSelectClick
             )
             Spacer(modifier = Modifier.height(dimensionResource(DesignR.dimen.padding_medium)))
         }
@@ -196,9 +209,11 @@ fun RecipeDetailContent(
 @Composable
 fun RecipeHeader(
     recipe: Recipe,
+    isSelectionMode: Boolean,
     onBackClick: () -> Unit,
     onWantToCookClick: () -> Unit,
-    onToListClick: () -> Unit
+    onToListClick: () -> Unit,
+    onSelectClick: () -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -209,7 +224,9 @@ fun RecipeHeader(
             model = recipe.imageUrl,
             contentDescription = null,
             modifier = Modifier.matchParentSize(),
-            contentScale = ContentScale.Crop
+            contentScale = ContentScale.Crop,
+            placeholder = painterResource(id = DesignR.drawable.ic_photo),
+            error = painterResource(id = DesignR.drawable.ic_photo)
         )
 
         Box(
@@ -274,10 +291,33 @@ fun RecipeHeader(
 
             Spacer(modifier = Modifier.height(dimensionResource(DesignR.dimen.padding_large)))
 
-            ActionButtons(
-                onWantToCookClick = onWantToCookClick,
-                onToListClick = onToListClick
-            )
+            if (isSelectionMode) {
+                Button(
+                    onClick = onSelectClick,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(dimensionResource(R.dimen.recipe_detail_action_btn_height)),
+                    colors = ButtonDefaults.buttonColors(containerColor = PalateColors.GreenPrimary),
+                    shape = RoundedCornerShape(dimensionResource(R.dimen.recipe_detail_action_btn_radius))
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = null,
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text(
+                        text = stringResource(R.string.plan_select_now),
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            } else {
+                ActionButtons(
+                    onWantToCookClick = onWantToCookClick,
+                    onToListClick = onToListClick
+                )
+            }
         }
     }
 }

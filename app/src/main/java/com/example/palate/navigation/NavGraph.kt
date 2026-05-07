@@ -14,7 +14,6 @@ import com.example.auth.ui.StartupScreen
 import com.example.create_recipe.CreateRecipeScreen
 import com.example.main.MainScreen
 import com.example.my_recipes.MyRecipeDetailScreen
-import com.example.my_recipes.MyRecipesScreen
 import com.example.my_recipes.viewModel.MyRecipeDetailViewModel
 import com.example.navigation.Destination
 import com.example.recipe_detail.CookedNoteScreen
@@ -43,14 +42,14 @@ fun PalateNavGraph(
 
         composable(Destination.Home.route) {
             MainScreen(
-                onRecipeClick = { recipeId ->
-                    navigator.openRecipeDetail(recipeId)
+                onRecipeClick = { recipeId, date, mealType ->
+                    navigator.openRecipeDetail(recipeId, date, mealType)
                 },
                 onCookedNoteClick = { recipeId ->
                     navigator.openCookedNote(recipeId)
                 },
-                onMyRecipesClick = { recipeId ->
-                    navController.navigate(Destination.MyRecipeDetail.createRoute(recipeId))
+                onMyRecipesClick = { recipeId, date, mealType ->
+                    navController.navigate(Destination.MyRecipeDetail.createRoute(recipeId, date, mealType))
                 },
                 onCreateRecipeClick = {
                     navController.navigate(Destination.CreateRecipe.route)
@@ -68,20 +67,26 @@ fun PalateNavGraph(
 
         composable(
             route = Destination.RecipeDetail.route,
-            arguments = listOf(navArgument("recipeId") { type = NavType.StringType })
+            arguments = listOf(
+                navArgument("recipeId") { type = NavType.StringType },
+                navArgument("date") { type = NavType.StringType; nullable = true; defaultValue = null },
+                navArgument("mealType") { type = NavType.StringType; nullable = true; defaultValue = null }
+            )
         ) {
             RecipeDetailScreen(
                 onBackClick = { navigator.navigateUp() }
             )
         }
 
-
         composable(
             route = Destination.MyRecipeDetail.route,
-            arguments = listOf(navArgument("recipeId") { type = NavType.StringType })
-        ) { backStackEntry ->
+            arguments = listOf(
+                navArgument("recipeId") { type = NavType.StringType },
+                navArgument("date") { type = NavType.StringType; nullable = true; defaultValue = null },
+                navArgument("mealType") { type = NavType.StringType; nullable = true; defaultValue = null }
+            )
+        ) {
             val viewModel: MyRecipeDetailViewModel = hiltViewModel()
-
             MyRecipeDetailScreen(
                 onBackClick = { navigator.navigateUp() },
                 onWantToCookClick = {
@@ -109,33 +114,6 @@ fun PalateNavGraph(
                 onSaved = { navigator.navigateUp() }
             )
         }
-
-        composable(Destination.MyRecipes.route) {
-            MyRecipesScreen(
-                onWantToCookClick = { recipeId ->
-                    navigator.openRecipeDetail(recipeId)
-                },
-                onCookedNotesClick = { recipeId ->
-                    navigator.openCookedNote(recipeId)
-                },
-                onMyRecipesClick = { recipeId ->
-                    navController.navigate(Destination.MyRecipeDetail.createRoute(recipeId))
-                },
-                onMyRecipesEditClick = { recipeId ->
-                    navController.navigate(Destination.EditRecipe.createRoute(recipeId))
-                },
-                onCreateRecipeClick = {
-                    navController.navigate(Destination.CreateRecipe.route)
-                }
-            )
-        }
-
-        composable(Destination.RecipeDetail.route, arguments = listOf(navArgument("recipeId") { type = NavType.StringType })) {
-            RecipeDetailScreen(
-                onBackClick = { navigator.navigateUp() }
-            )
-        }
-
 
         composable(
             route = Destination.EditRecipe.route,

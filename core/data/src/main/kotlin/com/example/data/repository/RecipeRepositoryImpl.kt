@@ -168,6 +168,31 @@ class RecipeRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun searchRecipes(query: String, language: String): List<RecipePreview> {
+        return try {
+            val response = api.searchRecipes(query)
+            if (response.isSuccessful) {
+                var recipes = response.body()?.meals?.map {
+                    it.toDomainPreview()
+                } ?: emptyList()
+
+                recipes = translateRecipePreviews(recipes, language)
+
+                recipes.forEach { recipe ->
+                    val existing = dao.getPreviewsByIds(listOf(recipe.id)).firstOrNull()
+                    if (existing == null) {
+                        dao.insertRecipePreviews(listOf(recipe.toEntity()))
+                    }
+                }
+                recipes
+            } else {
+                emptyList()
+            }
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
     private suspend fun translateRecipePreviews(recipes: List<RecipePreview>, language: String): List<RecipePreview> {
         if (recipes.isEmpty()) return recipes
         return try {

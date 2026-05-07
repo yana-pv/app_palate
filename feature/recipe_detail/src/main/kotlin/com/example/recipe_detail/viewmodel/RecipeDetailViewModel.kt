@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.repository.AuthRepository
+import com.example.domain.repository.MealPlanRepository
 import com.example.domain.repository.SettingsRepository
 import com.example.domain.repository.ShoppingListRepository
 import com.example.domain.repository.UserRecipeRepository
@@ -16,12 +17,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
 class RecipeDetailViewModel @Inject constructor(
     private val getRecipeByIdUseCase: GetRecipeByIdUseCase,
     private val shoppingRepository: ShoppingListRepository,
+    private val mealPlanRepository: MealPlanRepository,
     private val authRepository: AuthRepository,
     private val settingsRepository: SettingsRepository,
     private val userRecipeRepository: UserRecipeRepository,
@@ -33,8 +36,13 @@ class RecipeDetailViewModel @Inject constructor(
         get() = userRepository.getCurrentUser()?.id ?: ""
 
     private val recipeId: String = checkNotNull(savedStateHandle["recipeId"])
+    private val selectionDate: String? = savedStateHandle["date"]
+    private val selectionMealType: String? = savedStateHandle["mealType"]
 
-    private val _uiState = MutableStateFlow(RecipeDetailUiState(isLoading = true))
+    private val _uiState = MutableStateFlow(RecipeDetailUiState(
+        isLoading = true,
+        isSelectionMode = selectionDate != null && selectionMealType != null
+    ))
     val uiState: StateFlow<RecipeDetailUiState> = _uiState.asStateFlow()
 
     init {
@@ -169,5 +177,30 @@ class RecipeDetailViewModel @Inject constructor(
 
     fun dismissAlreadyAddedDialog() {
         _uiState.update { it.copy(showAlreadyAddedDialog = false) }
+    }
+
+    fun selectRecipe() {
+        val dateStr = selectionDate ?: return
+        val mealTypeStr = selectionMealType ?: return
+        val recipe = uiState.value.recipe ?: return
+
+        viewModelScope.launch {
+            val date = LocalDate.parse(dateStr)
+            val mealType = com.example.domain.model.MealType.valueOf(mealTypeStr)
+
+            val item = com.example.domain.model.MealPlanItem(
+                id = "${userId}:::${date}:::${mealType}",
+                userId = userId,
+                date = date,
+                mealType = mealType,
+                recipeId = recipe.id,
+                recipeName = recipe.name,
+                recipeImageUrl = recipe.imageUrl,
+                recipeCategory = recipe.category,
+                isUserRecipe = false
+            )
+            mealPlanRepository.addMealPlanItem(item)
+            _uiState.update { it.copy(isSelected = true) }
+        }
     }
 }

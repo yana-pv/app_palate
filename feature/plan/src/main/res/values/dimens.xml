@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="plan_padding">16dp</dimen>
+    <dimen name="plan_margin_small">8dp</dimen>
+    <dimen name="plan_card_corner">12dp</dimen>
+    <dimen name="plan_slot_width">120dp</dimen>
+    <dimen name="plan_slot_height">200dp</dimen>
+    <dimen name="plan_image_size">100dp</dimen>
+</resources>

@@ -1,8 +1,13 @@
 package com.example.my_recipes
 
+import androidx.compose.foundation.background
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.AlertDialog
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
@@ -54,13 +59,16 @@ fun MyRecipesScreen(
     onCookedNotesClick: (String) -> Unit,
     onMyRecipesClick: (String) -> Unit,
     onMyRecipesEditClick: (String) -> Unit = {},
-    onCreateRecipeClick: () -> Unit = {}
-
+    onCreateRecipeClick: () -> Unit = {},
+    selectionDate: String? = null,
+    selectionMealType: String? = null,
+    onSelectRecipe: (String, Boolean) -> Unit = { _, _ -> }
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var selectedTab by rememberSaveable { mutableIntStateOf(0) }
     var showDeleteDialog by remember { mutableStateOf(false) }
     var pendingDeleteId by remember { mutableStateOf<String?>(null) }
+    var showSelectionDialog by remember { mutableStateOf<Pair<String, Boolean>?>(null) }
 
     val tabs = listOf(
         stringResource(R.string.tab_want_to_cook),
@@ -136,9 +144,21 @@ fun MyRecipesScreen(
                 when (selectedTab) {
                     0 -> WantToCookTab(
                         recipes = uiState.wantToCook,
-                        onRecipeClick = onWantToCookClick,
+                        onRecipeClick = { id ->
+                            if (selectionDate != null && selectionMealType != null) {
+                                showSelectionDialog = id to false
+                            } else {
+                                onWantToCookClick(id)
+                            }
+                        },
                         onCookedClick = { recipeId -> viewModel.moveToCooked(recipeId) },
-                        onUserRecipeClick = onMyRecipesClick,
+                        onUserRecipeClick = { id ->
+                            if (selectionDate != null && selectionMealType != null) {
+                                showSelectionDialog = id to true
+                            } else {
+                                onMyRecipesClick(id)
+                            }
+                        },
                         onDeleteClick = { recipeId ->
                             pendingDeleteId = recipeId
                             showDeleteDialog = true
@@ -147,8 +167,20 @@ fun MyRecipesScreen(
 
                     1 -> CookedTab(
                         recipes = uiState.cooked,
-                        onRecipeClick = onWantToCookClick,
-                        onUserRecipeClick = onMyRecipesClick,
+                        onRecipeClick = { id ->
+                            if (selectionDate != null && selectionMealType != null) {
+                                showSelectionDialog = id to false
+                            } else {
+                                onWantToCookClick(id)
+                            }
+                        },
+                        onUserRecipeClick = { id ->
+                            if (selectionDate != null && selectionMealType != null) {
+                                showSelectionDialog = id to true
+                            } else {
+                                onMyRecipesClick(id)
+                            }
+                        },
                         onNotesClick = onCookedNotesClick,
                         onDeleteClick = { recipeId ->
                             pendingDeleteId = recipeId
@@ -159,7 +191,13 @@ fun MyRecipesScreen(
                     2 -> Box(modifier = Modifier.fillMaxSize()) {
                         MyRecipesTab(
                             recipes = uiState.userRecipes,
-                            onRecipeClick = onMyRecipesClick,
+                            onRecipeClick = { id ->
+                                if (selectionDate != null && selectionMealType != null) {
+                                    showSelectionDialog = id to true
+                                } else {
+                                    onMyRecipesClick(id)
+                                }
+                            },
                             onEditClick = onMyRecipesEditClick,
                             onDeleteClick = { recipeId ->
                                 pendingDeleteId = recipeId
@@ -206,6 +244,39 @@ fun MyRecipesScreen(
                     onDismiss = {
                         showDeleteDialog = false
                         pendingDeleteId = null
+                    }
+                )
+            }
+
+            if (showSelectionDialog != null) {
+                val (recipeId, isUserRecipe) = showSelectionDialog!!
+                AlertDialog(
+                    onDismissRequest = { showSelectionDialog = null },
+                    title = { Text(stringResource(com.example.design.R.string.selection_option_title)) },
+                    text = {
+                        Column {
+                            ListItem(
+                                headlineContent = { Text(stringResource(com.example.design.R.string.selection_option_view)) },
+                                leadingContent = { Icon(Icons.Default.Search, null) },
+                                modifier = Modifier.clickable {
+                                    if (isUserRecipe) onMyRecipesClick(recipeId) else onWantToCookClick(recipeId)
+                                    showSelectionDialog = null
+                                }
+                            )
+                            ListItem(
+                                headlineContent = { Text(stringResource(com.example.design.R.string.selection_option_select)) },
+                                leadingContent = { Icon(Icons.Default.Add, null) },
+                                modifier = Modifier.clickable {
+                                    onSelectRecipe(recipeId, isUserRecipe)
+                                    showSelectionDialog = null
+                                }
+                            )
+                        }
+                    },
+                    confirmButton = {
+                        TextButton(onClick = { showSelectionDialog = null }) {
+                            Text(stringResource(com.example.design.R.string.cancel))
+                        }
                     }
                 )
             }

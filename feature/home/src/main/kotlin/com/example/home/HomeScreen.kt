@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
@@ -40,10 +41,14 @@ import com.example.domain.model.Cuisine
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
     onRecipeClick: (String) -> Unit = {},
+    selectionDate: String? = null,
+    selectionMealType: String? = null,
+    onSelectRecipe: (String) -> Unit = {}
 ) {
     val state by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
     val sheetState = rememberModalBottomSheetState()
+    var showSelectionDialog by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(state.errorMessage) {
         state.errorMessage?.let {
@@ -72,13 +77,51 @@ fun HomeScreen(
         HomeContent(
             paddingValues = paddingValues,
             state = state,
-            onRecipeClick = onRecipeClick,
+            onRecipeClick = { recipeId ->
+                if (selectionDate != null && selectionMealType != null) {
+                    showSelectionDialog = recipeId
+                } else {
+                    onRecipeClick(recipeId)
+                }
+            },
             onSaveClick = { viewModel.toggleSaveRecipe(it) },
             onFilterSheetVisible = { viewModel.setFilterSheetVisible(it) },
             onCuisineSelected = { viewModel.onCuisineSelected(it) },
             onResetFilters = { viewModel.resetFilters() },
             onCategorySelected = { viewModel.onCategorySelected(it) },
             sheetState = sheetState
+        )
+    }
+
+    if (showSelectionDialog != null) {
+        AlertDialog(
+            onDismissRequest = { showSelectionDialog = null },
+            title = { Text(stringResource(com.example.design.R.string.selection_option_title)) },
+            text = {
+                Column {
+                    ListItem(
+                        headlineContent = { Text(stringResource(com.example.design.R.string.selection_option_view)) },
+                        leadingContent = { Icon(Icons.Default.Search, null) },
+                        modifier = Modifier.clickable {
+                            onRecipeClick(showSelectionDialog!!)
+                            showSelectionDialog = null
+                        }
+                    )
+                    ListItem(
+                        headlineContent = { Text(stringResource(com.example.design.R.string.selection_option_select)) },
+                        leadingContent = { Icon(Icons.Default.Add, null) },
+                        modifier = Modifier.clickable {
+                            onSelectRecipe(showSelectionDialog!!)
+                            showSelectionDialog = null
+                        }
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showSelectionDialog = null }) {
+                    Text(stringResource(com.example.design.R.string.cancel))
+                }
+            }
         )
     }
 }

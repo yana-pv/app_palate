@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="plan_title">Plan</string>
+    <string name="plan_assemble_list">Assemble shopping list</string>
+    <string name="plan_breakfast">BREAKFAST</string>
+    <string name="plan_lunch">LUNCH</string>
+    <string name="plan_dinner">DINNER</string>
+    <string name="plan_snack">SNACK</string>
+    <string name="plan_select">Select</string>
+    <string name="plan_add_snack">Add snack</string>
+    <string name="plan_delete_title">Remove recipe?</string>
+    <string name="plan_delete_message">Are you sure you want to remove this recipe from the plan?</string>
+    <string name="plan_cancel">Cancel</string>
+    <string name="plan_delete">Remove</string>
+    <string name="plan_select_option_title">Select recipe</string>
+    <string name="plan_option_my_recipes">My recipes</string>
+    <string name="plan_option_search">Search</string>
+    <string name="plan_select_now">Select</string>
+    <string name="plan_view_recipe">View Recipe</string>
+
+
+    <string name="monday">MONDAY</string>
+    <string name="tuesday">TUESDAY</string>
+    <string name="wednesday">WEDNESDAY</string>
+    <string name="thursday">THURSDAY</string>
+    <string name="friday">FRIDAY</string>
+    <string name="saturday">SATURDAY</string>
+    <string name="sunday">SUNDAY</string>
+</resources>
