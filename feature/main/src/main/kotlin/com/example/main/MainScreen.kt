@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
@@ -101,6 +103,17 @@ fun MainScreen(
                 val date = if (rawDate.isNullOrBlank() || rawDate.contains("{") || rawDate == "null") null else rawDate
                 val mealType = if (rawMealType.isNullOrBlank() || rawMealType.contains("{") || rawMealType == "null") null else rawMealType
 
+                val recipeSelected by backStackEntry.savedStateHandle.getStateFlow("recipe_selected", false).collectAsState()
+
+                LaunchedEffect(recipeSelected) {
+                    if (recipeSelected) {
+                        navController.navigate(Destination.Plan.route) {
+                            popUpTo(Destination.Home.route) { inclusive = false }
+                        }
+                        backStackEntry.savedStateHandle["recipe_selected"] = false
+                    }
+                }
+
                 HomeScreen(
                     onRecipeClick = { id -> onRecipeClick(id, date, mealType) },
                     selectionDate = date,
@@ -113,7 +126,9 @@ fun MainScreen(
                                 recipeId = recipeId,
                                 isUserRecipe = false
                             )
-                            navController.popBackStack(Destination.Plan.route, false)
+                            navController.navigate(Destination.Plan.route) {
+                                popUpTo(Destination.Home.route) { inclusive = false }
+                            }
                         }
                     }
                 )
@@ -159,7 +174,9 @@ fun MainScreen(
                                 recipeId = recipeId,
                                 isUserRecipe = isUserRecipe
                             )
-                            navController.popBackStack(Destination.Plan.route, false)
+                            navController.navigate(Destination.Plan.route) {
+                                popUpTo(Destination.Home.route) { inclusive = false }
+                            }
                         }
                     }
                 )

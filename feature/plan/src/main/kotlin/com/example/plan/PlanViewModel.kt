@@ -131,50 +131,101 @@ class PlanViewModel @Inject constructor(
         if (requiredIngredients.isEmpty()) return true
         
         val requiredMap = aggregateIngredients(requiredIngredients)
-        val activeShoppingItems = shoppingList.filter { !it.isChecked }
         
-        for ((key, reqItem) in requiredMap) {
-            val found = activeShoppingItems.find { 
-                "${it.name.lowercase()}_${it.unit.lowercase()}" == key 
+        for (reqItem in requiredMap.values) {
+            val reqAmt = parseAmount(reqItem.amount)
+            
+            val activeItems = shoppingList.filter { item ->
+                !item.isChecked &&
+                item.name.equals(reqItem.name, ignoreCase = true) &&
+                item.unit.equals(reqItem.unit, ignoreCase = true)
             }
             
-            if (found == null) return false
-            
-            val reqAmount = reqItem.amount.toDoubleOrNull()
-            val hasAmount = found.amount.toDoubleOrNull()
-            
-            if (reqAmount != null && hasAmount != null) {
-                if (hasAmount < reqAmount) return false
-            } else if (reqItem.amount.isNotEmpty() && found.amount.isEmpty()) {
-                return false
+            if (reqAmt != null && reqAmt > 0) {
+                val activeAmt = activeItems.sumOf { parseAmount(it.amount) ?: 0.0 }
+                if (activeAmt < reqAmt) return false
+            } else {
+                if (activeItems.isEmpty()) return false
             }
         }
         
         return true
     }
 
+    private fun parseAmount(amountStr: String): Double? {
+        val trimmed = amountStr.trim().replace(",", ".")
+        if (trimmed.isEmpty()) return null
+
+        val mixedRegex = Regex("""(\d+)\s*[- ]\s*(\d+)/(\d+)""")
+        val mixedMatch = mixedRegex.find(trimmed)
+        if (mixedMatch != null) {
+            val whole = mixedMatch.groupValues[1].toDoubleOrNull() ?: 0.0
+            val num = mixedMatch.groupValues[2].toDoubleOrNull() ?: 0.0
+            val den = mixedMatch.groupValues[3].toDoubleOrNull() ?: 1.0
+            if (den != 0.0) return whole + (num / den)
+        }
+
+        if (trimmed.contains("/")) {
+            val parts = trimmed.split("/")
+            if (parts.size == 2) {
+                val num = parts[0].trim().filter { it.isDigit() || it == '.' }.toDoubleOrNull()
+                val den = parts[1].trim().filter { it.isDigit() || it == '.' }.toDoubleOrNull()
+                if (num != null && den != null && den != 0.0) return num / den
+            }
+        }
+
+        val regex = Regex("""^([\d.]+)""")
+        val match = regex.find(trimmed)
+        return match?.groupValues?.get(1)?.toDoubleOrNull()
+    }
+
+    private fun formatAmount(amount: Double): String {
+        return when {
+            amount <= 0 -> ""
+            amount % 1.0 == 0.0 -> amount.toInt().toString()
+            else -> "%.2f".format(java.util.Locale.US, amount).trimEnd('0').trimEnd('.')
+        }
+    }
+
     private fun aggregateIngredients(ingredients: List<com.example.domain.model.Ingredient>): Map<String, ShoppingItem> {
         val userId = authRepository.getCurrentUser()?.id ?: ""
         val aggregated = mutableMapOf<String, ShoppingItem>()
-        
+
         ingredients.forEach { ingredient ->
-            val key = "${ingredient.name.lowercase()}_${ingredient.unit.lowercase()}"
+            val amt = parseAmount(ingredient.amount)
+
+            val extractedUnit = if (ingredient.unit.isBlank() && amt != null) {
+                val trimmedAmount = ingredient.amount.trim()
+                val numberPattern = Regex("""^(\d+\s*[- ]\s*\d+/\d+|\d+/\d+|\d+[.,]?\d*)""")
+                val match = numberPattern.find(trimmedAmount)
+                if (match != null) {
+                    trimmedAmount.substring(match.range.last + 1).trim()
+                } else ""
+            } else {
+                ingredient.unit.trim()
+            }
+
+            val nameTrimmed = ingredient.name.trim()
+            val nameLower = nameTrimmed.lowercase()
+            val unitLower = extractedUnit.lowercase()
+            val key = "${nameLower}_$unitLower"
+
             val existing = aggregated[key]
             if (existing != null) {
-                val currentAmount = existing.amount.toDoubleOrNull() ?: 0.0
-                val addedAmount = ingredient.amount.toDoubleOrNull() ?: 0.0
-                val newAmount = currentAmount + addedAmount
-                aggregated[key] = existing.copy(
-                    amount = if (newAmount > 0) {
-                        if (newAmount % 1.0 == 0.0) newAmount.toInt().toString() else newAmount.toString()
-                    } else ""
-                )
+                if (amt != null) {
+                    val currentAmt = parseAmount(existing.amount) ?: 0.0
+                    val sum = currentAmt + amt
+                    aggregated[key] = existing.copy(
+                        amount = formatAmount(sum),
+                        unit = extractedUnit
+                    )
+                }
             } else {
                 aggregated[key] = ShoppingItem(
                     id = UUID.randomUUID().toString(),
-                    name = ingredient.name,
-                    amount = ingredient.amount,
-                    unit = ingredient.unit,
+                    name = nameTrimmed,
+                    amount = if (amt != null) formatAmount(amt) else "",
+                    unit = if (amt != null) extractedUnit else "",
                     isChecked = false,
                     userId = userId
                 )
@@ -247,7 +298,6 @@ class PlanViewModel @Inject constructor(
                 val items = uiState.value.mealPlanItems
                 
                 val currentShoppingList = shoppingListRepository.getShoppingList(userId).first()
-                val activeShoppingItems = currentShoppingList.filter { !it.isChecked }
                 
                 val allPlanIngredients = mutableListOf<com.example.domain.model.Ingredient>()
                 for (planItem in items) {
@@ -262,21 +312,34 @@ class PlanViewModel @Inject constructor(
                 val requiredMap = aggregateIngredients(allPlanIngredients)
 
                 for (reqItem in requiredMap.values) {
-                    val key = "${reqItem.name.lowercase()}_${reqItem.unit.lowercase()}"
-                    val existing = activeShoppingItems.find { 
-                        "${it.name.lowercase()}_${it.unit.lowercase()}" == key 
+                    val reqAmt = parseAmount(reqItem.amount)
+                    
+                    val activeItems = currentShoppingList.filter { item ->
+                        !item.isChecked &&
+                        item.name.equals(reqItem.name, ignoreCase = true) &&
+                        item.unit.equals(reqItem.unit, ignoreCase = true)
                     }
-
-                    if (existing != null) {
-                        val currentAmt = existing.amount.toDoubleOrNull() ?: 0.0
-                        val reqAmt = reqItem.amount.toDoubleOrNull() ?: 0.0
-                        
-                        if (reqAmt > currentAmt) {
-                            val newAmt = if (reqAmt % 1.0 == 0.0) reqAmt.toInt().toString() else reqAmt.toString()
-                            shoppingListRepository.updateShoppingItem(existing.copy(amount = newAmt))
+                    
+                    if (reqAmt != null && reqAmt > 0) {
+                        val currentActiveAmt = activeItems.sumOf { parseAmount(it.amount) ?: 0.0 }
+                        if (currentActiveAmt < reqAmt) {
+                            val diff = reqAmt - currentActiveAmt
+                            val existingActive = activeItems.firstOrNull()
+                            if (existingActive != null) {
+                                val oldAmt = parseAmount(existingActive.amount) ?: 0.0
+                                val newTotalAmt = oldAmt + diff
+                                shoppingListRepository.updateShoppingItem(existingActive.copy(amount = formatAmount(newTotalAmt)))
+                            } else {
+                                shoppingListRepository.addShoppingItem(reqItem.copy(
+                                    id = java.util.UUID.randomUUID().toString(),
+                                    amount = formatAmount(diff)
+                                ))
+                            }
                         }
                     } else {
-                        shoppingListRepository.addShoppingItem(reqItem)
+                        if (activeItems.isEmpty()) {
+                            shoppingListRepository.addShoppingItem(reqItem.copy(id = java.util.UUID.randomUUID().toString()))
+                        }
                     }
                 }
             } catch (e: Exception) {

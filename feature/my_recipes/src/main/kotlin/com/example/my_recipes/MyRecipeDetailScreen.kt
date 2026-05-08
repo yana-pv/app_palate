@@ -35,14 +35,15 @@ fun MyRecipeDetailScreen(
     viewModel: MyRecipeDetailViewModel = hiltViewModel(),
     onBackClick: () -> Unit,
     onWantToCookClick: () -> Unit = {},
-    onToListClick: () -> Unit = {}
+    onToListClick: () -> Unit = {},
+    onSelected: () -> Unit = onBackClick
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(uiState.isSelected) {
         if (uiState.isSelected) {
-            onBackClick()
+            onSelected()
         }
     }
 

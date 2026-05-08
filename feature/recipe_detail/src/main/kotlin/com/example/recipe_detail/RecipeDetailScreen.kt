@@ -34,7 +34,8 @@ import com.example.recipe_detail.viewmodel.RecipeDetailViewModel
 @Composable
 fun RecipeDetailScreen(
     viewModel: RecipeDetailViewModel = hiltViewModel(),
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onSelected: () -> Unit = onBackClick
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -44,7 +45,7 @@ fun RecipeDetailScreen(
 
     LaunchedEffect(uiState.isSelected) {
         if (uiState.isSelected) {
-            onBackClick()
+            onSelected()
         }
     }
 

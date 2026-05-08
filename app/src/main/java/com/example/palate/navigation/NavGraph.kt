@@ -72,9 +72,20 @@ fun PalateNavGraph(
                 navArgument("date") { type = NavType.StringType; nullable = true; defaultValue = null },
                 navArgument("mealType") { type = NavType.StringType; nullable = true; defaultValue = null }
             )
-        ) {
+        ) { backStackEntry ->
+            val date = backStackEntry.arguments?.getString("date")
+            val mealType = backStackEntry.arguments?.getString("mealType")
             RecipeDetailScreen(
-                onBackClick = { navigator.navigateUp() }
+                onBackClick = { navigator.navigateUp() },
+                onSelected = {
+                    if (date != null && mealType != null) {
+                        navController.getBackStackEntry(Destination.Home.route)
+                            .savedStateHandle["recipe_selected"] = true
+                        navigator.navigateUp()
+                    } else {
+                        navigator.navigateUp()
+                    }
+                }
             )
         }
 
@@ -85,8 +96,10 @@ fun PalateNavGraph(
                 navArgument("date") { type = NavType.StringType; nullable = true; defaultValue = null },
                 navArgument("mealType") { type = NavType.StringType; nullable = true; defaultValue = null }
             )
-        ) {
+        ) { backStackEntry ->
             val viewModel: MyRecipeDetailViewModel = hiltViewModel()
+            val date = backStackEntry.arguments?.getString("date")
+            val mealType = backStackEntry.arguments?.getString("mealType")
             MyRecipeDetailScreen(
                 onBackClick = { navigator.navigateUp() },
                 onWantToCookClick = {
@@ -94,6 +107,15 @@ fun PalateNavGraph(
                 },
                 onToListClick = {
                     // TODO: добавить в список покупок
+                },
+                onSelected = {
+                    if (date != null && mealType != null) {
+                        navController.getBackStackEntry(Destination.Home.route)
+                            .savedStateHandle["recipe_selected"] = true
+                        navigator.navigateUp()
+                    } else {
+                        navigator.navigateUp()
+                    }
                 }
             )
         }
