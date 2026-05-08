@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import com.example.design.components.PalateAlertDialog
 import com.example.design.theme.PalateColors
 import com.example.domain.model.MealPlanItem
 import com.example.domain.model.MealType
@@ -129,31 +130,27 @@ fun PlanScreen(
 
     // Dialogs
     showDeleteDialog?.let { itemId ->
-        AlertDialog(
+        PalateAlertDialog(
             onDismissRequest = { showDeleteDialog = null },
-            title = { Text(stringResource(R.string.plan_delete_title)) },
-            text = { Text(stringResource(R.string.plan_delete_message)) },
-            confirmButton = {
-                TextButton(onClick = {
-                    viewModel.removeMeal(itemId)
-                    showDeleteDialog = null
-                }) {
-                    Text(stringResource(R.string.plan_delete), color = Color.Red)
-                }
+            title = stringResource(R.string.plan_delete_title),
+            text = stringResource(R.string.plan_delete_message),
+            confirmButtonText = stringResource(R.string.plan_delete),
+            onConfirmClick = {
+                viewModel.removeMeal(itemId)
+                showDeleteDialog = null
             },
-            dismissButton = {
-                TextButton(onClick = { showDeleteDialog = null }) {
-                    Text(stringResource(R.string.plan_cancel))
-                }
-            }
+            dismissButtonText = stringResource(R.string.plan_cancel),
+            onDismissClick = { showDeleteDialog = null }
         )
     }
 
     showSelectOptionDialog?.let { (date, mealType) ->
-        AlertDialog(
+        PalateAlertDialog(
             onDismissRequest = { showSelectOptionDialog = null },
-            title = { Text(stringResource(R.string.plan_select_option_title)) },
-            text = {
+            title = stringResource(R.string.plan_select_option_title),
+            confirmButtonText = stringResource(R.string.plan_cancel),
+            onConfirmClick = { showSelectOptionDialog = null },
+            content = {
                 Column {
                     ListItem(
                         headlineContent = { Text(stringResource(R.string.plan_option_my_recipes)) },
@@ -172,8 +169,7 @@ fun PlanScreen(
                         }
                     )
                 }
-            },
-            confirmButton = {}
+            }
         )
     }
 }

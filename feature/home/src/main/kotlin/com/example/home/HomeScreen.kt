@@ -29,6 +29,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.design.components.PalateAlertDialog
 import com.example.design.components.RecipeCard
 import com.example.design.components.RecipeCardPlaceholder
 import com.example.domain.model.Category
@@ -94,10 +95,12 @@ fun HomeScreen(
     }
 
     if (showSelectionDialog != null) {
-        AlertDialog(
+        PalateAlertDialog(
             onDismissRequest = { showSelectionDialog = null },
-            title = { Text(stringResource(com.example.design.R.string.selection_option_title)) },
-            text = {
+            title = stringResource(com.example.design.R.string.selection_option_title),
+            confirmButtonText = stringResource(com.example.design.R.string.cancel),
+            onConfirmClick = { showSelectionDialog = null },
+            content = {
                 Column {
                     ListItem(
                         headlineContent = { Text(stringResource(com.example.design.R.string.selection_option_view)) },
@@ -115,11 +118,6 @@ fun HomeScreen(
                             showSelectionDialog = null
                         }
                     )
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = { showSelectionDialog = null }) {
-                    Text(stringResource(com.example.design.R.string.cancel))
                 }
             }
         )

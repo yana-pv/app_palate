@@ -6,8 +6,6 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.foundation.clickable
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ListItem
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.AlertDialog
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
@@ -43,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.design.components.PalateAlertDialog
 import com.example.design.components.ConfirmationDialog
 import com.example.design.theme.PalateTheme
 import com.example.design.theme.PrimaryGreen
@@ -250,10 +249,12 @@ fun MyRecipesScreen(
 
             if (showSelectionDialog != null) {
                 val (recipeId, isUserRecipe) = showSelectionDialog!!
-                AlertDialog(
+                PalateAlertDialog(
                     onDismissRequest = { showSelectionDialog = null },
-                    title = { Text(stringResource(com.example.design.R.string.selection_option_title)) },
-                    text = {
+                    title = stringResource(com.example.design.R.string.selection_option_title),
+                    confirmButtonText = stringResource(com.example.design.R.string.cancel),
+                    onConfirmClick = { showSelectionDialog = null },
+                    content = {
                         Column {
                             ListItem(
                                 headlineContent = { Text(stringResource(com.example.design.R.string.selection_option_view)) },
@@ -271,11 +272,6 @@ fun MyRecipesScreen(
                                     showSelectionDialog = null
                                 }
                             )
-                        }
-                    },
-                    confirmButton = {
-                        TextButton(onClick = { showSelectionDialog = null }) {
-                            Text(stringResource(com.example.design.R.string.cancel))
                         }
                     }
                 )

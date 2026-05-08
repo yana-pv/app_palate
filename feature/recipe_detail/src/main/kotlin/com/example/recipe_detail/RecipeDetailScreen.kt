@@ -26,6 +26,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.example.design.theme.*
 import com.example.design.R as DesignR
+import com.example.design.components.PalateAlertDialog
 import com.example.design.components.RecipeDetailPlaceholder
 import com.example.domain.model.Recipe
 import com.example.recipe_detail.viewmodel.RecipeDetailViewModel
@@ -90,23 +91,17 @@ fun RecipeDetailScreen(
     }
 
     if (uiState.showAlreadyAddedDialog) {
-        AlertDialog(
+        PalateAlertDialog(
             onDismissRequest = { viewModel.dismissAlreadyAddedDialog() },
-            title = { Text(stringResource(R.string.already_added_title)) },
-            text = { Text(stringResource(R.string.already_added_message)) },
-            confirmButton = {
-                TextButton(onClick = {
-                    viewModel.addIngredientsToShoppingList(force = true)
-                    viewModel.dismissAlreadyAddedDialog()
-                }) {
-                    Text(stringResource(R.string.add_more))
-                }
+            title = stringResource(R.string.already_added_title),
+            text = stringResource(R.string.already_added_message),
+            confirmButtonText = stringResource(R.string.add_more),
+            onConfirmClick = {
+                viewModel.addIngredientsToShoppingList(force = true)
+                viewModel.dismissAlreadyAddedDialog()
             },
-            dismissButton = {
-                TextButton(onClick = { viewModel.dismissAlreadyAddedDialog() }) {
-                    Text(stringResource(R.string.cancel))
-                }
-            }
+            dismissButtonText = stringResource(R.string.cancel),
+            onDismissClick = { viewModel.dismissAlreadyAddedDialog() }
         )
     }
 }
