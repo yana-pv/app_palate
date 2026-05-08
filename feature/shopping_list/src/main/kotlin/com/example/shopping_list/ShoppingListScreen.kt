@@ -29,6 +29,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.design.components.PalateAlertDialog
 import com.example.design.theme.*
 import com.example.domain.model.ShoppingItem
 
@@ -152,23 +153,17 @@ fun ShoppingListScreen(
 
     // Delete Confirmation Dialog
     if (uiState.showDeleteConfirmation) {
-        AlertDialog(
+        PalateAlertDialog(
             onDismissRequest = { viewModel.showDeleteConfirmation(false) },
-            title = { Text(stringResource(R.string.delete_confirm_title)) },
-            text = { Text(stringResource(R.string.delete_confirm_message)) },
-            confirmButton = {
-                TextButton(onClick = { 
-                    viewModel.deleteCheckedItems()
-                    viewModel.showDeleteConfirmation(false)
-                }) {
-                    Text(stringResource(R.string.yes), color = Color.Red)
-                }
+            title = stringResource(R.string.delete_confirm_title),
+            text = stringResource(R.string.delete_confirm_message),
+            confirmButtonText = stringResource(R.string.yes),
+            onConfirmClick = { 
+                viewModel.deleteCheckedItems()
+                viewModel.showDeleteConfirmation(false)
             },
-            dismissButton = {
-                TextButton(onClick = { viewModel.showDeleteConfirmation(false) }) {
-                    Text(stringResource(R.string.cancel))
-                }
-            }
+            dismissButtonText = stringResource(R.string.cancel),
+            onDismissClick = { viewModel.showDeleteConfirmation(false) }
         )
     }
 
@@ -304,43 +299,40 @@ fun EditItemDialog(
     var amount by remember { mutableStateOf(item.amount) }
     var unit by remember { mutableStateOf(item.unit) }
 
-    AlertDialog(
+    PalateAlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(stringResource(R.string.edit_title)) },
-        text = {
-            Column(verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small))) {
+        title = stringResource(R.string.edit_title),
+        confirmButtonText = stringResource(R.string.save),
+        onConfirmClick = { onConfirm(name, amount, unit) },
+        dismissButtonText = stringResource(R.string.cancel),
+        onDismissClick = onDismiss,
+        content = {
+            Column(
+                modifier = Modifier.padding(top = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small))
+            ) {
                 OutlinedTextField(
                     value = name, 
                     onValueChange = { name = it }, 
                     label = { Text(stringResource(R.string.item_name_hint)) },
-                    shape = RoundedCornerShape(dimensionResource(R.dimen.input_corner_radius))
+                    shape = RoundedCornerShape(dimensionResource(R.dimen.input_corner_radius)),
+                    modifier = Modifier.fillMaxWidth()
                 )
                 OutlinedTextField(
                     value = amount, 
                     onValueChange = { amount = it }, 
                     label = { Text(stringResource(R.string.item_amount_hint)) },
-                    shape = RoundedCornerShape(dimensionResource(R.dimen.input_corner_radius))
+                    shape = RoundedCornerShape(dimensionResource(R.dimen.input_corner_radius)),
+                    modifier = Modifier.fillMaxWidth(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                 )
                 OutlinedTextField(
                     value = unit, 
                     onValueChange = { unit = it }, 
                     label = { Text(stringResource(R.string.item_unit_hint)) },
-                    shape = RoundedCornerShape(dimensionResource(R.dimen.input_corner_radius))
+                    shape = RoundedCornerShape(dimensionResource(R.dimen.input_corner_radius)),
+                    modifier = Modifier.fillMaxWidth()
                 )
-            }
-        },
-        confirmButton = {
-            Button(
-                onClick = { onConfirm(name, amount, unit) },
-                colors = ButtonDefaults.buttonColors(containerColor = PrimaryGreen),
-                shape = RoundedCornerShape(dimensionResource(R.dimen.input_corner_radius))
-            ) {
-                Text(stringResource(R.string.save))
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(stringResource(R.string.cancel))
             }
         }
     )

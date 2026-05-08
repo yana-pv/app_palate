@@ -17,6 +17,8 @@
     <string name="ingredients_added">Ingredients added to shopping list</string>
     <string name="add_more">Add more</string>
     <string name="cancel">Cancel</string>
+    <string name="plan_select_now">Select</string>
+
 
     <!-- Cooked Note Screen -->
     <string name="my_notes_section">My notes</string>

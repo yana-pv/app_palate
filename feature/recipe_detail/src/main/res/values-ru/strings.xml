@@ -16,6 +16,8 @@
     <string name="ingredients_added">Ингредиенты добавлены в список</string>
     <string name="add_more">Добавить еще</string>
     <string name="cancel">Отмена</string>
+    <string name="plan_select_now">Выбрать</string>
+
 
     <!-- Cooked Note Screen -->
     <string name="my_notes_section">Мои заметки</string>

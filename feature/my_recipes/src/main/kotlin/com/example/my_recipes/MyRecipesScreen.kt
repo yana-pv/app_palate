@@ -1,8 +1,11 @@
 package com.example.my_recipes
 
+import androidx.compose.foundation.background
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.ListItem
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
@@ -23,6 +26,7 @@ import androidx.compose.material3.TabRowDefaults.SecondaryIndicator
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -38,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.design.components.PalateAlertDialog
 import com.example.design.components.ConfirmationDialog
 import com.example.design.theme.PalateTheme
 import com.example.design.theme.PrimaryGreen
@@ -54,13 +59,20 @@ fun MyRecipesScreen(
     onCookedNotesClick: (String) -> Unit,
     onMyRecipesClick: (String) -> Unit,
     onMyRecipesEditClick: (String) -> Unit = {},
-    onCreateRecipeClick: () -> Unit = {}
-
+    onCreateRecipeClick: () -> Unit = {},
+    selectionDate: String? = null,
+    selectionMealType: String? = null,
+    onSelectRecipe: (String, Boolean) -> Unit = { _, _ -> }
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var selectedTab by rememberSaveable { mutableIntStateOf(0) }
     var showDeleteDialog by remember { mutableStateOf(false) }
     var pendingDeleteId by remember { mutableStateOf<String?>(null) }
+    var showSelectionDialog by remember { mutableStateOf<Pair<String, Boolean>?>(null) }
+    
+    LaunchedEffect(selectionDate, selectionMealType) {
+        android.util.Log.d("MyRecipesScreen", "selectionDate: '$selectionDate', selectionMealType: '$selectionMealType'")
+    }
 
     val tabs = listOf(
         stringResource(R.string.tab_want_to_cook),
@@ -136,9 +148,23 @@ fun MyRecipesScreen(
                 when (selectedTab) {
                     0 -> WantToCookTab(
                         recipes = uiState.wantToCook,
-                        onRecipeClick = onWantToCookClick,
+                        onRecipeClick = { id ->
+                            if (!selectionDate.isNullOrBlank() && selectionDate != "null" && !selectionDate.contains("{") &&
+                                !selectionMealType.isNullOrBlank() && selectionMealType != "null" && !selectionMealType.contains("{")) {
+                                showSelectionDialog = id to false
+                            } else {
+                                onWantToCookClick(id)
+                            }
+                        },
                         onCookedClick = { recipeId -> viewModel.moveToCooked(recipeId) },
-                        onUserRecipeClick = onMyRecipesClick,
+                        onUserRecipeClick = { id ->
+                            if (!selectionDate.isNullOrBlank() && selectionDate != "null" && !selectionDate.contains("{") &&
+                                !selectionMealType.isNullOrBlank() && selectionMealType != "null" && !selectionMealType.contains("{")) {
+                                showSelectionDialog = id to true
+                            } else {
+                                onMyRecipesClick(id)
+                            }
+                        },
                         onDeleteClick = { recipeId ->
                             pendingDeleteId = recipeId
                             showDeleteDialog = true
@@ -147,8 +173,22 @@ fun MyRecipesScreen(
 
                     1 -> CookedTab(
                         recipes = uiState.cooked,
-                        onRecipeClick = onWantToCookClick,
-                        onUserRecipeClick = onMyRecipesClick,
+                        onRecipeClick = { id ->
+                            if (!selectionDate.isNullOrBlank() && selectionDate != "null" && !selectionDate.contains("{") &&
+                                !selectionMealType.isNullOrBlank() && selectionMealType != "null" && !selectionMealType.contains("{")) {
+                                showSelectionDialog = id to false
+                            } else {
+                                onWantToCookClick(id)
+                            }
+                        },
+                        onUserRecipeClick = { id ->
+                            if (!selectionDate.isNullOrBlank() && selectionDate != "null" && !selectionDate.contains("{") &&
+                                !selectionMealType.isNullOrBlank() && selectionMealType != "null" && !selectionMealType.contains("{")) {
+                                showSelectionDialog = id to true
+                            } else {
+                                onMyRecipesClick(id)
+                            }
+                        },
                         onNotesClick = onCookedNotesClick,
                         onDeleteClick = { recipeId ->
                             pendingDeleteId = recipeId
@@ -159,7 +199,14 @@ fun MyRecipesScreen(
                     2 -> Box(modifier = Modifier.fillMaxSize()) {
                         MyRecipesTab(
                             recipes = uiState.userRecipes,
-                            onRecipeClick = onMyRecipesClick,
+                            onRecipeClick = { id ->
+                                if (!selectionDate.isNullOrBlank() && selectionDate != "null" && !selectionDate.contains("{") &&
+                                    !selectionMealType.isNullOrBlank() && selectionMealType != "null" && !selectionMealType.contains("{")) {
+                                    showSelectionDialog = id to true
+                                } else {
+                                    onMyRecipesClick(id)
+                                }
+                            },
                             onEditClick = onMyRecipesEditClick,
                             onDeleteClick = { recipeId ->
                                 pendingDeleteId = recipeId
@@ -206,6 +253,36 @@ fun MyRecipesScreen(
                     onDismiss = {
                         showDeleteDialog = false
                         pendingDeleteId = null
+                    }
+                )
+            }
+
+            if (showSelectionDialog != null) {
+                val (recipeId, isUserRecipe) = showSelectionDialog!!
+                PalateAlertDialog(
+                    onDismissRequest = { showSelectionDialog = null },
+                    title = stringResource(com.example.design.R.string.selection_option_title),
+                    confirmButtonText = stringResource(com.example.design.R.string.cancel),
+                    onConfirmClick = { showSelectionDialog = null },
+                    content = {
+                        Column {
+                            ListItem(
+                                headlineContent = { Text(stringResource(com.example.design.R.string.selection_option_view)) },
+                                leadingContent = { Icon(Icons.Default.Search, null) },
+                                modifier = Modifier.clickable {
+                                    if (isUserRecipe) onMyRecipesClick(recipeId) else onWantToCookClick(recipeId)
+                                    showSelectionDialog = null
+                                }
+                            )
+                            ListItem(
+                                headlineContent = { Text(stringResource(com.example.design.R.string.selection_option_select)) },
+                                leadingContent = { Icon(Icons.Default.Add, null) },
+                                modifier = Modifier.clickable {
+                                    onSelectRecipe(recipeId, isUserRecipe)
+                                    showSelectionDialog = null
+                                }
+                            )
+                        }
                     }
                 )
             }

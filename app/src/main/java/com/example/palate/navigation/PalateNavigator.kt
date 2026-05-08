@@ -15,9 +15,9 @@ class PalateNavigator(private val navController: NavController) : HomeNavigator 
         navController.navigateUp()
     }
 
-    override fun openRecipeDetail(recipeId: String) {
+    override fun openRecipeDetail(recipeId: String, date: String?, mealType: String?) {
         val encodedId = URLEncoder.encode(recipeId, StandardCharsets.UTF_8.toString())
-        val route = Destination.RecipeDetail.createRoute(encodedId)
+        val route = Destination.RecipeDetail.createRoute(encodedId, date, mealType)
         navController.navigate(route)
     }
 

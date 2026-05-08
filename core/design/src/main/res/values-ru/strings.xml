@@ -15,4 +15,9 @@
     <string name="delete">Удалить</string>
     <string name="cancel">Отмена</string>
     <string name="edit_recipe">Редактировать</string>
+
+    <!-- Selection Flow -->
+    <string name="selection_option_title">Выбрать рецепт</string>
+    <string name="selection_option_view">Посмотреть рецепт</string>
+    <string name="selection_option_select">Выбрать</string>
 </resources>

@@ -12,4 +12,5 @@ interface RecipeRepository {
     suspend fun getCuisines(language: String = "en"): List<Cuisine>
     suspend fun getRecipesByCuisine(cuisine: String, language: String = "en"): List<RecipePreview>
     suspend fun getRecipeById(id: String, language: String = "en"): Recipe?
+    suspend fun searchRecipes(query: String, language: String = "en"): List<RecipePreview>
 }

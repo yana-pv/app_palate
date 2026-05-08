@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.app.android.library)
     alias(libs.plugins.app.compose)
+    alias(libs.plugins.app.hilt)
 }
 
 android {
@@ -10,6 +11,7 @@ android {
 dependencies {
     implementation(project(":core:navigation"))
     implementation(project(":core:design"))
+    implementation(project(":core:domain"))
 
     implementation(project(":feature:home"))
     implementation(project(":feature:plan"))
@@ -20,5 +22,6 @@ dependencies {
     implementation(libs.compose.navigation)
     implementation(libs.compose.material3)
     implementation(libs.androidx.compose.material.icons.extended)
+    implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.core.ktx)
 }
