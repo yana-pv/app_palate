@@ -34,7 +34,6 @@ import com.example.domain.model.MealPlanItem
 import com.example.domain.model.MealType
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-
 import com.example.design.R as DesignR
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -81,21 +80,33 @@ fun PlanScreen(
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 8.dp)
                     .height(48.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = PalateColors.GreenPrimary),
+                enabled = !uiState.isShoppingListUpToDate && !uiState.isLoading,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = PalateColors.GreenPrimary,
+                    disabledContainerColor = Color.Gray.copy(alpha = 0.5f)
+                ),
                 shape = RoundedCornerShape(12.dp),
                 elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp)
             ) {
-                Icon(
-                    painter = painterResource(com.example.design.R.drawable.shopping_cart),
-                    contentDescription = null,
-                    modifier = Modifier.size(20.dp)
-                )
-                Spacer(Modifier.width(8.dp))
-                Text(
-                    text = stringResource(R.string.plan_assemble_list),
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Bold
-                )
+                if (uiState.isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(24.dp),
+                        color = Color.White,
+                        strokeWidth = 2.dp
+                    )
+                } else {
+                    Icon(
+                        painter = painterResource(com.example.design.R.drawable.shopping_cart),
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text(
+                        text = stringResource(R.string.plan_assemble_list),
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
             }
 
             LazyColumn(

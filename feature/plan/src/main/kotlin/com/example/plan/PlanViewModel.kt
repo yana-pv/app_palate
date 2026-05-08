@@ -36,7 +36,9 @@ data class PlanUiState(
     val userRecipes: List<UserRecipe> = emptyList(),
     val searchResults: List<RecipePreview> = emptyList(),
     val isLoading: Boolean = false,
-    val error: String? = null
+    val error: String? = null,
+    val isShoppingListSyncing: Boolean = false,
+    val isShoppingListUpToDate: Boolean = true
 )
 
 @HiltViewModel
@@ -59,6 +61,30 @@ class PlanViewModel @Inject constructor(
         mealPlanRepository.getMealPlanForWeek(userId, date)
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private val _requiredIngredients = _mealPlanItems.flatMapLatest { items ->
+        if (items.isEmpty()) return@flatMapLatest flowOf(emptyList<com.example.domain.model.Ingredient>())
+        val userId = authRepository.getCurrentUser()?.id ?: return@flatMapLatest flowOf(emptyList())
+        val lang = getCurrentLanguage()
+
+        kotlinx.coroutines.flow.flow {
+            val allIngredients = mutableListOf<com.example.domain.model.Ingredient>()
+            for (planItem in items) {
+                val ingredients = if (planItem.isUserRecipe) {
+                    userRecipeRepository.getUserRecipeById(userId, planItem.recipeId)?.ingredients
+                } else {
+                    recipeRepository.getRecipeById(planItem.recipeId, lang)?.ingredients
+                }
+                ingredients?.let { allIngredients.addAll(it) }
+            }
+            emit(allIngredients)
+        }
+    }
+
+    private val _shoppingList = authRepository.getCurrentUser()?.id?.let { userId ->
+        shoppingListRepository.getShoppingList(userId)
+    } ?: flowOf(emptyList())
+
     private val _userRecipes = MutableStateFlow<List<UserRecipe>>(emptyList())
     private val _searchResults = MutableStateFlow<List<RecipePreview>>(emptyList())
     private val _isLoading = MutableStateFlow(false)
@@ -70,21 +96,92 @@ class PlanViewModel @Inject constructor(
         _userRecipes,
         _searchResults,
         _isLoading,
-        _error
-    ) { params ->
+        _error,
+        _shoppingList,
+        _requiredIngredients
+    ) { params: Array<Any?> ->
+        val currentWeekStart = params[0] as LocalDate
+        val mealPlanItems = params[1] as List<MealPlanItem>
+        val userRecipes = params[2] as List<UserRecipe>
+        val searchResults = params[3] as List<RecipePreview>
+        val isLoading = params[4] as Boolean
+        val error = params[5] as String?
+        val shoppingList = params[6] as List<ShoppingItem>
+        val requiredIngredients = params[7] as List<com.example.domain.model.Ingredient>
+
         PlanUiState(
-            currentWeekStart = params[0] as LocalDate,
-            mealPlanItems = params[1] as List<MealPlanItem>,
-            userRecipes = params[2] as List<UserRecipe>,
-            searchResults = params[3] as List<RecipePreview>,
-            isLoading = params[4] as Boolean,
-            error = params[5] as String?
+            currentWeekStart = currentWeekStart,
+            mealPlanItems = mealPlanItems,
+            userRecipes = userRecipes,
+            searchResults = searchResults,
+            isLoading = isLoading,
+            error = error,
+            isShoppingListUpToDate = checkIsShoppingListUpToDate(requiredIngredients, shoppingList)
         )
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = PlanUiState()
     )
+
+    private fun checkIsShoppingListUpToDate(
+        requiredIngredients: List<com.example.domain.model.Ingredient>,
+        shoppingList: List<ShoppingItem>
+    ): Boolean {
+        if (requiredIngredients.isEmpty()) return true
+        
+        val requiredMap = aggregateIngredients(requiredIngredients)
+        val activeShoppingItems = shoppingList.filter { !it.isChecked }
+        
+        for ((key, reqItem) in requiredMap) {
+            val found = activeShoppingItems.find { 
+                "${it.name.lowercase()}_${it.unit.lowercase()}" == key 
+            }
+            
+            if (found == null) return false
+            
+            val reqAmount = reqItem.amount.toDoubleOrNull()
+            val hasAmount = found.amount.toDoubleOrNull()
+            
+            if (reqAmount != null && hasAmount != null) {
+                if (hasAmount < reqAmount) return false
+            } else if (reqItem.amount.isNotEmpty() && found.amount.isEmpty()) {
+                return false
+            }
+        }
+        
+        return true
+    }
+
+    private fun aggregateIngredients(ingredients: List<com.example.domain.model.Ingredient>): Map<String, ShoppingItem> {
+        val userId = authRepository.getCurrentUser()?.id ?: ""
+        val aggregated = mutableMapOf<String, ShoppingItem>()
+        
+        ingredients.forEach { ingredient ->
+            val key = "${ingredient.name.lowercase()}_${ingredient.unit.lowercase()}"
+            val existing = aggregated[key]
+            if (existing != null) {
+                val currentAmount = existing.amount.toDoubleOrNull() ?: 0.0
+                val addedAmount = ingredient.amount.toDoubleOrNull() ?: 0.0
+                val newAmount = currentAmount + addedAmount
+                aggregated[key] = existing.copy(
+                    amount = if (newAmount > 0) {
+                        if (newAmount % 1.0 == 0.0) newAmount.toInt().toString() else newAmount.toString()
+                    } else ""
+                )
+            } else {
+                aggregated[key] = ShoppingItem(
+                    id = UUID.randomUUID().toString(),
+                    name = ingredient.name,
+                    amount = ingredient.amount,
+                    unit = ingredient.unit,
+                    isChecked = false,
+                    userId = userId
+                )
+            }
+        }
+        return aggregated
+    }
 
     init {
         loadUserRecipes()
@@ -144,45 +241,49 @@ class PlanViewModel @Inject constructor(
     fun assembleShoppingList() {
         viewModelScope.launch {
             _isLoading.value = true
-            val userId = authRepository.getCurrentUser()?.id ?: return@launch
-            val items = uiState.value.mealPlanItems
-            
-            val aggregatedIngredients = mutableMapOf<String, ShoppingItem>()
-
-            items.forEach { planItem ->
+            try {
+                val userId = authRepository.getCurrentUser()?.id ?: return@launch
                 val lang = getCurrentLanguage()
-                val ingredients = if (planItem.isUserRecipe) {
-                    userRecipeRepository.getUserRecipeById(userId, planItem.recipeId)?.ingredients ?: emptyList()
-                } else {
-                    recipeRepository.getRecipeById(planItem.recipeId, lang)?.ingredients ?: emptyList()
+                val items = uiState.value.mealPlanItems
+                
+                val currentShoppingList = shoppingListRepository.getShoppingList(userId).first()
+                val activeShoppingItems = currentShoppingList.filter { !it.isChecked }
+                
+                val allPlanIngredients = mutableListOf<com.example.domain.model.Ingredient>()
+                for (planItem in items) {
+                    val ingredients = if (planItem.isUserRecipe) {
+                        userRecipeRepository.getUserRecipeById(userId, planItem.recipeId)?.ingredients
+                    } else {
+                        recipeRepository.getRecipeById(planItem.recipeId, lang)?.ingredients
+                    }
+                    ingredients?.let { allPlanIngredients.addAll(it) }
                 }
                 
-                ingredients.forEach { ingredient ->
-                    val key = "${ingredient.name.lowercase()}_${ingredient.unit.lowercase()}"
-                    val existing = aggregatedIngredients[key]
+                val requiredMap = aggregateIngredients(allPlanIngredients)
+
+                for (reqItem in requiredMap.values) {
+                    val key = "${reqItem.name.lowercase()}_${reqItem.unit.lowercase()}"
+                    val existing = activeShoppingItems.find { 
+                        "${it.name.lowercase()}_${it.unit.lowercase()}" == key 
+                    }
+
                     if (existing != null) {
-                        val currentAmount = existing.amount.toDoubleOrNull() ?: 0.0
-                        val newAmount = currentAmount + (ingredient.amount.toDoubleOrNull() ?: 0.0)
-                        aggregatedIngredients[key] = existing.copy(
-                            amount = if (newAmount % 1.0 == 0.0) newAmount.toInt().toString() else newAmount.toString()
-                        )
+                        val currentAmt = existing.amount.toDoubleOrNull() ?: 0.0
+                        val reqAmt = reqItem.amount.toDoubleOrNull() ?: 0.0
+                        
+                        if (reqAmt > currentAmt) {
+                            val newAmt = if (reqAmt % 1.0 == 0.0) reqAmt.toInt().toString() else reqAmt.toString()
+                            shoppingListRepository.updateShoppingItem(existing.copy(amount = newAmt))
+                        }
                     } else {
-                        aggregatedIngredients[key] = ShoppingItem(
-                            id = UUID.randomUUID().toString(),
-                            name = ingredient.name,
-                            amount = ingredient.amount,
-                            unit = ingredient.unit,
-                            isChecked = false,
-                            userId = userId
-                        )
+                        shoppingListRepository.addShoppingItem(reqItem)
                     }
                 }
+            } catch (e: Exception) {
+                _error.value = e.message
+            } finally {
+                _isLoading.value = false
             }
-
-            aggregatedIngredients.values.forEach { item ->
-                shoppingListRepository.addOrUpdateShoppingItem(item)
-            }
-            _isLoading.value = false
         }
     }
 }
