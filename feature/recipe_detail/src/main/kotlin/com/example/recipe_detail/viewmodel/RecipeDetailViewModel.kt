@@ -32,16 +32,32 @@ class RecipeDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val userId: String
-        get() = userRepository.getCurrentUser()?.id ?: ""
-
     private val recipeId: String = checkNotNull(savedStateHandle["recipeId"])
     private val selectionDate: String? = savedStateHandle["date"]
     private val selectionMealType: String? = savedStateHandle["mealType"]
 
+    private val userId: String
+        get() = authRepository.getCurrentUser()?.id ?: ""
+
+    private val isSelectionMode: Boolean = run {
+        val dateStr = selectionDate ?: ""
+        val mealStr = selectionMealType ?: ""
+
+        val isDateValid = dateStr.isNotBlank() && 
+                          dateStr != "null" && 
+                          !dateStr.contains("{") && 
+                          dateStr.count { it == '-' } >= 2
+                          
+        val isMealValid = mealStr.isNotBlank() && 
+                          mealStr != "null" && 
+                          !mealStr.contains("{")
+        
+        isDateValid && isMealValid
+    }
+
     private val _uiState = MutableStateFlow(RecipeDetailUiState(
         isLoading = true,
-        isSelectionMode = selectionDate != null && selectionMealType != null
+        isSelectionMode = isSelectionMode
     ))
     val uiState: StateFlow<RecipeDetailUiState> = _uiState.asStateFlow()
 
@@ -91,8 +107,7 @@ class RecipeDetailViewModel @Inject constructor(
     fun addToShoppingList(recipeId: String) {
         viewModelScope.launch {
             val recipe = _uiState.value.recipe ?: return@launch
-            // Здесь будет вызов репозитория для списка покупок
-            // userShoppingRepository.addToList(userId, recipe)
+
         }
     }
 

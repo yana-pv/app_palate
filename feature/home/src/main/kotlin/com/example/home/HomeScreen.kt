@@ -79,7 +79,8 @@ fun HomeScreen(
             paddingValues = paddingValues,
             state = state,
             onRecipeClick = { recipeId ->
-                if (selectionDate != null && selectionMealType != null) {
+                if (!selectionDate.isNullOrBlank() && selectionDate != "null" && !selectionDate.contains("{") &&
+                    !selectionMealType.isNullOrBlank() && selectionMealType != "null" && !selectionMealType.contains("{")) {
                     showSelectionDialog = recipeId
                 } else {
                     onRecipeClick(recipeId)

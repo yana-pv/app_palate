@@ -50,12 +50,12 @@ fun MainScreen(
             icon = ImageVector.vectorResource(DesignR.drawable.calendar)
         ),
         BottomNavItemData(
-            route = Destination.MyRecipes.route,
+            route = Destination.MyRecipes.createRoute(),
             titleRes = DesignR.string.nav_my_recipes,
             icon = ImageVector.vectorResource(DesignR.drawable.book_open)
         ),
         BottomNavItemData(
-            route = Destination.Home.route,
+            route = Destination.Home.createRoute(),
             titleRes = DesignR.string.nav_home,
             icon = Icons.Default.Search
         ),
@@ -95,8 +95,12 @@ fun MainScreen(
             modifier = Modifier.padding(paddingValues)
         ) {
             composable(Destination.Home.route) { backStackEntry ->
-                val date = backStackEntry.arguments?.getString("date")
-                val mealType = backStackEntry.arguments?.getString("mealType")
+                val rawDate = backStackEntry.arguments?.getString("date")
+                val rawMealType = backStackEntry.arguments?.getString("mealType")
+
+                val date = if (rawDate.isNullOrBlank() || rawDate.contains("{") || rawDate == "null") null else rawDate
+                val mealType = if (rawMealType.isNullOrBlank() || rawMealType.contains("{") || rawMealType == "null") null else rawMealType
+
                 HomeScreen(
                     onRecipeClick = { id -> onRecipeClick(id, date, mealType) },
                     selectionDate = date,
@@ -133,8 +137,12 @@ fun MainScreen(
                 )
             }
             composable(Destination.MyRecipes.route) { backStackEntry ->
-                val date = backStackEntry.arguments?.getString("date")
-                val mealType = backStackEntry.arguments?.getString("mealType")
+                val rawDate = backStackEntry.arguments?.getString("date")
+                val rawMealType = backStackEntry.arguments?.getString("mealType")
+                
+                val date = if (rawDate.isNullOrBlank() || rawDate.contains("{") || rawDate == "null") null else rawDate
+                val mealType = if (rawMealType.isNullOrBlank() || rawMealType.contains("{") || rawMealType == "null") null else rawMealType
+
                 MyRecipesScreen(
                     onWantToCookClick = { id -> onRecipeClick(id, date, mealType) },
                     onCookedNotesClick = onCookedNoteClick,

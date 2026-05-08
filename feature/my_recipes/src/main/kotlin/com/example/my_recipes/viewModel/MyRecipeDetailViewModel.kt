@@ -32,9 +32,25 @@ class MyRecipeDetailViewModel @Inject constructor(
     private val selectionDate: String? = savedStateHandle["date"]
     private val selectionMealType: String? = savedStateHandle["mealType"]
 
+    private val isSelectionMode: Boolean = run {
+        val dateStr = selectionDate ?: ""
+        val mealStr = selectionMealType ?: ""
+
+        val isDateValid = dateStr.isNotBlank() && 
+                          dateStr != "null" && 
+                          !dateStr.contains("{") && 
+                          dateStr.count { it == '-' } >= 2
+                          
+        val isMealValid = mealStr.isNotBlank() && 
+                          mealStr != "null" && 
+                          !mealStr.contains("{")
+        
+        isDateValid && isMealValid
+    }
+
     private val _uiState = MutableStateFlow(MyRecipeDetailUiState(
         isLoading = true,
-        isSelectionMode = selectionDate != null && selectionMealType != null
+        isSelectionMode = isSelectionMode
     ))
     val uiState: StateFlow<MyRecipeDetailUiState> = _uiState.asStateFlow()
 
@@ -54,7 +70,7 @@ class MyRecipeDetailViewModel @Inject constructor(
                 it.copy(
                     isLoading = false,
                     recipe = recipe,
-                    errorMessage = if (recipe == null) "Рецепт не найден" else null
+                    errorMessage = if (recipe == null) "Recipe not found" else null
                 )
             }
         }

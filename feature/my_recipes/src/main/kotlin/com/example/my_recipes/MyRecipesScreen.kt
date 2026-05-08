@@ -26,6 +26,7 @@ import androidx.compose.material3.TabRowDefaults.SecondaryIndicator
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -68,6 +69,10 @@ fun MyRecipesScreen(
     var showDeleteDialog by remember { mutableStateOf(false) }
     var pendingDeleteId by remember { mutableStateOf<String?>(null) }
     var showSelectionDialog by remember { mutableStateOf<Pair<String, Boolean>?>(null) }
+    
+    LaunchedEffect(selectionDate, selectionMealType) {
+        android.util.Log.d("MyRecipesScreen", "selectionDate: '$selectionDate', selectionMealType: '$selectionMealType'")
+    }
 
     val tabs = listOf(
         stringResource(R.string.tab_want_to_cook),
@@ -144,7 +149,8 @@ fun MyRecipesScreen(
                     0 -> WantToCookTab(
                         recipes = uiState.wantToCook,
                         onRecipeClick = { id ->
-                            if (selectionDate != null && selectionMealType != null) {
+                            if (!selectionDate.isNullOrBlank() && selectionDate != "null" && !selectionDate.contains("{") &&
+                                !selectionMealType.isNullOrBlank() && selectionMealType != "null" && !selectionMealType.contains("{")) {
                                 showSelectionDialog = id to false
                             } else {
                                 onWantToCookClick(id)
@@ -152,7 +158,8 @@ fun MyRecipesScreen(
                         },
                         onCookedClick = { recipeId -> viewModel.moveToCooked(recipeId) },
                         onUserRecipeClick = { id ->
-                            if (selectionDate != null && selectionMealType != null) {
+                            if (!selectionDate.isNullOrBlank() && selectionDate != "null" && !selectionDate.contains("{") &&
+                                !selectionMealType.isNullOrBlank() && selectionMealType != "null" && !selectionMealType.contains("{")) {
                                 showSelectionDialog = id to true
                             } else {
                                 onMyRecipesClick(id)
@@ -167,14 +174,16 @@ fun MyRecipesScreen(
                     1 -> CookedTab(
                         recipes = uiState.cooked,
                         onRecipeClick = { id ->
-                            if (selectionDate != null && selectionMealType != null) {
+                            if (!selectionDate.isNullOrBlank() && selectionDate != "null" && !selectionDate.contains("{") &&
+                                !selectionMealType.isNullOrBlank() && selectionMealType != "null" && !selectionMealType.contains("{")) {
                                 showSelectionDialog = id to false
                             } else {
                                 onWantToCookClick(id)
                             }
                         },
                         onUserRecipeClick = { id ->
-                            if (selectionDate != null && selectionMealType != null) {
+                            if (!selectionDate.isNullOrBlank() && selectionDate != "null" && !selectionDate.contains("{") &&
+                                !selectionMealType.isNullOrBlank() && selectionMealType != "null" && !selectionMealType.contains("{")) {
                                 showSelectionDialog = id to true
                             } else {
                                 onMyRecipesClick(id)
@@ -191,7 +200,8 @@ fun MyRecipesScreen(
                         MyRecipesTab(
                             recipes = uiState.userRecipes,
                             onRecipeClick = { id ->
-                                if (selectionDate != null && selectionMealType != null) {
+                                if (!selectionDate.isNullOrBlank() && selectionDate != "null" && !selectionDate.contains("{") &&
+                                    !selectionMealType.isNullOrBlank() && selectionMealType != "null" && !selectionMealType.contains("{")) {
                                     showSelectionDialog = id to true
                                 } else {
                                     onMyRecipesClick(id)
