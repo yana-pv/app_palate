@@ -11,5 +11,6 @@ data class CreateRecipeUiState(
     val imageUri: String? = null,
     val isLoading: Boolean = false,
     val isSaved: Boolean = false,
+    val isDarkMode: Boolean = false,
     val errorMessage: String? = null
 )

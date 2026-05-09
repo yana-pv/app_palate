@@ -6,7 +6,6 @@ import com.example.domain.model.CookedRecipe
 import com.example.domain.model.Recipe
 import com.example.domain.model.UserRecipe
 import com.example.domain.repository.UserRecipeRepository
-import com.example.domain.usecase.GetRecipeByIdUseCase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -15,17 +14,23 @@ import javax.inject.Singleton
 @Singleton
 class UserRecipeRepositoryImpl @Inject constructor(
     private val dao: UserRecipeDao,
-    private val firestoreRepo: FirestoreUserRecipeRepository,
-    private val getRecipeByIdUseCase: GetRecipeByIdUseCase  // ← добавить
+    private val firestoreRepo: FirestoreUserRecipeRepository
 ) : UserRecipeRepository {
 
     // ========== Want To Cook ==========
     override suspend fun addToWantToCook(userId: String, recipe: Recipe) {
         try {
-            firestoreRepo.addToWantToCook(userId, recipe.id, "api")
+            firestoreRepo.addToWantToCook(
+                userId = userId,
+                recipeId = recipe.id,
+                name = recipe.name,
+                imageUrl = recipe.imageUrl,
+                category = recipe.category,
+                source = "api"
+            )
             dao.insertWantToCook(recipe.toWantToCookEntity(userId))
         } catch (e: Exception) {
-            // логируем
+            e.printStackTrace()
         }
     }
 
@@ -60,7 +65,15 @@ class UserRecipeRepositoryImpl @Inject constructor(
 
     // ========== Cooked ==========
     override suspend fun addToCooked(userId: String, recipe: Recipe, rating: Int, note: String, photoPath: String?) {
-        firestoreRepo.addToCooked(userId, recipe.id, rating, note)
+        firestoreRepo.addToCooked(
+            userId = userId,
+            recipeId = recipe.id,
+            name = recipe.name,
+            imageUrl = recipe.imageUrl,
+            category = recipe.category,
+            rating = rating,
+            note = note
+        )
         dao.insertCooked(
             CookedEntity(
                 userId = userId,
@@ -73,16 +86,21 @@ class UserRecipeRepositoryImpl @Inject constructor(
                 userPhotoPath = photoPath
             )
         )
-        if (firestoreRepo.isInWantToCook(userId, recipe.id)) {
-            firestoreRepo.removeFromWantToCook(userId, recipe.id)
-            dao.deleteWantToCook(userId, recipe.id)
-        }
+        dao.deleteWantToCook(userId, recipe.id)
     }
 
     override suspend fun updateCooked(userId: String, recipeId: String, rating: Int, note: String, photoPath: String?) {
-        firestoreRepo.updateOrCreateCooked(userId, recipeId, rating, note)
         val existing = dao.getCookedById(userId, recipeId) ?: return
-        dao.updateCooked(existing.copy(userRating = rating, userNote = note))
+        firestoreRepo.updateOrCreateCooked(
+            userId = userId,
+            recipeId = recipeId,
+            name = existing.name,
+            imageUrl = existing.imageUrl,
+            category = existing.category,
+            rating = rating,
+            note = note
+        )
+        dao.updateCooked(existing.copy(userRating = rating, userNote = note, userPhotoPath = photoPath))
     }
 
     override suspend fun removeFromCooked(userId: String, recipeId: String) {
@@ -117,7 +135,15 @@ class UserRecipeRepositoryImpl @Inject constructor(
 
     // ========== User Recipes ==========
     override suspend fun addUserRecipeToCooked(userId: String, recipe: UserRecipe, rating: Int, note: String, photoPath: String?) {
-        firestoreRepo.addToCooked(userId, recipe.id, rating, note)
+        firestoreRepo.addToCooked(
+            userId = userId,
+            recipeId = recipe.id,
+            name = recipe.name,
+            imageUrl = recipe.imagePath ?: "",
+            category = recipe.category,
+            rating = rating,
+            note = note
+        )
         dao.insertCooked(
             CookedEntity(
                 userId = userId,
@@ -165,42 +191,58 @@ class UserRecipeRepositoryImpl @Inject constructor(
 
     // ========== Синхронизация ==========
     override suspend fun syncAllDataFromFirestore(userId: String) {
-        val statusMap = firestoreRepo.getUserRecipesStatus(userId)
+        try {
+            val remoteRecipes = firestoreRepo.getAllUserRecipesWithStatus(userId)
+            val customRecipes = firestoreRepo.getAllCustomRecipes(userId)
 
-        val customRecipes = firestoreRepo.getAllCustomRecipes(userId)
+            val wantToCookEntities = mutableListOf<WantToCookEntity>()
+            val cookedEntities = mutableListOf<CookedEntity>()
 
-        dao.clearAllUserData(userId)
+            remoteRecipes.forEach { data ->
+                val recipeId = data["recipeId"] as? String ?: return@forEach
+                val status = data["status"] as? String ?: return@forEach
+                val name = data["name"] as? String ?: ""
+                val imageUrl = data["imageUrl"] as? String ?: ""
+                val category = data["category"] as? String ?: ""
 
-        customRecipes.forEach { recipe ->
-            dao.insertUserRecipe(recipe)
-        }
-
-        // Обрабатываем wantToCook и cooked
-        statusMap.forEach { (recipeId, status) ->
-            if (status == "wantToCook") {
-                // Получаем рецепт из API
-                val recipe = getRecipeByIdUseCase(recipeId)
-                recipe?.let {
-                    dao.insertWantToCook(it.toWantToCookEntity(userId))
-                }
-            } else if (status == "cooked") {
-                // Получаем cooked данные из Firestore
-                val cookedData = firestoreRepo.getCookedData(userId, recipeId)
-                cookedData?.let {
-                    dao.insertCooked(
-                        CookedEntity(
-                            userId = userId,
-                            recipeId = recipeId,
-                            name = cookedData.name,
-                            imageUrl = cookedData.imageUrl,
-                            category = cookedData.category,
-                            userRating = cookedData.rating,
-                            userNote = cookedData.note,
-                            cookedAt = cookedData.dateCooked
+                when (status) {
+                    "wantToCook" -> {
+                        wantToCookEntities.add(
+                            WantToCookEntity(
+                                userId = userId,
+                                recipeId = recipeId,
+                                name = name,
+                                imageUrl = imageUrl,
+                                category = category,
+                                addedAt = (data["dateAdded"] as? Number)?.toLong() ?: System.currentTimeMillis()
+                            )
                         )
-                    )
+                    }
+                    "cooked" -> {
+                        cookedEntities.add(
+                            CookedEntity(
+                                userId = userId,
+                                recipeId = recipeId,
+                                name = name,
+                                imageUrl = imageUrl,
+                                category = category,
+                                userRating = (data["rating"] as? Number)?.toInt() ?: 0,
+                                userNote = data["note"] as? String ?: "",
+                                cookedAt = (data["dateCooked"] as? Number)?.toLong() ?: System.currentTimeMillis()
+                            )
+                        )
+                    }
                 }
             }
+
+            dao.refreshAllUserData(
+                userId = userId,
+                wantToCook = wantToCookEntities,
+                cooked = cookedEntities,
+                userRecipes = customRecipes
+            )
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 }

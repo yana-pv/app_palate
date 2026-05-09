@@ -14,7 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -36,6 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -143,7 +144,7 @@ fun MyRecipesScreen(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(innerPadding)
+                    .padding(top = innerPadding.calculateTopPadding())
             ) {
                 when (selectedTab) {
                     0 -> WantToCookTab(
@@ -196,41 +197,44 @@ fun MyRecipesScreen(
                         }
                     )
 
-                    2 -> Box(modifier = Modifier.fillMaxSize()) {
-                        MyRecipesTab(
-                            recipes = uiState.userRecipes,
-                            onRecipeClick = { id ->
-                                if (!selectionDate.isNullOrBlank() && selectionDate != "null" && !selectionDate.contains("{") &&
-                                    !selectionMealType.isNullOrBlank() && selectionMealType != "null" && !selectionMealType.contains("{")) {
-                                    showSelectionDialog = id to true
-                                } else {
-                                    onMyRecipesClick(id)
-                                }
-                            },
-                            onEditClick = onMyRecipesEditClick,
-                            onDeleteClick = { recipeId ->
-                                pendingDeleteId = recipeId
-                                showDeleteDialog = true
-                            },
-                            onCookedClick = { recipe -> viewModel.moveUserRecipeToCooked(recipe) },
-                            onAddClick = onCreateRecipeClick
-                        )
+                    2 -> MyRecipesTab(
+                        recipes = uiState.userRecipes,
+                        onRecipeClick = { id ->
+                            if (!selectionDate.isNullOrBlank() && selectionDate != "null" && !selectionDate.contains("{") &&
+                                !selectionMealType.isNullOrBlank() && selectionMealType != "null" && !selectionMealType.contains("{")) {
+                                showSelectionDialog = id to true
+                            } else {
+                                onMyRecipesClick(id)
+                            }
+                        },
+                        onEditClick = onMyRecipesEditClick,
+                        onDeleteClick = { recipeId ->
+                            pendingDeleteId = recipeId
+                            showDeleteDialog = true
+                        },
+                        onCookedClick = { recipe -> viewModel.moveUserRecipeToCooked(recipe) }
+                    )
+                }
 
-                        FloatingActionButton(
-                            onClick = onCreateRecipeClick,
-                            modifier = Modifier
-                                .align(Alignment.BottomEnd)
-                                .padding(16.dp),
-                            containerColor = PrimaryGreen,
-                            contentColor = Color.White,
-                            shape = CircleShape
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Add,
-                                contentDescription = null,
-                                modifier = Modifier.size(24.dp)
+                // Кнопка добавления рецепта
+                if (selectedTab == 2) {
+                    FloatingActionButton(
+                        onClick = onCreateRecipeClick,
+                        containerColor = PrimaryGreen,
+                        contentColor = Color.White,
+                        shape = RoundedCornerShape(16.dp),
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(
+                                bottom = dimensionResource(R.dimen.my_recipes_fab_bottom_padding),
+                                end = 16.dp
                             )
-                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "Добавить рецепт",
+                            modifier = Modifier.size(24.dp)
+                        )
                     }
                 }
             }

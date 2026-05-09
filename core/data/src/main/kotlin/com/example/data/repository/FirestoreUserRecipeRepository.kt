@@ -13,9 +13,19 @@ class FirestoreUserRecipeRepository @Inject constructor(
 ) {
 
     // ========== Want To Cook ==========
-    suspend fun addToWantToCook(userId: String, recipeId: String, source: String) {
+    suspend fun addToWantToCook(
+        userId: String,
+        recipeId: String,
+        name: String,
+        imageUrl: String,
+        category: String,
+        source: String
+    ) {
         val data = mapOf(
             "recipeId" to recipeId,
+            "name" to name,
+            "imageUrl" to imageUrl,
+            "category" to category,
             "source" to source,
             "status" to "wantToCook",
             "dateAdded" to System.currentTimeMillis()
@@ -42,10 +52,21 @@ class FirestoreUserRecipeRepository @Inject constructor(
     }
 
     // ========== Cooked ==========
-    suspend fun addToCooked(userId: String, recipeId: String, rating: Int, note: String) {
+    suspend fun addToCooked(
+        userId: String,
+        recipeId: String,
+        name: String,
+        imageUrl: String,
+        category: String,
+        rating: Int,
+        note: String
+    ) {
         val data = mapOf(
             "recipeId" to recipeId,
             "status" to "cooked",
+            "name" to name,
+            "imageUrl" to imageUrl,
+            "category" to category,
             "rating" to rating,
             "note" to note,
             "dateCooked" to System.currentTimeMillis()
@@ -56,24 +77,27 @@ class FirestoreUserRecipeRepository @Inject constructor(
             .await()
     }
 
-
-    suspend fun updateOrCreateCooked(userId: String, recipeId: String, rating: Int, note: String) {
+    suspend fun updateOrCreateCooked(
+        userId: String,
+        recipeId: String,
+        name: String,
+        imageUrl: String,
+        category: String,
+        rating: Int,
+        note: String
+    ) {
         val docRef = firestore.collection("users/$userId/userRecipes").document(recipeId)
-        val snapshot = docRef.get().await()
-
         val data = mapOf(
             "recipeId" to recipeId,
             "status" to "cooked",
+            "name" to name,
+            "imageUrl" to imageUrl,
+            "category" to category,
             "rating" to rating,
             "note" to note,
             "dateCooked" to System.currentTimeMillis()
         )
-
-        if (snapshot.exists()) {
-            docRef.update(data).await()
-        } else {
-            docRef.set(data).await()
-        }
+        docRef.set(data).await()
     }
 
     suspend fun removeFromCooked(userId: String, recipeId: String) {
@@ -172,16 +196,13 @@ class FirestoreUserRecipeRepository @Inject constructor(
     }
 
     // ========== Get All Recipes with Status ==========
-    suspend fun getUserRecipesStatus(userId: String): Map<String, String> {
+    suspend fun getAllUserRecipesWithStatus(userId: String): List<Map<String, Any>> {
         val snapshot = firestore.collection("users/$userId/userRecipes").get().await()
-        val result = mutableMapOf<String, String>()
-        for (document in snapshot.documents) {
-            val status = document.getString("status")
-            if (status != null) {
-                result[document.id] = status
+        return snapshot.documents.mapNotNull { doc ->
+            doc.data?.toMutableMap()?.apply {
+                put("recipeId", doc.id)
             }
         }
-        return result
     }
 
     suspend fun getAllCustomRecipes(userId: String): List<UserRecipeEntity> {
@@ -208,49 +229,6 @@ class FirestoreUserRecipeRepository @Inject constructor(
             )
         }
     }
-
-    suspend fun getCookedData(userId: String, recipeId: String): CookedData? {
-        val snapshot = firestore.collection("users/$userId/userRecipes")
-            .document(recipeId)
-            .get()
-            .await()
-
-        if (!snapshot.exists() || snapshot.getString("status") != "cooked") return null
-
-        return CookedData(
-            name = snapshot.getString("name") ?: "",
-            imageUrl = snapshot.getString("imageUrl") ?: "",
-            category = snapshot.getString("category") ?: "",
-            rating = snapshot.getLong("rating")?.toInt() ?: 0,
-            note = snapshot.getString("note") ?: "",
-            dateCooked = snapshot.getLong("dateCooked") ?: System.currentTimeMillis()
-        )
-    }
-
-    suspend fun addToCooked(userId: String, recipeId: String, name: String, imageUrl: String, category: String, rating: Int, note: String) {
-        val data = mapOf(
-            "recipeId" to recipeId,
-            "status" to "cooked",
-            "name" to name,
-            "imageUrl" to imageUrl,
-            "category" to category,
-            "rating" to rating,
-            "note" to note,
-            "dateCooked" to System.currentTimeMillis()
-        )
-        firestore.collection("users/$userId/userRecipes")
-            .document(recipeId)
-            .set(data)
-            .await()
-    }
 }
 
-data class CookedData(
-    val name: String,
-    val imageUrl: String,
-    val category: String,
-    val rating: Int,
-    val note: String,
-    val dateCooked: Long
-)
 

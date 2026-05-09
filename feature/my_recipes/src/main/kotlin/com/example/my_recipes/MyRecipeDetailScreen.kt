@@ -27,6 +27,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.example.design.theme.*
 import com.example.design.R as DesignR
+import com.example.design.components.PalateAlertDialog
 import com.example.design.components.RecipeDetailPlaceholder
 import com.example.my_recipes.viewModel.MyRecipeDetailViewModel
 
@@ -34,12 +35,13 @@ import com.example.my_recipes.viewModel.MyRecipeDetailViewModel
 fun MyRecipeDetailScreen(
     viewModel: MyRecipeDetailViewModel = hiltViewModel(),
     onBackClick: () -> Unit,
-    onWantToCookClick: () -> Unit = {},
-    onToListClick: () -> Unit = {},
     onSelected: () -> Unit = onBackClick
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
+
+    val successMessage = stringResource(com.example.recipe_detail.R.string.ingredients_added)
+    val genericErrorMessage = stringResource(com.example.recipe_detail.R.string.error_failed_to_add)
 
     LaunchedEffect(uiState.isSelected) {
         if (uiState.isSelected) {
@@ -47,10 +49,14 @@ fun MyRecipeDetailScreen(
         }
     }
 
-    LaunchedEffect(uiState.errorMessage) {
+    LaunchedEffect(uiState.errorMessage, uiState.successMessage) {
         uiState.errorMessage?.let {
-            snackbarHostState.showSnackbar(it)
+            snackbarHostState.showSnackbar(genericErrorMessage)
             viewModel.clearError()
+        }
+        uiState.successMessage?.let {
+            snackbarHostState.showSnackbar(successMessage)
+            viewModel.clearSuccess()
         }
     }
 
@@ -72,9 +78,10 @@ fun MyRecipeDetailScreen(
                     MyRecipeDetailContent(
                         recipe = recipe,
                         isSelectionMode = uiState.isSelectionMode,
+                        isInWantToCook = uiState.isInWantToCook,
                         onBackClick = onBackClick,
-                        onWantToCookClick = onWantToCookClick,
-                        onToListClick = onToListClick,
+                        onWantToCookClick = { viewModel.addToWantToCook() },
+                        onToListClick = { viewModel.addIngredientsToShoppingList() },
                         onSelectClick = { viewModel.selectRecipe() }
                     )
                 } ?: RecipeErrorState(
@@ -84,12 +91,28 @@ fun MyRecipeDetailScreen(
             }
         }
     }
+
+    if (uiState.showAlreadyAddedDialog) {
+        PalateAlertDialog(
+            onDismissRequest = { viewModel.dismissAlreadyAddedDialog() },
+            title = stringResource(com.example.recipe_detail.R.string.already_added_title),
+            text = stringResource(com.example.recipe_detail.R.string.already_added_message),
+            confirmButtonText = stringResource(com.example.recipe_detail.R.string.add_more),
+            onConfirmClick = {
+                viewModel.addIngredientsToShoppingList(force = true)
+                viewModel.dismissAlreadyAddedDialog()
+            },
+            dismissButtonText = stringResource(com.example.recipe_detail.R.string.cancel),
+            onDismissClick = { viewModel.dismissAlreadyAddedDialog() }
+        )
+    }
 }
 
 @Composable
 fun MyRecipeDetailContent(
     recipe: com.example.domain.model.UserRecipe,
     isSelectionMode: Boolean,
+    isInWantToCook: Boolean,
     onBackClick: () -> Unit,
     onWantToCookClick: () -> Unit,
     onToListClick: () -> Unit,
@@ -105,6 +128,7 @@ fun MyRecipeDetailContent(
             MyRecipeHeader(
                 recipe = recipe,
                 isSelectionMode = isSelectionMode,
+                isInWantToCook = isInWantToCook,
                 onBackClick = onBackClick,
                 onWantToCookClick = onWantToCookClick,
                 onToListClick = onToListClick,
@@ -139,6 +163,7 @@ fun MyRecipeDetailContent(
 fun MyRecipeHeader(
     recipe: com.example.domain.model.UserRecipe,
     isSelectionMode: Boolean,
+    isInWantToCook: Boolean,
     onBackClick: () -> Unit,
     onWantToCookClick: () -> Unit,
     onToListClick: () -> Unit,
@@ -251,6 +276,7 @@ fun MyRecipeHeader(
                 }
             } else {
                 ActionButtons(
+                    isInWantToCook = isInWantToCook,
                     onWantToCookClick = onWantToCookClick,
                     onToListClick = onToListClick
                 )
@@ -261,6 +287,7 @@ fun MyRecipeHeader(
 
 @Composable
 fun ActionButtons(
+    isInWantToCook: Boolean,
     onWantToCookClick: () -> Unit,
     onToListClick: () -> Unit
 ) {
@@ -270,10 +297,14 @@ fun ActionButtons(
     ) {
         Button(
             onClick = onWantToCookClick,
+            enabled = !isInWantToCook,
             modifier = Modifier
                 .weight(1f)
                 .height(dimensionResource(R.dimen.recipe_detail_action_btn_height)),
-            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.secondary,
+                disabledContainerColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f)
+            ),
             shape = RoundedCornerShape(dimensionResource(R.dimen.recipe_detail_action_btn_radius)),
             contentPadding = PaddingValues(vertical = 0.dp)
         ) {
@@ -284,7 +315,10 @@ fun ActionButtons(
             )
             Spacer(Modifier.width(dimensionResource(com.example.design.R.dimen.padding_medium)))
             Text(
-                text = stringResource(R.string.recipe_detail_want_to_cook),
+                text = if (isInWantToCook) 
+                    stringResource(com.example.recipe_detail.R.string.recipe_detail_already_in_want_to_cook) 
+                else 
+                    stringResource(com.example.recipe_detail.R.string.recipe_detail_want_to_cook),
                 fontSize = dimensionResource(com.example.design.R.dimen.text_size_action_button).value.sp
             )
         }
@@ -304,7 +338,7 @@ fun ActionButtons(
             )
             Spacer(Modifier.width(dimensionResource(com.example.design.R.dimen.padding_medium)))
             Text(
-                text = stringResource(R.string.recipe_detail_to_list),
+                text = stringResource(com.example.recipe_detail.R.string.recipe_detail_to_list),
                 fontSize = dimensionResource(com.example.design.R.dimen.text_size_action_button).value.sp
             )
         }

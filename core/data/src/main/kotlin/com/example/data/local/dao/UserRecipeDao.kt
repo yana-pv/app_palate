@@ -83,6 +83,19 @@ interface UserRecipeDao {
         clearUserRecipes(userId)
     }
 
+    @androidx.room.Transaction
+    suspend fun refreshAllUserData(
+        userId: String,
+        wantToCook: List<WantToCookEntity>,
+        cooked: List<CookedEntity>,
+        userRecipes: List<UserRecipeEntity>
+    ) {
+        clearAllUserData(userId)
+        wantToCook.forEach { insertWantToCook(it) }
+        cooked.forEach { insertCooked(it) }
+        userRecipes.forEach { insertUserRecipe(it) }
+    }
+
     @Query("SELECT COUNT(*) FROM want_to_cook WHERE userId = :userId")
     fun getWantToCookCountFlow(userId: String): Flow<Int>
 

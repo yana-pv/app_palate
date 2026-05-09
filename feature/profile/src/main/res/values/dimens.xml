@@ -12,4 +12,5 @@
     <dimen name="profile_stat_card_elevation">4dp</dimen>
     <dimen name="profile_stat_value_text_size">28sp</dimen>
     <dimen name="profile_stat_label_line_height">14sp</dimen>
+    <dimen name="profile_bottom_padding">100dp</dimen>
 </resources>

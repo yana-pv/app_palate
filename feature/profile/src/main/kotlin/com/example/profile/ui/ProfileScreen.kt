@@ -319,32 +319,35 @@ fun ProfileScreen(
                     }
                 }
             }
-            Spacer(modifier = Modifier.height(dimensionResource(com.example.design.R.dimen.padding_extra_large)))
-        }
+            
+            Spacer(modifier = Modifier.height(dimensionResource(com.example.design.R.dimen.padding_large)))
 
-        // Logout Button
-        Button(
-            onClick = { viewModel.logout() },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = dimensionResource(com.example.design.R.dimen.padding_medium))
-                .height(dimensionResource(R.dimen.profile_logout_button_height)),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.error
-            ),
-            shape = RoundedCornerShape(dimensionResource(com.example.design.R.dimen.radius_extra_large))
-        ) {
-            Icon(
-                painter = painterResource(com.example.design.R.drawable.move_item),
-                contentDescription = null,
-                modifier = Modifier.size(24.dp).rotate(180f)
-            )
-            Spacer(modifier = Modifier.width(dimensionResource(com.example.design.R.dimen.padding_medium)))
-            Text(
-                text = stringResource(R.string.logout_button),
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold
-            )
+            // Logout Button
+            Button(
+                onClick = { viewModel.logout() },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = dimensionResource(com.example.design.R.dimen.padding_medium))
+                    .height(dimensionResource(R.dimen.profile_logout_button_height)),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.error
+                ),
+                shape = RoundedCornerShape(dimensionResource(com.example.design.R.dimen.radius_extra_large))
+            ) {
+                Icon(
+                    painter = painterResource(com.example.design.R.drawable.move_item),
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp).rotate(180f)
+                )
+                Spacer(modifier = Modifier.width(dimensionResource(com.example.design.R.dimen.padding_medium)))
+                Text(
+                    text = stringResource(R.string.logout_button),
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
+            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.profile_bottom_padding)))
         }
     }
 }

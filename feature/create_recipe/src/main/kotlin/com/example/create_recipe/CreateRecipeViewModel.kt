@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.model.Ingredient
 import com.example.domain.model.UserRecipe
+import com.example.domain.repository.SettingsRepository
 import com.example.domain.repository.UserRecipeRepository
 import com.example.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,6 +27,7 @@ import kotlinx.coroutines.withContext
 class CreateRecipeViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val userRecipeRepository: UserRecipeRepository,
+    private val settingsRepository: SettingsRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -34,6 +36,15 @@ class CreateRecipeViewModel @Inject constructor(
     init {
         if (recipeId != null) {
             loadRecipeForEdit()
+        }
+        observeTheme()
+    }
+
+    private fun observeTheme() {
+        viewModelScope.launch {
+            settingsRepository.isDarkMode().collect { isDark ->
+                _uiState.update { it.copy(isDarkMode = isDark) }
+            }
         }
     }
 

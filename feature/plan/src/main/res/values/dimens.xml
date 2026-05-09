@@ -6,4 +6,5 @@
     <dimen name="plan_slot_width">120dp</dimen>
     <dimen name="plan_slot_height">200dp</dimen>
     <dimen name="plan_image_size">100dp</dimen>
+    <dimen name="plan_bottom_padding">100dp</dimen>
 </resources>

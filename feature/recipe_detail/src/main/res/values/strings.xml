@@ -2,6 +2,7 @@
 <resources>
     <!-- Recipe Detail -->
     <string name="recipe_detail_want_to_cook">Want to cook</string>
+    <string name="recipe_detail_already_in_want_to_cook">Already in list</string>
     <string name="recipe_detail_to_list">To list</string>
     <string name="recipe_detail_ingredients">INGREDIENTS</string>
     <string name="recipe_detail_preparation">PREPARATION</string>
@@ -21,8 +22,13 @@
 
 
     <!-- Cooked Note Screen -->
-    <string name="my_notes_section">My notes</string>
+    <string name="my_notes_section">MY NOTES</string>
     <string name="note_placeholder">Your notes and recipe changes</string>
     <string name="save_button">Save</string>
-    <string name="your_rating">Your rating</string>
+    <string name="your_rating">MY RATING</string>
+    <string name="rating_excellent">Masterpiece!</string>
+    <string name="rating_good">Delicious!</string>
+    <string name="rating_average">Good</string>
+    <string name="rating_poor">Not bad</string>
+    <string name="rating_bad">Could be better</string>
 </resources>

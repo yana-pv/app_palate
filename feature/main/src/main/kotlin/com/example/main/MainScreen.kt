@@ -1,7 +1,7 @@
 package com.example.main
 
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -94,7 +94,7 @@ fun MainScreen(
         NavHost(
             navController = navController,
             startDestination = Destination.Home.route,
-            modifier = Modifier.padding(paddingValues)
+            modifier = Modifier.fillMaxSize()
         ) {
             composable(Destination.Home.route) { backStackEntry ->
                 val rawDate = backStackEntry.arguments?.getString("date")

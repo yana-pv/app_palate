@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="recipe_detail_want_to_cook">Хочу приготовить</string>
+    <string name="recipe_detail_already_in_want_to_cook">Уже в списке</string>
     <string name="recipe_detail_to_list">В список</string>
     <string name="recipe_detail_ingredients">ИНГРЕДИЕНТЫ</string>
     <string name="recipe_detail_preparation">ПРИГОТОВЛЕНИЕ</string>
@@ -20,8 +21,13 @@
 
 
     <!-- Cooked Note Screen -->
-    <string name="my_notes_section">Мои заметки</string>
+    <string name="my_notes_section">МОИ ЗАМЕТКИ</string>
     <string name="note_placeholder">Ваши заметки и изменения рецепта</string>
     <string name="save_button">Сохранить</string>
-    <string name="your_rating">Ваша оценка</string>
+    <string name="your_rating">МОЯ ОЦЕНКА</string>
+    <string name="rating_excellent">Шедевр!</string>
+    <string name="rating_good">Очень вкусно!</string>
+    <string name="rating_average">Хорошо</string>
+    <string name="rating_poor">Неплохо</string>
+    <string name="rating_bad">Могло быть лучше</string>
 </resources>

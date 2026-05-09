@@ -78,6 +78,7 @@ fun RecipeDetailScreen(
                     RecipeDetailContent(
                         recipe = recipe,
                         isSelectionMode = uiState.isSelectionMode,
+                        isInWantToCook = uiState.isInWantToCook,
                         onBackClick = onBackClick,
                         onToListClick = { viewModel.addIngredientsToShoppingList() },
                         onWantToCookClick = { viewModel.addToWantToCook() },
@@ -160,6 +161,7 @@ fun RecipeErrorState(
 fun RecipeDetailContent(
     recipe: Recipe,
     isSelectionMode: Boolean,
+    isInWantToCook: Boolean,
     onBackClick: () -> Unit,
     onWantToCookClick: () -> Unit,
     onToListClick: () -> Unit,
@@ -175,6 +177,7 @@ fun RecipeDetailContent(
             RecipeHeader(
                 recipe = recipe,
                 isSelectionMode = isSelectionMode,
+                isInWantToCook = isInWantToCook,
                 onBackClick = onBackClick,
                 onWantToCookClick = onWantToCookClick,
                 onToListClick = onToListClick,
@@ -206,6 +209,7 @@ fun RecipeDetailContent(
 fun RecipeHeader(
     recipe: Recipe,
     isSelectionMode: Boolean,
+    isInWantToCook: Boolean,
     onBackClick: () -> Unit,
     onWantToCookClick: () -> Unit,
     onToListClick: () -> Unit,
@@ -310,6 +314,7 @@ fun RecipeHeader(
                 }
             } else {
                 ActionButtons(
+                    isInWantToCook = isInWantToCook,
                     onWantToCookClick = onWantToCookClick,
                     onToListClick = onToListClick
                 )
@@ -320,6 +325,7 @@ fun RecipeHeader(
 
 @Composable
 fun ActionButtons(
+    isInWantToCook: Boolean,
     onWantToCookClick: () -> Unit,
     onToListClick: () -> Unit
 ) {
@@ -329,10 +335,14 @@ fun ActionButtons(
     ) {
         Button(
             onClick = onWantToCookClick,
+            enabled = !isInWantToCook,
             modifier = Modifier
                 .weight(1f)
                 .height(dimensionResource(R.dimen.recipe_detail_action_btn_height)),
-            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.secondary,
+                disabledContainerColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f)
+            ),
             shape = RoundedCornerShape(dimensionResource(R.dimen.recipe_detail_action_btn_radius)),
             contentPadding = PaddingValues(vertical = 0.dp)
         ) {
@@ -343,7 +353,10 @@ fun ActionButtons(
             )
             Spacer(Modifier.width(dimensionResource(com.example.design.R.dimen.padding_medium)))
             Text(
-                text = stringResource(R.string.recipe_detail_want_to_cook),
+                text = if (isInWantToCook) 
+                    stringResource(R.string.recipe_detail_already_in_want_to_cook) 
+                else 
+                    stringResource(R.string.recipe_detail_want_to_cook),
                 fontSize = dimensionResource(com.example.design.R.dimen.text_size_action_button).value.sp
             )
         }

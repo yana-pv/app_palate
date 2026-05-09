@@ -1,21 +1,25 @@
 package com.example.recipe_detail
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.StarOutline
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -85,25 +89,25 @@ fun CookedNoteScreen(
 
         item {
             Spacer(modifier = Modifier.height(24.dp))
-            SectionTitle(stringResource(R.string.recipe_detail_ingredients))
+            NoteSectionTitle(stringResource(R.string.recipe_detail_ingredients))
         }
 
         itemsIndexed(recipe.ingredients) { _, ingredient ->
-            IngredientItem(ingredient.name, ingredient.amount)
+            NoteIngredientItem(ingredient.name, ingredient.amount)
         }
 
         item {
             Spacer(modifier = Modifier.height(24.dp))
-            SectionTitle(stringResource(R.string.recipe_detail_preparation))
+            NoteSectionTitle(stringResource(R.string.recipe_detail_preparation))
         }
 
         itemsIndexed(recipe.instructions) { _, step ->
-            PreparationStep(step)
+            NotePreparationStep(step)
         }
 
         item {
             Spacer(modifier = Modifier.height(24.dp))
-            SectionTitle(stringResource(R.string.my_notes_section))
+            NoteSectionTitle(stringResource(R.string.my_notes_section))
         }
 
         item {
@@ -154,6 +158,15 @@ fun RatingSection(
     rating: Int,
     onRatingChange: (Int) -> Unit
 ) {
+    val ratingLabel = when (rating) {
+        1 -> stringResource(R.string.rating_bad)
+        2 -> stringResource(R.string.rating_poor)
+        3 -> stringResource(R.string.rating_average)
+        4 -> stringResource(R.string.rating_good)
+        5 -> stringResource(R.string.rating_excellent)
+        else -> ""
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -161,34 +174,115 @@ fun RatingSection(
     ) {
         Text(
             text = stringResource(R.string.your_rating),
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Medium,
-            modifier = Modifier.padding(bottom = 8.dp)
+            style = MaterialTheme.typography.labelLarge,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(bottom = 12.dp)
         )
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+
+        Surface(
+            modifier = Modifier.fillMaxWidth(),
+            color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
+            shape = RoundedCornerShape(16.dp)
         ) {
-            repeat(5) { index ->
-                val starRating = index + 1
-                IconButton(
-                    onClick = { onRatingChange(starRating) },
-                    modifier = Modifier.size(48.dp)
+            Column(
+                modifier = Modifier
+                    .padding(vertical = 16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        painter = painterResource(
-                            if (starRating <= rating) {
-                                android.R.drawable.btn_star_big_on
-                            } else {
-                                android.R.drawable.btn_star_big_off
-                            }
-                        ),
-                        contentDescription = "Rating $starRating",
-                        tint = if (starRating <= rating) Color(0xFFFFC107) else Color.Gray,
-                        modifier = Modifier.size(32.dp)
+                    repeat(5) { index ->
+                        val starRating = index + 1
+                        val isSelected = starRating <= rating
+                        Icon(
+                            imageVector = if (isSelected) Icons.Filled.Star else Icons.Outlined.StarOutline,
+                            contentDescription = "Rating $starRating",
+                            tint = if (isSelected) PalateColors.GreenPrimary else MaterialTheme.colorScheme.outline,
+                            modifier = Modifier
+                                .size(40.dp)
+                                .clickable(
+                                    interactionSource = remember { MutableInteractionSource() },
+                                    indication = null
+                                ) { onRatingChange(starRating) }
+                        )
+                    }
+                }
+
+                if (ratingLabel.isNotEmpty()) {
+                    Text(
+                        text = ratingLabel,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = PalateColors.GreenPrimary,
+                        fontWeight = FontWeight.Medium,
+                        modifier = Modifier.padding(top = 8.dp)
                     )
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun NoteSectionTitle(title: String) {
+    Surface(
+        color = MaterialTheme.colorScheme.surfaceVariant,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .height(40.dp)
+            .clip(RoundedCornerShape(8.dp))
+    ) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.CenterStart
+        ) {
+            Text(
+                text = title,
+                modifier = Modifier.padding(horizontal = 16.dp),
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
+    }
+}
+
+@Composable
+private fun NoteIngredientItem(name: String, amount: String) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp, vertical = 4.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = "•",
+            modifier = Modifier.width(16.dp),
+            fontSize = 16.sp
+        )
+        Text(
+            text = "$name — $amount",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurface
+        )
+    }
+}
+
+@Composable
+private fun NotePreparationStep(text: String) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodyMedium,
+            fontSize = 16.sp
+        )
     }
 }
 

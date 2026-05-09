@@ -295,7 +295,7 @@ fun HomeContent(
                     start = dimensionResource(R.dimen.search_bar_corner_radius),
                     end = dimensionResource(R.dimen.search_bar_corner_radius),
                     top = dimensionResource(com.example.design.R.dimen.padding_extra_small),
-                    bottom = dimensionResource(com.example.design.R.dimen.nav_bar_height) + dimensionResource(com.example.design.R.dimen.padding_extra_large) * 2
+                    bottom = dimensionResource(R.dimen.home_bottom_padding)
                 ),
                 modifier = Modifier.fillMaxSize(),
                 horizontalArrangement = Arrangement.spacedBy(dimensionResource(com.example.design.R.dimen.padding_extra_small)),

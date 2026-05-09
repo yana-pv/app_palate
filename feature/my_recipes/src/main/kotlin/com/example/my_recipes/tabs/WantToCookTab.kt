@@ -34,7 +34,12 @@ fun WantToCookTab(
     } else {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(dimensionResource(R.dimen.my_recipes_content_padding))
+            contentPadding = PaddingValues(
+                top = dimensionResource(R.dimen.my_recipes_content_padding),
+                start = dimensionResource(R.dimen.my_recipes_content_padding),
+                end = dimensionResource(R.dimen.my_recipes_content_padding),
+                bottom = dimensionResource(R.dimen.my_recipes_bottom_padding)
+            )
         ) {
             items(recipes) { recipe ->
                 val isUserRecipe = !recipe.id.matches(Regex("\\d+"))

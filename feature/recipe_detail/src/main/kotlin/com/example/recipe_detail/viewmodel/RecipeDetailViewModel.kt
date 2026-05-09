@@ -79,7 +79,12 @@ class RecipeDetailViewModel @Inject constructor(
             try {
                 val recipe = getRecipeByIdUseCase(recipeId, language)
                 if (recipe != null) {
-                    _uiState.update { it.copy(isLoading = false, recipe = recipe) }
+                    val isInWantToCook = userRecipeRepository.isInWantToCook(userId, recipe.id)
+                    _uiState.update { it.copy(
+                        isLoading = false, 
+                        recipe = recipe,
+                        isInWantToCook = isInWantToCook
+                    ) }
                 } else {
                     _uiState.update { it.copy(isLoading = false, errorMessage = "Recipe not found") }
                 }
@@ -101,13 +106,7 @@ class RecipeDetailViewModel @Inject constructor(
         viewModelScope.launch {
             val recipe = _uiState.value.recipe ?: return@launch
             userRecipeRepository.addToWantToCook(userId, recipe)
-        }
-    }
-
-    fun addToShoppingList(recipeId: String) {
-        viewModelScope.launch {
-            val recipe = _uiState.value.recipe ?: return@launch
-
+            _uiState.update { it.copy(isInWantToCook = true) }
         }
     }
 

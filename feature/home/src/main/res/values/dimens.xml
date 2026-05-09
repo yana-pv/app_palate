@@ -15,4 +15,5 @@
 
     <!-- Grid -->
     <dimen name="recipe_card_min_width">110dp</dimen>
+    <dimen name="home_bottom_padding">100dp</dimen>
 </resources>

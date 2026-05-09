@@ -12,7 +12,7 @@
     <string name="ingredient_unit_hint">Unit</string>
     <string name="add_ingredient">Add ingredient</string>
     <string name="preparation_title">PREPARATION</string>
-    <string name="preparation_hint">Enter cooking instructions. Each step on a new line</string>
+    <string name="preparation_placeholder">Enter cooking instructions. Each step on a new line</string>
 
     <!-- Validation errors -->
     <string name="error_recipe_name_required">Recipe name is required</string>

@@ -12,7 +12,7 @@
     <string name="ingredient_unit_hint">Ед.</string>
     <string name="add_ingredient">Добавить ингредиент</string>
     <string name="preparation_title">ПРИГОТОВЛЕНИЕ</string>
-    <string name="preparation_hint">Введите инструкции приготовления. Каждый шаг с новой строки</string>
+    <string name="preparation_placeholder">Введите инструкции приготовления. Каждый шаг с новой строки</string>
 
     <!-- Ошибки валидации -->
     <string name="error_ingredients_empty">Добавьте хотя бы один ингредиент</string>
@@ -22,6 +22,5 @@
 
     <!-- Успех -->
     <string name="recipe_saved">Рецепт сохранён</string>
-
     <string name="category_default">Общее</string>
 </resources>

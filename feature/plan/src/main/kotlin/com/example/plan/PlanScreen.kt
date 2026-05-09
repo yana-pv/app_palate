@@ -112,7 +112,7 @@ fun PlanScreen(
 
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(bottom = 16.dp)
+                contentPadding = PaddingValues(bottom = dimensionResource(R.dimen.plan_bottom_padding))
             ) {
                 val weekDays = (0..6).map { uiState.currentWeekStart.plusDays(it.toLong()) }
                 items(weekDays) { date ->

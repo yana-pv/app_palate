@@ -2,7 +2,6 @@ package com.example.palate.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -14,7 +13,6 @@ import com.example.auth.ui.StartupScreen
 import com.example.create_recipe.CreateRecipeScreen
 import com.example.main.MainScreen
 import com.example.my_recipes.MyRecipeDetailScreen
-import com.example.my_recipes.viewModel.MyRecipeDetailViewModel
 import com.example.navigation.Destination
 import com.example.recipe_detail.CookedNoteScreen
 import com.example.recipe_detail.RecipeDetailScreen
@@ -97,17 +95,10 @@ fun PalateNavGraph(
                 navArgument("mealType") { type = NavType.StringType; nullable = true; defaultValue = null }
             )
         ) { backStackEntry ->
-            val viewModel: MyRecipeDetailViewModel = hiltViewModel()
             val date = backStackEntry.arguments?.getString("date")
             val mealType = backStackEntry.arguments?.getString("mealType")
             MyRecipeDetailScreen(
                 onBackClick = { navigator.navigateUp() },
-                onWantToCookClick = {
-                    viewModel.addToWantToCook()
-                },
-                onToListClick = {
-                    // TODO: добавить в список покупок
-                },
                 onSelected = {
                     if (date != null && mealType != null) {
                         navController.getBackStackEntry(Destination.Home.route)

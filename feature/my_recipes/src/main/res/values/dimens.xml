@@ -8,9 +8,10 @@
     <dimen name="my_recipes_padding_small">8dp</dimen>
     <dimen name="my_recipes_icon_size">24dp</dimen>
     <dimen name="my_recipes_content_padding">16dp</dimen>
+    <dimen name="my_recipes_bottom_padding">100dp</dimen>
+    <dimen name="my_recipes_fab_bottom_padding">120dp</dimen>
     <dimen name="padding_small">8dp</dimen>
 
-    <!-- Размеры для детального экрана (как в recipe_detail) -->
     <dimen name="recipe_detail_header_height">420dp</dimen>
     <dimen name="recipe_detail_back_btn_width">32dp</dimen>
     <dimen name="recipe_detail_back_btn_height">40dp</dimen>

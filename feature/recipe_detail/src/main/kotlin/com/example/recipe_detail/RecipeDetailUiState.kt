@@ -9,5 +9,6 @@ data class RecipeDetailUiState(
     val successMessage: String? = null,
     val showAlreadyAddedDialog: Boolean = false,
     val isSelectionMode: Boolean = false,
-    val isSelected: Boolean = false
+    val isSelected: Boolean = false,
+    val isInWantToCook: Boolean = false
 )
