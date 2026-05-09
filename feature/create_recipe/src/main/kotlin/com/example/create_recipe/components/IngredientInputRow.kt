@@ -29,8 +29,7 @@ fun IngredientInputRow(
     onUnitChange: (String) -> Unit,
     onDeleteClick: () -> Unit,
     modifier: Modifier = Modifier,
-    showDeleteButton: Boolean = true,
-    isDarkMode: Boolean = false
+    showDeleteButton: Boolean = true
 ) {
     val textFieldColors = OutlinedTextFieldDefaults.colors(
         focusedBorderColor = MaterialTheme.colorScheme.primary,

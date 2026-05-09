@@ -131,8 +131,7 @@ fun CreateRecipeScreen(
                 item {
                     PhotoUploadSection(
                         imageUri = uiState.imageUri,
-                        onAddPhotoClick = { imagePickerLauncher.launch("image/*") },
-                        isDarkMode = isDarkMode
+                        onAddPhotoClick = { imagePickerLauncher.launch("image/*") }
                     )
                 }
 
@@ -141,8 +140,7 @@ fun CreateRecipeScreen(
                     PalateTextField(
                         value = uiState.name,
                         onValueChange = viewModel::updateName,
-                        label = stringResource(R.string.recipe_name_hint),
-                        isDarkMode = isDarkMode
+                        label = stringResource(R.string.recipe_name_hint)
                     )
                 }
 
@@ -151,8 +149,7 @@ fun CreateRecipeScreen(
                     PalateTextField(
                         value = uiState.cuisine,
                         onValueChange = viewModel::updateCuisine,
-                        label = stringResource(R.string.cuisine_hint),
-                        isDarkMode = isDarkMode
+                        label = stringResource(R.string.cuisine_hint)
                     )
                 }
 
@@ -161,14 +158,13 @@ fun CreateRecipeScreen(
                     PalateTextField(
                         value = uiState.category,
                         onValueChange = viewModel::updateCategory,
-                        label = stringResource(R.string.category_hint),
-                        isDarkMode = isDarkMode
+                        label = stringResource(R.string.category_hint)
                     )
                 }
 
                 // Ингредиенты
                 item {
-                    SectionTitle(stringResource(R.string.ingredients_title), isDarkMode = isDarkMode)
+                    SectionTitle(stringResource(R.string.ingredients_title))
                 }
 
                 itemsIndexed(uiState.ingredients) { index, ingredient ->
@@ -179,7 +175,6 @@ fun CreateRecipeScreen(
                         onUnitChange = { unit -> viewModel.updateIngredient(index, ingredient.name, ingredient.amount, unit) },
                         onDeleteClick = { viewModel.removeIngredient(index) },
                         showDeleteButton = uiState.ingredients.size > 1,
-                        isDarkMode = isDarkMode,
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
                 }
@@ -213,7 +208,7 @@ fun CreateRecipeScreen(
 
                 // Приготовление
                 item {
-                    SectionTitle(stringResource(R.string.preparation_title), isDarkMode = isDarkMode)
+                    SectionTitle(stringResource(R.string.preparation_title))
                 }
 
                 item {
@@ -221,7 +216,6 @@ fun CreateRecipeScreen(
                         value = uiState.instructions,
                         onValueChange = viewModel::updateInstructions,
                         placeholder = stringResource(R.string.preparation_placeholder),
-                        isDarkMode = isDarkMode,
                         minLines = 6
                     )
                 }
@@ -238,8 +232,7 @@ fun CreateRecipeScreen(
 @Composable
 fun PhotoUploadSection(
     imageUri: String?,
-    onAddPhotoClick: () -> Unit,
-    isDarkMode: Boolean = false
+    onAddPhotoClick: () -> Unit
 ) {
     val borderColor = MaterialTheme.colorScheme.outline
     Box(
@@ -299,7 +292,6 @@ fun PhotoUploadSection(
 fun PalateTextField(
     value: String,
     onValueChange: (String) -> Unit,
-    isDarkMode: Boolean,
     modifier: Modifier = Modifier,
     label: String? = null,
     placeholder: String? = null,
@@ -335,7 +327,7 @@ fun PalateTextField(
 }
 
 @Composable
-fun SectionTitle(title: String, isDarkMode: Boolean = false) {
+fun SectionTitle(title: String) {
     Surface(
         color = MaterialTheme.colorScheme.surfaceVariant,
         modifier = Modifier
